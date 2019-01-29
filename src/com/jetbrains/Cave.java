@@ -181,6 +181,8 @@ public class Cave {
         return true;
     }
 
+
+
     // cave rooms structure
     public Room rooms[] = {
             // create a dummy room to allow the remaining rooms to be base 1 indexed
