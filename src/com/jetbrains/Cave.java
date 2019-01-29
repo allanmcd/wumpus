@@ -3,12 +3,15 @@ package com.jetbrains;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import javafx.stage.Stage;
+
 
 public class Cave {
     public Cave(int caveNumber){
         loadCave(caveNumber);
     }
 
+    Stage fooStage = new Stage();
     public int number;
 
     public boolean valid = false;

@@ -1,14 +1,28 @@
 package com.jetbrains;
 
-public class Main {
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.VBox;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
-    public static void main(String[] args) {
-        Game game = new Game(1);
+public class Main extends Application{
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        // get cave number from user
+        int caveNumber = 1;
+        Game game = new Game(caveNumber, primaryStage);
         if(game.cave.valid){
             System.out.println("Cave " + game.cave.number + " loaded");
+            game.play();
         }
         else{
             System.out.println("Cave NOT loaded");
         }
     }
+
+    public static void main(String[] args) {launch(args);}
 }

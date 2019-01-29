@@ -24,4 +24,8 @@ public class Room {
         walls[4].adjacentRoom = adjacentRoom5;
         walls[5].adjacentRoom = adjacentRoom6;
     }
+
+    public void draw(){
+
+    }
 }
