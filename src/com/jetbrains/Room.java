@@ -24,6 +24,14 @@ public class Room {
     private static final int WALL_XY = 0;
     private static final int TUNNEL_XY = 1;
 
+    private static final int LEFT = 0;
+    private static final int RIGHT = 1;
+
+    private static final int TOP_LEFT = 0;
+    private static final int TOP_RIGHT = 1;
+    private static final int BOTTOM_LEFT = 2;
+    private static final int BOTTOM_RIGHT = 3;
+
     private static final int X = 0;
     private static final int Y = 1;
     private static final int X0 = 0;
@@ -32,6 +40,11 @@ public class Room {
     private static final int Y1 = 1;
     private static final int X2 = 2;
     private static final int Y2 = 2;
+
+    private static final int POINT_0 = 0;
+    private static final int POINT_1 = 1;
+    private static final int POINT_2 = 2;
+    private static final int POINT_3 = 3;
 
     private static final int point0 = 0;
     private static final int point1 = 1;
@@ -68,8 +81,83 @@ public class Room {
         walls[4].adjacentRoom = adjacentRoom5;
         walls[5].adjacentRoom = adjacentRoom6;
 
-        initRoomXY();
-        initRoomHexagon(hexagon[INNER_WALL],100,40,100, 140,180); 
+    }
+
+    public void initWallPoints(){
+        initRoomHexagon(hexagon[OUTER_WALL],85,30,110, 190,170);
+        initRoomHexagon(hexagon[INNER_WALL],100,40,100, 180,160);
+
+        initRoomTunnels();
+    }
+
+    public void draw(Stage gameStage){
+
+        Group group = new Group();
+        drawPolyWalls(group, hexagon[OUTER_WALL], Color.BLACK);
+        drawPolyWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
+
+        drawTunnels(group, walls, Color.LIGHTGRAY);
+        Button btn = new Button();
+        btn.setLayoutX(100);
+        btn.setLayoutY(40);
+        btn.setText("Say 'Hello World'");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Hello World!");
+            }
+        });
+
+        StackPane root = new StackPane();
+//        Rectangle r = new Rectangle(1,298,200,200);
+        Rectangle r = new Rectangle(299.0, 249.0, Color.TRANSPARENT);
+        r.setStroke(Color.BLACK);
+
+        gameStage.setScene(new Scene(group, 300, 250));
+
+        gameStage.show();
+
+    }
+
+    private void initRoomTunnels(){
+        for(int wallNumber = 0; wallNumber < 6; wallNumber++)
+        {
+            Point point1 = new Point(hexagon[INNER_WALL][wallNumber][X], hexagon[INNER_WALL][wallNumber][Y]);
+            Point point2 = new Point(hexagon[INNER_WALL][wallNumber+1][X], hexagon[INNER_WALL][wallNumber+1][Y]);
+            initWallTunnel(INNER_WALL,wallNumber, point1, point2);
+
+            Point point3 = new Point(hexagon[OUTER_WALL][wallNumber][X], hexagon[OUTER_WALL][wallNumber][Y]);
+            Point point4 = new Point(hexagon[OUTER_WALL][wallNumber+1][X], hexagon[OUTER_WALL][wallNumber+1][Y]);
+            initWallTunnel(OUTER_WALL,wallNumber, point3, point4);
+        }
+    }
+
+    private void initWallTunnel(int innerOuter, int wallNumber, Point point1, Point point2){
+        Wall wall = walls[wallNumber];
+
+        if(wall.hasTunne1){
+            // assumes point2 further right than point1
+            double wallWidth = point2.x - point1.x;
+            double tunnelMidX = point1.x + wallWidth/2;
+            double tunnelWidth = .2 * wallWidth;
+            double tunnelLeft = tunnelMidX - tunnelWidth/2;
+            double tunnelRight = tunnelLeft + tunnelWidth;
+
+            // assumes point2 lower than point1
+            double wallHeight = point2.y - point1.y;
+            double tunnelMidY = point2.y - wallHeight/2;
+            double tunnelHeight = .2 * wallHeight;
+            double tunnelTop = tunnelMidY - tunnelHeight/2;
+            double tunnelBottom = tunnelTop + tunnelHeight;
+
+            if(innerOuter == INNER_WALL) {
+                wall.tunnel[POINT_0] = new Point(tunnelLeft, tunnelTop);
+                wall.tunnel[POINT_1] = new Point(tunnelRight, tunnelBottom);
+            }else {
+                wall.tunnel[POINT_2] = new Point(tunnelRight, tunnelBottom);
+                wall.tunnel[POINT_3] = new Point(tunnelLeft, tunnelTop);
+            }
+        }
     }
 
     private void initRoomHexagon(double[][] hexagon,int hexLeft, int hexTop, int deltaX1, int deltaX2, int deltaY){
@@ -97,6 +185,14 @@ public class Room {
         double wallTop = hexTop;
         double wallBottom = hexTop;
 
+        //        point0    point1
+        //
+        //
+        // point5                  point2
+        //
+        //
+        //        point4    point3
+        //
         double point0X = hexLeft + deltaX1;
         double point0Y = hexTop;
         hexagon[0][X] = point0X;
@@ -124,6 +220,7 @@ public class Room {
 
         hexagon[6][X] = point0X;
         hexagon[6][Y] = point0Y;
+
     }
 
     // define the wall xy array indexes
@@ -138,7 +235,7 @@ public class Room {
         int wallRight = wallLeft + delta2;
         int wallTop = yStart;
         int wallBottom = yStart;
-        
+
         Wall wall = walls[0];
         double[][] innerWall = wall.xy[INNER_WALL];
 
@@ -161,7 +258,7 @@ public class Room {
         innerWall[TUNNEL_XY][Y2] = wallTop;
 */
     }
-    
+
     private double tunnelLeft(double[][] wall){
         double wallLeft = wall[WALL_XY][X];
         double wallRight = wall[WALL_XY][Y];
@@ -178,36 +275,7 @@ public class Room {
         return wallLeft + wallWidth/2 - tunnelWidth/2;
     }
 
-    public void draw(Stage gameStage){
-
-        Group group = new Group();
-        drawPolyWalls(group, hexagon[INNER_WALL]);
-        //drawWalls(group,100, 40, 100, 180, 160);
-        //drawWalls(group,85, 30, 110, 190, 170);
-
-        Button btn = new Button();
-        btn.setLayoutX(100);
-        btn.setLayoutY(40);
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
-
-        StackPane root = new StackPane();
-//        Rectangle r = new Rectangle(1,298,200,200);
-        Rectangle r = new Rectangle(299.0, 249.0, Color.TRANSPARENT);
-        r.setStroke(Color.BLACK);
-
-        gameStage.setScene(new Scene(group, 300, 250));
-
-        gameStage.show();
-
-    }
-
-    private void drawPolyWalls(Group group, double[][] hexPoints){
+    private void drawPolyWalls(Group group, double[][] hexPoints, Color fillColor){
         Polygon hexagon = new Polygon();
         hexagon.getPoints().addAll(new Double[]{
                 hexPoints[point0][X], hexPoints[point0][Y],
@@ -218,11 +286,40 @@ public class Room {
                 hexPoints[point5][X], hexPoints[point5][Y],
                 hexPoints[point6][X], hexPoints[point6][Y],
         });
+        hexagon.setFill(fillColor);
         group.getChildren().addAll(hexagon);
     }
 
-    private void drawWalls(Group group, int xStart, int yStart, int delta1, int delta2, int delta3){
+    private void drawTunnels(Group group, Wall[] walls, Color fillColor) {
+        for(int wallNumber = 0; wallNumber < 6; wallNumber++){
+            Wall wall = walls[wallNumber];
+            if(wall.hasTunne1) {
+                drawTunnel(group, wall, fillColor);
+            }
+        }
+    }
+    private void drawTunnel(Group group, Wall wall, Color fillColor){
+        Polygon tunnelPoly = new Polygon();
+        Point point0 = (Point)wall.tunnel[0];
+        Point point1 = (Point)wall.tunnel[1];
+        Point point2 = (Point)wall.tunnel[2];
+        Point point3 = (Point)wall.tunnel[3];
+        tunnelPoly.getPoints().addAll(new Double[]{
+                point0.x, point0.y,
+                point1.x, point1.y,
+                point2.x, point2.y,
+                point3.x, point3.y,
+                point0.x, point0.y
+        });
+        tunnelPoly.setFill(fillColor);
+        tunnelPoly.setOnMouseClicked((event)->{
+            System.out.println("click detected");
+        });
+        group.getChildren().addAll(tunnelPoly);
+    }
 
+    private void drawWalls(Group group, int xStart, int yStart, int delta1, int delta2, int delta3){
+/*
         double[][] hexWall = hexagon[INNER_WALL];
         drawPolyWalls(group, hexWall);
         //double lineLeft = innerWall[WALL_XY][X1];

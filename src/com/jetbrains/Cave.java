@@ -60,6 +60,7 @@ public class Cave {
                             addTunnel(roomToTunnelTo, caveRoom.roomNumber);
                     }
                 }
+                caveRoom.initWallPoints();
                 Debug.log("");
             }
         } catch (IOException e) {
