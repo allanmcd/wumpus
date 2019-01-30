@@ -73,11 +73,11 @@ class Cave {
                         default:
                             // assume it is a room number to tunnel to
                             int numberOfRoomToTunnelTo = Integer.parseInt(args[argsIndex].trim());
-                            addTunnel(caveRoom, numberOfRoomToTunnelTo);
+                            caveRoom.addTunnel(numberOfRoomToTunnelTo);
 
                             // also add the tunnel to the room that was tunneled to
                             Room roomToTunnelTo = rooms[numberOfRoomToTunnelTo];
-                            addTunnel(roomToTunnelTo, caveRoom.roomNumber);
+                            roomToTunnelTo.addTunnel(caveRoom.roomNumber);
                     }
                 }
                 caveRoom.initWallPoints();
@@ -87,19 +87,6 @@ class Cave {
             e.printStackTrace();
         }
         verifyCave(caveNumber);
-    }
-
-    private void addTunnel(Room caveRoom, int roomToTunnelTo) {
-        // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
-        for (int wallNumberIndex = 0; wallNumberIndex < 6; wallNumberIndex++) {
-            Wall caveRoomWall = caveRoom.walls[wallNumberIndex];
-            if (caveRoomWall.adjacentRoom == roomToTunnelTo) {
-                // we found the wall to assign the tunnel to
-                caveRoomWall.hasTunne1 = true;
-                Debug.log("added tunnel from room " + caveRoom.roomNumber + " to room " + roomToTunnelTo );
-                break;
-            }
-        }
     }
 
     private void verifyCave(int gameNumber){

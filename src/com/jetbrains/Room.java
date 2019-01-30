@@ -53,6 +53,19 @@ class Room {
         Game.gameStage.show();
     }
 
+    void addTunnel(int roomToTunnelTo) {
+        // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
+        for (int wallNumberIndex = 0; wallNumberIndex < 6; wallNumberIndex++) {
+            Wall caveRoomWall = walls[wallNumberIndex];
+            if (caveRoomWall.adjacentRoom == roomToTunnelTo) {
+                // we found the wall to assign the tunnel to
+                caveRoomWall.hasTunne1 = true;
+                Debug.log("added tunnel from room " + roomNumber + " to room " + roomToTunnelTo );
+                break;
+            }
+        }
+    }
+
     //
     // class constructor
     //
