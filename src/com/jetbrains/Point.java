@@ -1,16 +1,12 @@
 package com.jetbrains;
 
-public class Point extends Object{
+class Point{
 
-    public double x;
-    public double y;
+    double x;
+    double y;
 
-    public Point(double x, double y) {
+    Point(double x, double y) {
         this.x = x;
         this.y = y;
-    }
-
-    public double getX(){
-        return x;
     }
 }

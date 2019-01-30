@@ -1,9 +1,9 @@
 package com.jetbrains;
 
-public class Debug {
-    public static boolean isEnabled = false;
+class Debug {
+    static boolean isEnabled = false;
 
-    public static void log(String msg){
+    static void log(String msg){
         if(isEnabled){
             System.out.println(msg);
         }

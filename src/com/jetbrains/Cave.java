@@ -6,19 +6,39 @@ import java.io.IOException;
 import javafx.stage.Stage;
 
 
-public class Cave {
-    public Cave(int caveNumber){
+class Cave {
+    //
+    // class member variables
+    //
+    Stage fooStage = new Stage();
+    int number;
+    boolean valid = false;
+
+    //
+    // class methods
+    //
+    void gotoRoom(int roomNumber){
+        rooms[1].draw();
+    }
+
+    //
+    // class constructor
+    //
+    Cave(int caveNumber){
         loadCave(caveNumber);
     }
 
-    Stage fooStage = new Stage();
-    public int number;
+    //
+    // class local variables
+    //
+    private Room caveRoom;
 
-    public boolean valid = false;
-
+    //
+    // class helper functions
+    //
     private void loadCave(int caveNumber){
         number = caveNumber;
-        BufferedReader br = null;
+        BufferedReader br;
         try {
             // cave CSV format is:
             //      roomNumber [,tunnelRoom1] [,tunnelRoom2] [,tunnelRoom3] [,pit] [,bat]
@@ -35,7 +55,7 @@ public class Cave {
                 Debug.log("room number = " + args[0]);
                 int roomNumber = Integer.parseInt(args[0].trim());
 
-                Room caveRoom = rooms[roomNumber];
+                caveRoom = rooms[roomNumber];
                 caveRoom.roomNumber = roomNumber;
 
                 // process all the parameters for the current line of the game file
@@ -69,8 +89,6 @@ public class Cave {
         verifyCave(caveNumber);
     }
 
-    // helper functions
-
     private void addTunnel(Room caveRoom, int roomToTunnelTo) {
         // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
         for (int wallNumberIndex = 0; wallNumberIndex < 6; wallNumberIndex++) {
@@ -85,9 +103,6 @@ public class Cave {
     }
 
     private void verifyCave(int gameNumber){
-        int currentCaveNumber;
-        int nextCaveNumber;
-
         // assume the cave configuration is valid for now
         valid = true;
 
@@ -128,7 +143,6 @@ public class Cave {
         }
 
         Debug.log("game number " + gameNumber + " is " + (valid ? "" : "NOT") + "valid");
-        return;
     }
 
     private boolean verifyNumberOfTunnels(){
@@ -182,11 +196,9 @@ public class Cave {
         return true;
     }
 
-
-
     // cave rooms structure
-    public Room rooms[] = {
-            // create a dummy room to allow the remaining rooms to be base 1 indexed
+    private Room rooms[] = {
+            // create a dummy room to allow the remaining rooms to be 1 based indexed
             new Room(0,0,0,0,0,0,0),
             // create the 30 rooms
             new Room( 1, 25,26,2,7,6,30),

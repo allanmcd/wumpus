@@ -1,32 +1,38 @@
 package com.jetbrains;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
-
 import javafx.stage.Stage;
 
+class Game {
+    //
+    // class instance variables
+    //
+    static Stage gameStage;
+    static Cave cave;
 
-public class Game {
-    int caveNumber = 1;
+    //
+    // class member variables
+    //
 
-    Stage gameStage;
+    //
+    // class local variables
+    //
+    private int caveNumber;
 
-    Cave cave = new Cave( caveNumber);
-
-    public Game(int caveNumber, Stage gameStage){
-        caveNumber = caveNumber;
-        this.gameStage = gameStage;
+    //
+    // class constructor
+    //
+    Game(int caveNumber, Stage stage){
+        this.caveNumber = caveNumber;
+        cave = new Cave(caveNumber);
+        gameStage = stage;
     }
 
-    public void play(){
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+    //
+    // class helper functions
+    //
+    void play(){
         gameStage.setTitle("Find The Wumpus");
-        cave.rooms[1].draw(gameStage);
+        cave.gotoRoom(1);
     }
 }
 
