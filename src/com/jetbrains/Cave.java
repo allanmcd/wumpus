@@ -3,23 +3,19 @@ package com.jetbrains;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import javafx.stage.Stage;
+import java.util.*;
 
 
 class Cave {
     //
     // class member variables
     //
-    Stage fooStage = new Stage();
     int number;
     boolean valid = false;
 
     //
     // class methods
     //
-    void gotoRoom(int roomNumber){
-        rooms[1].draw();
-    }
 
     //
     // class constructor
@@ -80,9 +76,14 @@ class Cave {
                             roomToTunnelTo.addTunnel(caveRoom.roomNumber);
                     }
                 }
-                caveRoom.initWallPoints();
-                Debug.log("");
             }
+            // initialize the wall and tunnel points for all the rooms
+            for(int roomNumber = 1; roomNumber < 31; roomNumber++) {
+                Room room = rooms[roomNumber];
+                room.initWallPoints();
+            }
+            Debug.log("");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,27 +94,37 @@ class Cave {
         // assume the cave configuration is valid for now
         valid = true;
 
-        // verify that each room can be visited
-        // first we mark each room that is the destination of a tunnel
-        for (int roomNumber = 1; roomNumber <= 30; roomNumber++) {
-            // examine all the walls looking for tunnels
+        Stack roomStack = new Stack();
+        // preload the stack with the first room
+        int roomNumber = 1;
+        roomStack.push(roomNumber);
+
+        while(roomStack.empty() == false) {
+            roomNumber = (int) roomStack.pop();
+            Room thisRoom = rooms[roomNumber];
+            thisRoom.hasBeenVisited = true;
+            // check each wall to see if it has a tunnel
             for (int wallNumber = 0; wallNumber <= 5; wallNumber++) {
-                Room thisRoom = rooms[roomNumber];
                 Wall thisWall = thisRoom.walls[wallNumber];
                 if (thisWall.hasTunne1) {
-                    // mark this room as having been visited
+                    // see if the adjacent room has been visited
                     int adjacentRoomNumber = thisWall.adjacentRoom;
                     Room adjacentRoom = rooms[adjacentRoomNumber];
-                    adjacentRoom.hasBeenVisited = true;
+                    if(adjacentRoom.hasBeenVisited == false){
+                        // one of the current rooms adjacent Rooms has not been visited
+                        // so add it to the room Stack
+                        roomStack.push(adjacentRoomNumber);
+                    }
                 }
             }
         }
 
-        // make sure each room in the cave has been visited
-        for (int roomNumber = 1; roomNumber <= 30; roomNumber++) {
+
+            // make sure each room in the cave has been visited
+        for (roomNumber = 1; roomNumber <= 30; roomNumber++) {
             if (rooms[roomNumber].hasBeenVisited == false) {
                 // this room has NOT been visited
-                Debug.log("room " + roomNumber + " is not connected to any other rooms");
+                System.out.println("room " + roomNumber + " is not connected to any other rooms");
                 valid = false;
                 break;
             }
@@ -184,7 +195,7 @@ class Cave {
     }
 
     // cave rooms structure
-    private Room rooms[] = {
+    static Room rooms[] = {
             // create a dummy room to allow the remaining rooms to be 1 based indexed
             new Room(0,0,0,0,0,0,0),
             // create the 30 rooms

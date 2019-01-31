@@ -8,6 +8,7 @@ class Game {
     //
     static Stage gameStage;
     static Cave cave;
+    static GIO gio;
 
     //
     // class member variables
@@ -25,6 +26,7 @@ class Game {
         this.caveNumber = caveNumber;
         cave = new Cave(caveNumber);
         gameStage = stage;
+        gio = new GIO();
     }
 
     //
@@ -32,7 +34,7 @@ class Game {
     //
     void play(){
         gameStage.setTitle("Find The Wumpus");
-        cave.gotoRoom(1);
+        gio.gotoRoom(1);
     }
 }
 

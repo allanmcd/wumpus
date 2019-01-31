@@ -1,13 +1,8 @@
 package com.jetbrains;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 
 class Room {
     // constants used for readability
@@ -40,17 +35,12 @@ class Room {
     // class methods
     //
     void draw(){
-
-        Group group = new Group();
+        Group group = Game.gio.gioGroup;
 
         drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
-
-        Game.gameStage.setScene(new Scene(group, 300, 250));
-
-        Game.gameStage.show();
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -64,6 +54,16 @@ class Room {
                 break;
             }
         }
+    }
+
+    //
+    // initialize the hexagon points and tunnel rectangle
+    // NOTE: must be done AFTER the class has been created
+    //
+    void initWallPoints(){
+        initRoomHexagon(hexagon[OUTER_WALL],85,40,110, 190,170);
+        initRoomHexagon(hexagon[INNER_WALL],100,50,100, 180,160);
+        initRoomTunnels();
     }
 
     //
@@ -98,27 +98,19 @@ class Room {
     // class helper functions
     //
 
-    //
-    // initialize the hexagon points and tunnel rectangle
-    // NOTE: must be done AFTER the class has been created
-    //
-    void initWallPoints(){
-        initRoomHexagon(hexagon[OUTER_WALL],85,30,110, 190,170);
-        initRoomHexagon(hexagon[INNER_WALL],100,40,100, 180,160);
-        initRoomTunnels();
-    }
-
     private void initRoomTunnels(){
         // compute the four points that define the tunnel polygon
         for(int wallNumber = 0; wallNumber < 6; wallNumber++)
         {
-            Point point1 = new Point(hexagon[INNER_WALL][wallNumber][X], hexagon[INNER_WALL][wallNumber][Y]);
-            Point point2 = new Point(hexagon[INNER_WALL][wallNumber+1][X], hexagon[INNER_WALL][wallNumber+1][Y]);
-            initWallTunnel(INNER_WALL,wallNumber, point1, point2);
+            if(walls[wallNumber].hasTunne1) {
+                Point point1 = new Point(hexagon[INNER_WALL][wallNumber][X], hexagon[INNER_WALL][wallNumber][Y]);
+                Point point2 = new Point(hexagon[INNER_WALL][wallNumber + 1][X], hexagon[INNER_WALL][wallNumber + 1][Y]);
+                initWallTunnel(INNER_WALL, wallNumber, point1, point2);
 
-            Point point3 = new Point(hexagon[OUTER_WALL][wallNumber][X], hexagon[OUTER_WALL][wallNumber][Y]);
-            Point point4 = new Point(hexagon[OUTER_WALL][wallNumber+1][X], hexagon[OUTER_WALL][wallNumber+1][Y]);
-            initWallTunnel(OUTER_WALL,wallNumber, point3, point4);
+                Point point3 = new Point(hexagon[OUTER_WALL][wallNumber][X], hexagon[OUTER_WALL][wallNumber][Y]);
+                Point point4 = new Point(hexagon[OUTER_WALL][wallNumber + 1][X], hexagon[OUTER_WALL][wallNumber + 1][Y]);
+                initWallTunnel(OUTER_WALL, wallNumber, point3, point4);
+            }
         }
     }
 
@@ -234,7 +226,8 @@ class Room {
 
         // define code to be executed when a click occurs on the tunnel
         tunnelPoly.setOnMouseClicked((event)->{
-            System.out.println("click detected");
+            Debug.log("click detected on wall " + wall + " in room " + roomNumber);
+            Game.gio.gotoRoom(wall.adjacentRoom);
         });
     }
 }
