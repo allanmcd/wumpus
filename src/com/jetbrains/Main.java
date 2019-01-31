@@ -12,16 +12,16 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception{
         // get cave number from user
-        int caveNumber = 1;
+        String caveName = "cave1";
         primaryStage.setHeight(800);
         primaryStage.setWidth(600);
-        Game game = new Game(caveNumber, primaryStage);
+        Game game = new Game(caveName, primaryStage);
         if(game.cave.valid){
-            System.out.println("Cave " + game.cave.number + " loaded");
+            System.out.println(caveName + " loaded");
             game.play();
         }
         else{
-            System.out.println("Cave NOT loaded");
+            System.out.println(caveName + " NOT loaded");
         }
     }
 

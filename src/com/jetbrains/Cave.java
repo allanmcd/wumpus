@@ -3,44 +3,42 @@ package com.jetbrains;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.*;
-
-
+//
+// NOTE there should only be one Cave object
+//
 class Cave {
     //
-    // class member variables
+    // Cave static variables
     //
-    int number;
-    boolean valid = false;
+    static String caveName;
+    static boolean valid = false;
 
     //
-    // class methods
+    // Cave constructor
     //
-
-    //
-    // class constructor
-    //
-    Cave(int caveNumber){
-        loadCave(caveNumber);
+    Cave(String caveName){
+        this.caveName = caveName;
+        loadCave(caveName);
     }
 
     //
-    // class local variables
+    // Cave local variables
     //
     private Room caveRoom;
 
     //
-    // class helper functions
+    // Cave helper functions
     //
-    private void loadCave(int caveNumber){
-        number = caveNumber;
+    private void loadCave(String caveName){
         BufferedReader br;
         try {
             // cave CSV format is:
             //      roomNumber [,tunnelRoom1] [,tunnelRoom2] [,tunnelRoom3] [,pit] [,bat]
             // multiple lines are used to define the rooms
             // we currently don't test for duplicate room definitions
-            br = new BufferedReader(new FileReader("src/cave" + caveNumber + ".csv"));
+            br = new BufferedReader(new FileReader("src/" + caveName + ".csv"));
             String line;
 
             // process all the lines from the cave file
@@ -87,10 +85,10 @@ class Cave {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        verifyCave(caveNumber);
+        verifyCave(caveName);
     }
 
-    private void verifyCave(int gameNumber){
+    private void verifyCave(String caveName){
         // assume the cave configuration is valid for now
         valid = true;
 
@@ -124,7 +122,7 @@ class Cave {
         for (roomNumber = 1; roomNumber <= 30; roomNumber++) {
             if (rooms[roomNumber].hasBeenVisited == false) {
                 // this room has NOT been visited
-                System.out.println("room " + roomNumber + " is not connected to any other rooms");
+                Debug.error( "room " + roomNumber + " is not connected to any other rooms");
                 valid = false;
                 break;
             }
@@ -139,8 +137,11 @@ class Cave {
         if(valid) {
             valid = verifyNumberOfPitsAndBats();
         }
-
-        Debug.log("game number " + gameNumber + " is " + (valid ? "" : "NOT") + "valid");
+        if(valid){
+            Debug.log(caveName + " is valid");
+        }else{
+            Debug.error(caveName + " is NOT valid");
+        }
     }
 
     private boolean verifyNumberOfTunnels(){
@@ -181,20 +182,22 @@ class Cave {
 
         // make sure this room has exactly 2 pits
         if (numberOfPits != 2) {
-            Debug.log("cave has " + numberOfPits + " pits - it should have 2");
+            Debug.warning("cave " + caveName +" has " + numberOfPits + " pits - it should have 2");
             return false;
         }
 
         // make sure this room has exactly 2 bats
         if (numberOfBats != 2) {
-            Debug.log("cave has " + numberOfBats + " bats - it should have 2");
+            Debug.warning("cave " + caveName + " has " + numberOfBats + " bats - it should have 2");
             return false;
         }
 
         return true;
     }
 
-    // cave rooms structure
+    //
+    // Cave static variables
+    //
     static Room rooms[] = {
             // create a dummy room to allow the remaining rooms to be 1 based indexed
             new Room(0,0,0,0,0,0,0),

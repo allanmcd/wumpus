@@ -5,25 +5,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 class Room {
+    //
     // constants used for readability
+    //
+        // INNER/OUTER refer to the inside/outside wall edges
+        private static final int INNER_WALL = 0;
+        private static final int OUTER_WALL = 1;
 
-    // INNER/OUTER refer to the inside/outside wall edges
-    private static final int INNER_WALL = 0;
-    private static final int OUTER_WALL = 1;
+        private static final int X = 0;
+        private static final int Y = 1;
 
-    private static final int X = 0;
-    private static final int Y = 1;
-
-    private static final int POINT_0 = 0;
-    private static final int POINT_1 = 1;
-    private static final int POINT_2 = 2;
-    private static final int POINT_3 = 3;
-    private static final int POINT_4 = 4;
-    private static final int POINT_5 = 5;
-    private static final int POINT_6 = 6;
+        private static final int POINT_0 = 0;
+        private static final int POINT_1 = 1;
+        private static final int POINT_2 = 2;
+        private static final int POINT_3 = 3;
+        private static final int POINT_4 = 4;
+        private static final int POINT_5 = 5;
+        private static final int POINT_6 = 6;
 
     //
-    // class member variables
+    // Room instance variables
     //
     Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
     int roomNumber;
@@ -32,7 +33,7 @@ class Room {
     boolean hasBeenVisited;
 
     //
-    // class methods
+    // Room methods
     //
     void draw(){
         Group group = Game.gio.gioGroup;
@@ -56,18 +57,18 @@ class Room {
         }
     }
 
-    //
-    // initialize the hexagon points and tunnel rectangle
-    // NOTE: must be done AFTER the class has been created
-    //
     void initWallPoints(){
+        //
+        // initialize the hexagon points and tunnel rectangle
+        // NOTE: must be done AFTER the class has been created
+        //
         initRoomHexagon(hexagon[OUTER_WALL],85,40,110, 190,170);
         initRoomHexagon(hexagon[INNER_WALL],100,50,100, 180,160);
         initRoomTunnels();
     }
 
     //
-    // class constructor
+    // Room constructor
     //
     Room (int newRoomNumber,
                  int adjacentRoom1,
@@ -88,14 +89,14 @@ class Room {
 
     }
     //
-    // class local variables
+    // Room local variables
     //
 
     // hexagon[inner/outer][points][x/y];
     private double[][][]hexagon = new double[2][7][2];
 
     //
-    // class helper functions
+    // Room helper functions
     //
 
     private void initRoomTunnels(){

@@ -14,14 +14,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.geometry.Pos;
 
+//
+// NOTE there should only be one GIO object
+//
 class GIO {
     //
-    // class instance variables
+    // GIO static variables
     //
     static Group gioGroup;
 
     //
-    // class methods
+    // GIO methods
     //
     void gotoRoom(int roomNumber){
         GridPane gridpane = new GridPane();
@@ -49,16 +52,11 @@ class GIO {
     }
 
     //
-    // class constructor
+    // GIO constructor
     //
     GIO(){
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
     };
-
-    //
-    // local class variables
-    //
-    String roomNumber;
 
     //
     // javafx controls

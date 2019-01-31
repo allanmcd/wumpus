@@ -2,7 +2,7 @@ package com.jetbrains;
 
 class Wall {
     //
-    // class member variables
+    // Wall instance variables
     //
     int adjacentRoom;
     boolean hasTunne1;
