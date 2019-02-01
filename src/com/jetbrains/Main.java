@@ -9,9 +9,11 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class Main extends Application{
+    // pass "debugging" as a command line arg while debugging this code
+    static boolean debugging;
     @Override
     public void start(Stage primaryStage) throws Exception{
-        // get cave number from user
+        //UNDONE get cave number from user
         String caveName = "cave1";
         primaryStage.setHeight(800);
         primaryStage.setWidth(600);
@@ -26,5 +28,12 @@ public class Main extends Application{
     }
 
     public static void main(String[] args) {
+        // were any arguments passed from the command line
+        if(args.length > 0) {
+            // see if we are in debug mode
+            String arg0 = args[0];
+            debugging = arg0.equals("debugging");
+        }
+
         launch(args);}
 }
