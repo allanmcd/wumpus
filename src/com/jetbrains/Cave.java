@@ -71,7 +71,7 @@ class Cave {
             }
 
             // create a couple of pits
-            if(Main.debugging){
+            if(Main.useDefaults){
                 rooms[7].hasPit = true;
                 rooms[9].hasPit = true;
             } else {
@@ -84,7 +84,7 @@ class Cave {
             }
 
             // create a couple of bats
-            if(Main.debugging){
+            if(Main.useDefaults){
                 Game.map.batRooms[0] = 3;
                 Game.map.batRooms[1] = 13;
             } else {
