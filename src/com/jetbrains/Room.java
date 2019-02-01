@@ -46,9 +46,10 @@ class Room {
         drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
 
-        drawTunnels(group, walls, Color.LIGHTGRAY);
-
         if(hasBat){drawBat(group);}
+        if(hasPit){drawPit(group);}
+
+        drawTunnels(group, walls, Color.LIGHTGRAY);
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -266,6 +267,29 @@ class Room {
         {
             // UNDONE should probably add code to display "e"
             Debug.error(("could not load bat.png"));
+        }
+    }
+
+    private void drawPit(Group group) {
+        // display the pit image centered in the room
+        try
+        {
+            Image pitImagep = new Image(new FileInputStream("src/pit.png"));
+            ImageView imageView = new ImageView(pitImagep);
+
+            double[] hexagonPoint5XY = hexagon[INNER_WALL][POINT_5];
+            double pitImagepLeft = hexagonPoint5XY[X] - 5;
+            imageView.setX(pitImagepLeft);
+
+            double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
+            double pitImagepTop = hexagonPoint0XY[Y] - 5;
+            imageView.setY(pitImagepTop);
+            group.getChildren().add(imageView);
+        }
+        catch (FileNotFoundException e)
+        {
+            // UNDONE should probably add code to display "e"
+            Debug.error(("could not load pit.png"));
         }
     }
 }
