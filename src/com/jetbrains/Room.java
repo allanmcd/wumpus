@@ -1,8 +1,13 @@
 package com.jetbrains;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 class Room {
     //
@@ -42,6 +47,8 @@ class Room {
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
+
+        if(hasBat){drawBat(group);}
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -230,5 +237,35 @@ class Room {
             Debug.log("click detected on wall " + wall + " in room " + roomNumber);
             Game.gio.gotoRoom(wall.adjacentRoom);
         });
+    }
+
+    private void drawBat(Group group) {
+        // display the bat image centered in the room
+        try
+        {
+            Image batImage = new Image(new FileInputStream("src/bat.png"));
+            ImageView imageView = new ImageView(batImage);
+
+            double batImageWidth = batImage.getWidth();
+            double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
+            double[] hexagonPoint1XY = hexagon[INNER_WALL][POINT_1];
+            double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
+            //double batImageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2;
+            double batImageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - batImageWidth/2;
+            imageView.setX(batImageLeft);
+
+            double batImageHeight = batImage.getHeight();
+            double[] hexagonPoint3XY = hexagon[INNER_WALL][POINT_3];
+            double hexagonHeight = hexagonPoint3XY[Y] - hexagonPoint0XY[Y];
+            double batImageTop = hexagonPoint0XY[Y] + hexagonHeight/2 - batImageHeight/2;
+            imageView.setY(batImageTop);
+            imageView.setY(batImageTop);
+            group.getChildren().add(imageView);
+        }
+        catch (FileNotFoundException e)
+        {
+            // UNDONE should probably add code to display "e"
+            Debug.error(("could not load bat.png"));
+        }
     }
 }
