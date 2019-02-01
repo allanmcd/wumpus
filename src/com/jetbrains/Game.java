@@ -9,9 +9,10 @@ class Game {
     //
     // game static variables
     //
-    static Stage gameStage;
     static Cave cave;
+    static Stage gameStage;
     static GIO gio;
+    static Map map;
     static String caveName;
 
     //
@@ -27,9 +28,10 @@ class Game {
     //
     Game(String caveName, Stage stage){
         this.caveName = caveName;
+        gio = new GIO();
+        map = new Map();
         cave = new Cave(caveName);
         gameStage = stage;
-        gio = new GIO();
     }
 }
 

@@ -34,7 +34,6 @@ class Room {
     Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
     int roomNumber;
     boolean hasPit;
-    boolean hasBat;
     boolean hasBeenVisited;
 
     //
@@ -46,7 +45,7 @@ class Room {
         drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
 
-        if(hasBat){drawBat(group);}
+        if(hasBat()){drawBat(group);}
         if(hasPit){drawPit(group);}
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
@@ -68,13 +67,19 @@ class Room {
     void initWallPoints(){
         //
         // initialize the hexagon points and tunnel rectangle
-        // NOTE: must be done AFTER the class has been created
+        // NOTE: must be done AFTER the Room class has been instantiated
         //
         initRoomHexagon(hexagon[OUTER_WALL],85,40,110, 190,170);
         initRoomHexagon(hexagon[INNER_WALL],100,50,100, 180,160);
         initRoomTunnels();
     }
 
+    boolean hasBat(){
+        boolean hasBat = false;
+        if(Game.map.batRooms[0] == roomNumber){hasBat = true;}
+        if(Game.map.batRooms[1] == roomNumber){hasBat = true;}
+        return hasBat;
+    }
     //
     // Room constructor
     //

@@ -34,8 +34,8 @@ class Cave {
     private void loadCave(String caveName){
         BufferedReader br;
         try {
-            // cave CSV format is:
-            //      roomNumber [,tunnelRoom1] [,tunnelRoom2] [,tunnelRoom3] [,pit] [,bat]
+            // cave CSV format in BNF notation is:
+            //      <roomNumber> <1>#<3>{<comma><tunnelRoom>}
             // multiple lines are used to define the rooms
             // we currently don't test for duplicate room definitions
             br = new BufferedReader(new FileReader("src/" + caveName + ".csv"));
@@ -55,24 +55,13 @@ class Cave {
                 // process all the parameters for the current line of the game file
                 for(int argsIndex = 1; argsIndex < args.length; argsIndex++) {
                     String nextArg = args[argsIndex].trim();
-                    switch(nextArg){
-                        case "bat":
-                            Debug.log("room " + roomNumber + " has a bat");
-                            caveRoom.hasBat = true;
-                            break;
-                        case "pit":
-                            Debug.log("room " + roomNumber + " has a pit");
-                            caveRoom.hasPit = true;
-                            break;
-                        default:
-                            // assume it is a room number to tunnel to
-                            int numberOfRoomToTunnelTo = Integer.parseInt(args[argsIndex].trim());
-                            caveRoom.addTunnel(numberOfRoomToTunnelTo);
+                    // assume it is a room number to tunnel to
+                    int numberOfRoomToTunnelTo = Integer.parseInt(args[argsIndex].trim());
+                    caveRoom.addTunnel(numberOfRoomToTunnelTo);
 
-                            // also add the tunnel to the room that was tunneled to
-                            Room roomToTunnelTo = rooms[numberOfRoomToTunnelTo];
-                            roomToTunnelTo.addTunnel(caveRoom.roomNumber);
-                    }
+                    // also add the tunnel to the room that was tunneled to
+                    Room roomToTunnelTo = rooms[numberOfRoomToTunnelTo];
+                    roomToTunnelTo.addTunnel(caveRoom.roomNumber);
                 }
             }
             // initialize the wall and tunnel points for all the rooms
@@ -80,6 +69,34 @@ class Cave {
                 Room room = rooms[roomNumber];
                 room.initWallPoints();
             }
+
+            // create a couple of pits
+            if(Main.debugging){
+                rooms[7].hasPit = true;
+                rooms[9].hasPit = true;
+            } else {
+                Random random = new Random();
+                for (int pitNumber = 1; pitNumber < 3; pitNumber++) {
+                    // generate a random room from 1 to 30
+                    int pitRoomNumber = random.nextInt(29) + 1;
+                    rooms[pitRoomNumber].hasPit = true;
+                }
+            }
+
+            // create a couple of bats
+            if(Main.debugging){
+                Game.map.batRooms[0] = 3;
+                Game.map.batRooms[1] = 13;
+            } else {
+                Random random = new Random();
+                    // generate a random room from 1 to 30
+                    int batRoomNumber = random.nextInt(29) + 1;
+                    Game.map.batRooms[0] = batRoomNumber;
+
+                    // generate a different random room from 1 to 30
+                    batRoomNumber = random.nextInt(29) + 1;
+                    Game.map.batRooms[1] = batRoomNumber;
+                }
             Debug.log("");
 
         } catch (IOException e) {
@@ -175,7 +192,7 @@ class Cave {
             if(room.hasPit){
                 numberOfPits++;
             }
-            if(room.hasBat){
+            if(room.hasBat()){
                 numberOfBats++;
             }
         }
