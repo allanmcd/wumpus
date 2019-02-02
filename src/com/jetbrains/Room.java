@@ -9,6 +9,8 @@ import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import static com.jetbrains.Game.wumpus;
+
 class Room {
     //
     // constants used for readability
@@ -47,6 +49,7 @@ class Room {
 
         if(hasBat()){drawBat(group);}
         if(hasPit){drawPit(group);}
+        if (wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
     }
@@ -245,36 +248,6 @@ class Room {
         });
     }
 
-    private void drawBat(Group group) {
-        // display the bat image centered in the room
-        try
-        {
-            Image batImage = new Image(new FileInputStream("src/bat.png"));
-            ImageView imageView = new ImageView(batImage);
-
-            double batImageWidth = batImage.getWidth();
-            double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
-            double[] hexagonPoint1XY = hexagon[INNER_WALL][POINT_1];
-            double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
-            //double batImageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2;
-            double batImageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - batImageWidth/2;
-            imageView.setX(batImageLeft);
-
-            double batImageHeight = batImage.getHeight();
-            double[] hexagonPoint3XY = hexagon[INNER_WALL][POINT_3];
-            double hexagonHeight = hexagonPoint3XY[Y] - hexagonPoint0XY[Y];
-            double batImageTop = hexagonPoint0XY[Y] + hexagonHeight/2 - batImageHeight/2;
-            imageView.setY(batImageTop);
-            imageView.setY(batImageTop);
-            group.getChildren().add(imageView);
-        }
-        catch (FileNotFoundException e)
-        {
-            // UNDONE should probably add code to display "e"
-            Debug.error(("could not load bat.png"));
-        }
-    }
-
     private void drawPit(Group group) {
         // display the pit image centered in the room
         try
@@ -295,6 +268,46 @@ class Room {
         {
             // UNDONE should probably add code to display "e"
             Debug.error(("could not load pit.png"));
+        }
+    }
+
+    private void drawBat(Group group) {
+        // display the bat image centered in the room
+        drawImageCentered(group, "bat.png");
+    }
+
+    private void drawWumpus(Group group) {
+        // display the wumpus image centered in the room
+        drawImageCentered(group, "wumpus.png");
+    }
+
+    private void drawImageCentered(Group group, String imageFileName) {
+        // display an image centered in the current room
+        try
+        {
+            Image image = new Image(new FileInputStream("src/" + imageFileName));
+            ImageView imageView = new ImageView(image);
+
+            double imageWidth = image.getWidth();
+            double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
+            double[] hexagonPoint1XY = hexagon[INNER_WALL][POINT_1];
+            double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
+            //double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2;
+            double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - imageWidth/2;
+            imageView.setX(imageLeft);
+
+            double imageHeight = image.getHeight();
+            double[] hexagonPoint3XY = hexagon[INNER_WALL][POINT_3];
+            double hexagonHeight = hexagonPoint3XY[Y] - hexagonPoint0XY[Y];
+            double imageTop = hexagonPoint0XY[Y] + hexagonHeight/2 - imageHeight/2;
+            imageView.setY(imageTop);
+            imageView.setY(imageTop);
+            group.getChildren().add(imageView);
+        }
+        catch (FileNotFoundException e)
+        {
+            // UNDONE should probably add code to display "e"
+            Debug.error(("could not " + imageFileName));
         }
     }
 }

@@ -11,13 +11,14 @@ import javafx.stage.Stage;
 public class Main extends Application{
     // pass "useDefaults" as a command line arg while debugging this code
     static boolean useDefaults;
+    static Game game;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //UNDONE get cave number from user
         String caveName = "cave1";
         primaryStage.setHeight(800);
         primaryStage.setWidth(600);
-        Game game = new Game(caveName, primaryStage);
+        game = new Game(caveName, primaryStage);
         if(game.cave.valid){
             System.out.println(caveName + " loaded");
             game.play();

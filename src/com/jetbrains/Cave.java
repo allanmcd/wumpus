@@ -5,6 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.*;
+
+import static com.jetbrains.Main.useDefaults;
+
 //
 // NOTE there should only be one Cave object
 //
@@ -18,9 +21,9 @@ class Cave {
     //
     // Cave constructor
     //
-    Cave(String caveName){
+    Cave(String caveName, int initialRoom){
         this.caveName = caveName;
-        loadCave(caveName);
+        loadCave(caveName, initialRoom);
     }
 
     //
@@ -31,7 +34,7 @@ class Cave {
     //
     // Cave helper functions
     //
-    private void loadCave(String caveName){
+    private void loadCave(String caveName, int initialRoom){
         BufferedReader br;
         try {
             // cave CSV format in BNF notation is:
@@ -71,7 +74,7 @@ class Cave {
             }
 
             // create a couple of pits
-            if(Main.useDefaults){
+            if(useDefaults){
                 rooms[7].hasPit = true;
                 rooms[9].hasPit = true;
             } else {
@@ -79,23 +82,22 @@ class Cave {
                 for (int pitNumber = 1; pitNumber < 3; pitNumber++) {
                     // generate a random room from 1 to 30
                     int pitRoomNumber = random.nextInt(29) + 1;
+                    if(pitRoomNumber == initialRoom){
+                        // don't put a pit in the initial room
+                        pitRoomNumber = random.nextInt(29) + 1;
+                    }
                     rooms[pitRoomNumber].hasPit = true;
                 }
             }
 
             // create a couple of bats
-            if(Main.useDefaults){
+            if(useDefaults){
                 Game.map.batRooms[0] = 3;
                 Game.map.batRooms[1] = 13;
             } else {
                 Random random = new Random();
-                    // generate a random room from 1 to 30
-                    int batRoomNumber = random.nextInt(29) + 1;
-                    Game.map.batRooms[0] = batRoomNumber;
-
-                    // generate a different random room from 1 to 30
-                    batRoomNumber = random.nextInt(29) + 1;
-                    Game.map.batRooms[1] = batRoomNumber;
+                setBatRoomNumber(0, initialRoom, random);
+                setBatRoomNumber(1, initialRoom, random);
                 }
             Debug.log("");
 
@@ -103,6 +105,17 @@ class Cave {
             e.printStackTrace();
         }
         verifyCave(caveName);
+    }
+
+    private void setBatRoomNumber(int batRoomIndex, int initialRoom, Random random){
+        // generate a different random room from 1 to 30
+        int batRoomNumber = random.nextInt(29) + 1;
+
+        if(batRoomNumber == initialRoom){
+            // don't put a bat in the initial room
+            batRoomNumber = random.nextInt(29) + 1;
+        }
+        Game.map.batRooms[batRoomIndex] = batRoomNumber;
     }
 
     private void verifyCave(String caveName){
