@@ -13,6 +13,7 @@ class Game {
     //
     // game static variables
     //
+    static Bow bow;
     static Cave cave;
     static Stage gameStage;
     static GIO gio;
@@ -50,6 +51,7 @@ class Game {
         map = new Map();
         cave = new Cave(caveName, initialRoom);
         gameStage = stage;
+        bow = new Bow(3);
     }
 }
 

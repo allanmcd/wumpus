@@ -9,8 +9,7 @@ import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static com.jetbrains.Game.wumpus;
-import static com.jetbrains.Game.player;
+import static com.jetbrains.Game.*;
 
 class Room {
     //
@@ -57,6 +56,8 @@ class Room {
         if (wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
+
+        bow.draw();
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -290,8 +291,9 @@ class Room {
 
         String verticalPosition = "Centered";
         if(hasBat()){ verticalPosition = "Bottom";}
+        if(wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
-        drawImage(group, verticalPosition,"player.png");
+        player.position = drawImage(group, verticalPosition,"player.png");
     }
 
     private void drawWumpus(Group group) {
@@ -302,8 +304,9 @@ class Room {
         drawImage(group, verticalPosition, "wumpus.png");
     }
 
-    private void drawImage(Group group, String verticalPosition, String imageFileName) {
+    private double[] drawImage(Group group, String verticalPosition, String imageFileName) {
         // display an image centered in the current room
+        double[] retVal = new double[4];
         try
         {
             Image image = new Image(new FileInputStream("src/" + imageFileName));
@@ -343,11 +346,13 @@ class Room {
 
             imageView.setY(imageY);
             group.getChildren().add(imageView);
+            retVal =  new double[]{imageLeft, imageY, imageWidth, imageHeight};
         }
         catch (FileNotFoundException e)
         {
             // UNDONE should probably add code to display "e"
-            Debug.error(("could not " + imageFileName));
+            Debug.error(("could not load " + imageFileName));
         }
+        return retVal;
     }
 }

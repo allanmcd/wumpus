@@ -8,7 +8,8 @@ public class Player {
     // Player instance variables
     //
     int roomNumber;
-
+    // position[X, Y, width, height];
+    double[] position;
     //
     // Player methods
     //
