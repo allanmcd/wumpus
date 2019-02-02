@@ -43,6 +43,7 @@ class GIO {
 
         gioGroup = new Group();
 
+        Main.game.player.roomNumber = roomNumber;
         gioGroup.getChildren().add(gridpane);
         Game.cave.rooms[roomNumber].draw();
 

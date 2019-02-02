@@ -17,6 +17,7 @@ class Game {
     static Stage gameStage;
     static GIO gio;
     static Map map;
+    static Player player;
     static Wumpus wumpus;
 
     //
@@ -32,6 +33,7 @@ class Game {
     //
     Game(String caveName, Stage stage){
         int initialRoom;
+
         if(useDefaults){
             initialRoom = 1;
         }
@@ -41,6 +43,8 @@ class Game {
             initialRoom = random.nextInt(29) + 1;
         }
         wumpus = new Wumpus(initialRoom);
+
+        player = new Player(initialRoom);
 
         gio = new GIO();
         map = new Map();

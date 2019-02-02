@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import static com.jetbrains.Game.wumpus;
+import static com.jetbrains.Game.player;
 
 class Room {
     //
@@ -47,8 +48,12 @@ class Room {
         drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
 
-        if(hasBat()){drawBat(group);}
         if(hasPit){drawPit(group);}
+
+        drawPlayer(group);
+
+        if(hasBat()){drawBat(group);}
+
         if (wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
@@ -273,15 +278,31 @@ class Room {
 
     private void drawBat(Group group) {
         // display the bat image centered in the room
-        drawImageCentered(group, "bat.png");
+
+        String verticalPosition = "Centered";
+        if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
+
+        drawImage(group, verticalPosition, "bat.png");
+    }
+
+    private void drawPlayer(Group group) {
+        // display the player image centered in the room
+
+        String verticalPosition = "Centered";
+        if(hasBat()){ verticalPosition = "Bottom";}
+
+        drawImage(group, verticalPosition,"player.png");
     }
 
     private void drawWumpus(Group group) {
-        // display the wumpus image centered in the room
-        drawImageCentered(group, "wumpus.png");
+        // display the wumpus image in the room
+        String verticalPosition = "Centered";
+        if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
+
+        drawImage(group, verticalPosition, "wumpus.png");
     }
 
-    private void drawImageCentered(Group group, String imageFileName) {
+    private void drawImage(Group group, String verticalPosition, String imageFileName) {
         // display an image centered in the current room
         try
         {
@@ -292,16 +313,35 @@ class Room {
             double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
             double[] hexagonPoint1XY = hexagon[INNER_WALL][POINT_1];
             double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
-            //double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2;
+
             double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - imageWidth/2;
             imageView.setX(imageLeft);
 
             double imageHeight = image.getHeight();
-            double[] hexagonPoint3XY = hexagon[INNER_WALL][POINT_3];
-            double hexagonHeight = hexagonPoint3XY[Y] - hexagonPoint0XY[Y];
-            double imageTop = hexagonPoint0XY[Y] + hexagonHeight/2 - imageHeight/2;
-            imageView.setY(imageTop);
-            imageView.setY(imageTop);
+            double[] hexagonBottomXY = hexagon[INNER_WALL][POINT_3];
+            double hexagonHeight = hexagonBottomXY[Y] - hexagonPoint0XY[Y];
+
+            // determine vertical positioning
+            double imageY = 0;
+            switch (verticalPosition){
+                case "Top":{
+                    imageY = hexagonPoint0XY[Y] + 10;
+                    break;
+                }
+                case "Bottom": {
+                    imageY = hexagonBottomXY[Y] - imageHeight -10;
+                    break;
+                }
+                case "Centered": {
+                    imageY = hexagonPoint0XY[Y] + hexagonHeight/2 - imageHeight/2;
+                    break;
+                }
+                default:{
+                    Debug.error("invalid drawImage verticalPosition parameter: " + verticalPosition);
+                }
+            }
+
+            imageView.setY(imageY);
             group.getChildren().add(imageView);
         }
         catch (FileNotFoundException e)
