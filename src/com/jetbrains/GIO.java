@@ -163,6 +163,12 @@ class GIO {
             }
         });
 
+        quitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                System.exit(0);
+            }
+        });
+
         gameMenu.getItems().addAll(newMenuItem, replayMenuItem, quitMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
