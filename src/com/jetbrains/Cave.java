@@ -16,13 +16,18 @@ class Cave {
     // Cave static variables
     //
     static String caveName;
-    static boolean valid = false;
     static Bat[] bats = new Bat[2];
     static int initialRoom;
     static Wumpus wumpus;
 
     //
+    // Cave Instance variables
+    //
+    boolean valid;
+
+    //
     // Cave constructor
+    //
     //
     Cave(String caveName, int initialRoom){
         this.caveName = caveName;
@@ -38,7 +43,7 @@ class Cave {
     //
     // Cave helper functions
     //
-    private void loadCave(String caveName){
+    private boolean loadCave(String caveName){
         BufferedReader br;
         try {
             // cave CSV format in BNF notation is:
@@ -103,6 +108,15 @@ class Cave {
             e.printStackTrace();
         }
         verifyCave(caveName);
+
+        if(valid){
+            System.out.println(caveName + " loaded");
+        }
+        else{
+            System.out.println(caveName + " NOT loaded");
+        }
+
+        return valid;
     }
 
     private void verifyCave(String caveName){
@@ -153,11 +167,6 @@ class Cave {
         // make sure the cave does NOt have more than two pits or bats
         if(valid) {
             valid = verifyNumberOfPitsAndBats();
-        }
-        if(valid){
-            Debug.log(caveName + " is valid");
-        }else{
-            Debug.error(caveName + " is NOT valid");
         }
     }
 

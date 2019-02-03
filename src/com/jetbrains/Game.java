@@ -23,6 +23,7 @@ import static com.jetbrains.Main.useDefaults;
 class Game {
     //
     // game static variables
+    // most are accessed before game object is created
     //
     static Bow bow;
     static Cave cave;
@@ -34,6 +35,7 @@ class Game {
     static boolean youWon;
     static boolean  youLost;
     static boolean stillPlayiing;
+    static boolean valid;
 
     //
     // Game methods
@@ -77,6 +79,7 @@ class Game {
         gio = new GIO();
         map = new Map();
         cave = new Cave(caveName, initialRoom);
+        valid = cave.valid;
         bow = new Bow(3);
     }
 

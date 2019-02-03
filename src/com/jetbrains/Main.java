@@ -14,12 +14,9 @@ public class Main extends Application{
         String caveName = "cave1";
         this.primaryStage = primaryStage;
         game = new Game(caveName, primaryStage);
-        if(game.cave.valid){
-            System.out.println(caveName + " loaded");
+
+        if(game.valid){
             game.play();
-        }
-        else{
-            System.out.println(caveName + " NOT loaded");
         }
     }
 

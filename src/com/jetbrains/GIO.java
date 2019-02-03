@@ -159,14 +159,7 @@ class GIO {
         replayMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 game = new Game(caveName, Main.primaryStage);
-                if(game.cave.valid){
-                    System.out.println(caveName + " loaded");
-                    game.play();
-                }
-                else{
-                    System.out.println(caveName + " NOT loaded");
-                }
-
+                if(game.valid){game.play();};
             }
         });
 
