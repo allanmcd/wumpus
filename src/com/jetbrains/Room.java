@@ -78,8 +78,8 @@ class Room {
         // initialize the hexagon points and tunnel rectangle
         // NOTE: must be done AFTER the Room class has been instantiated
         //
-        initRoomHexagon(hexagon[OUTER_WALL],85,40,110, 190,170);
-        initRoomHexagon(hexagon[INNER_WALL],100,50,100, 180,160);
+        initRoomHexagon(hexagon[OUTER_WALL],0,40,110, 190,170);
+        initRoomHexagon(hexagon[INNER_WALL],15,50,100, 180,160);
         initRoomTunnels();
     }
 

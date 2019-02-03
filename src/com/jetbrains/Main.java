@@ -1,23 +1,18 @@
 package com.jetbrains;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.VBox;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class Main extends Application{
     // pass "useDefaults" as a command line arg while debugging this code
     static boolean useDefaults;
     static Game game;
+    static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //UNDONE get cave number from user
         String caveName = "cave1";
-        primaryStage.setHeight(800);
-        primaryStage.setWidth(600);
+        this.primaryStage = primaryStage;
         game = new Game(caveName, primaryStage);
         if(game.cave.valid){
             System.out.println(caveName + " loaded");

@@ -29,6 +29,7 @@ class Game {
     static Stage gameStage;
     static GIO gio;
     static Map map;
+    static String name;
     static Player player;
     static boolean youWon;
     static boolean  youLost;
@@ -58,6 +59,8 @@ class Game {
     //
     Game(String caveName, Stage stage){
         stillPlayiing = true;
+        gameStage = stage;
+
         if(useDefaults){
             initialRoom = 1;
         }
@@ -74,7 +77,6 @@ class Game {
         gio = new GIO();
         map = new Map();
         cave = new Cave(caveName, initialRoom);
-        gameStage = stage;
         bow = new Bow(3);
     }
 
