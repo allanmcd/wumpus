@@ -2,6 +2,7 @@ package com.jetbrains;
 
 import java.util.Random;
 
+import static com.jetbrains.Game.cave;
 import static com.jetbrains.Main.useDefaults;
 
 //
@@ -25,14 +26,14 @@ public class Wumpus {
     //
     // Wumpus constructor
     //
-    Wumpus(int initialRoom){
+    Wumpus(){
         if(useDefaults){
-            roomNumber = 18;
+            roomNumber = 6;
         } else {
             Random random = new Random();
             // generate a random room from 1 to 30
              roomNumber = random.nextInt(29) + 1;
-            if(roomNumber == initialRoom){
+            if(roomNumber == cave.initialRoom){
                 // don't put the wumpus in the initial room
                 roomNumber = random.nextInt(29) + 1;
             }

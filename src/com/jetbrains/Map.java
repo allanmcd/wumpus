@@ -6,4 +6,9 @@ package com.jetbrains;
 public class Map {
     // used to keep track of where the bats are currently located
     int batRooms[] = new int[2];
+
+    // UNDONE - move wumpus here
+
+    // UNDONE - move player here
+
 }

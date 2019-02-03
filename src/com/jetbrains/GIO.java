@@ -3,20 +3,27 @@
 //
 package com.jetbrains;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.Group;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.geometry.Pos;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Window;
 
-import static com.jetbrains.Game.bow;
+import java.util.Random;
+
+import static com.jetbrains.Game.*;
 
 //
 // NOTE there should only be one GIO object
@@ -34,6 +41,7 @@ class GIO {
     // GIO static variables
     //
     static Group gioGroup;
+    static Label lblInfo;
 
     //
     // GIO methods
@@ -53,6 +61,10 @@ class GIO {
         lblRoomNumber.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
         gridpane.add(lblBlankLine, 23, 1);
 
+        lblInfo = new Label();
+        lblInfo.setFont(Font.font("Verdana", 18));
+        gridpane.add(lblInfo, 0, 35);
+
         gioGroup = new Group();
 
         Main.game.player.roomNumber = roomNumber;
@@ -63,20 +75,61 @@ class GIO {
         Game.gameStage.setScene(gioScene);
         Game.gameStage.show();
 
-        gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent evt) {
-                        double mouseX = evt.getX();
-                        double mouseY = evt.getY();
-                        if (mouseX > bow.rect[LEFT] && mouseX < bow.rect[RIGHT]) {
-                            if (mouseY > bow.rect[TOP] && mouseY < bow.rect[BOTTOM]) {
-                                System.out.println("mouse click detected! in bow " + evt.getSource());
-                                bow.fired = true;
-                            }
+        if(roomNumber == Cave.wumpus.roomNumber) {
+            Game.youLost();
+        }else if(Cave.rooms[roomNumber].hasBat()) {
+            relocatePlayer();
+        }
+        else{
+            // have to examine all mouse clicks because clicking on the transparent part of
+            // the mow does not generate a mouseclick event for the bow image
+            gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent evt) {
+                    double mouseX = evt.getX();
+                    double mouseY = evt.getY();
+                    if (mouseX > bow.rect[LEFT] && mouseX < bow.rect[RIGHT]) {
+                        if (mouseY > bow.rect[TOP] && mouseY < bow.rect[BOTTOM]) {
+                            bow.fired = true;
                         }
                     }
-                });
+                }
+            });
+        }
     }
+
+    void updateInfo(String infoText){
+        gio.lblInfo.setText(infoText);
+    }
+
+    void showDialog(String dlgMsg) {
+        Label msgLabel = new Label(dlgMsg);
+
+        Dialog dialog = new Dialog<>();
+        dialog.setResizable(false);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 35, 20, 35));
+        grid.add(msgLabel, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        Platform.runLater(() -> {
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Window window = dialog.getDialogPane().getScene().getWindow();
+            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+        });
+
+        dialog.showAndWait();
+    }
+
     //
     // GIO constructor
     //
@@ -88,4 +141,47 @@ class GIO {
     // javafx controls
     //
     TextField tfRoomNumber = new TextField();
+
+    //
+    // GIO helper functions
+    //
+
+    private void relocatePlayer(){
+        showDialog("A bat has captured you and will transport you to another room");
+        gio.gotoRoom(nextEmptyRoom());
+    }
+
+    private int nextEmptyRoom(){
+        Random random = new Random();
+        int nextEmptyRoomNumber = random.nextInt(29) + 1;
+
+        boolean generateAnotherRoomNumber;
+        do {
+            // assume the current room number is OK
+            generateAnotherRoomNumber = false;
+
+            if (Cave.rooms[nextEmptyRoomNumber].hasBat()) {
+                // not empty - bat in room
+                generateAnotherRoomNumber = true;
+            }
+
+            if (Cave.rooms[nextEmptyRoomNumber].hasPit) {
+                // not empty - pit in room
+                generateAnotherRoomNumber = true;
+            }
+
+            if (nextEmptyRoomNumber == Cave.wumpus.roomNumber) {
+                // not empty - wumpus in room
+                generateAnotherRoomNumber = true;
+            }
+
+            if(generateAnotherRoomNumber) {
+                // generate another room number to test
+                nextEmptyRoomNumber = random.nextInt(29) + 1;
+            }
+        }while(generateAnotherRoomNumber);
+
+        return nextEmptyRoomNumber;
+    }
+
 }

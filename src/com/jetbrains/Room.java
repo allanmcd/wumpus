@@ -53,7 +53,7 @@ class Room {
 
         if(hasBat()){drawBat(group);}
 
-        if (wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
+        if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
         drawTunnels(group, walls, Color.LIGHTGRAY);
 
@@ -247,11 +247,20 @@ class Room {
         tunnelPoly.setFill(fillColor);
         group.getChildren().addAll(tunnelPoly);
 
-        // define code to be executed when a click occurs on the tunnel
-        tunnelPoly.setOnMouseClicked((event)->{
-            Debug.log("click detected on wall " + wall + " in room " + roomNumber);
-            Game.gio.gotoRoom(wall.adjacentRoom);
-        });
+        // is the game still in play
+        if(stillPlayiing) {
+            // define code to be executed when a click occurs on the tunnel
+            tunnelPoly.setOnMouseClicked((event) -> {
+                if(stillPlayiing) {
+                    if (bow.fired) {
+                        int targetRoom = wall.adjacentRoom;
+                        bow.shoot(targetRoom);
+                    } else {
+                        gio.gotoRoom(wall.adjacentRoom);
+                    }
+                }
+            });
+        }
     }
 
     private void drawPit(Group group) {
@@ -291,7 +300,7 @@ class Room {
 
         String verticalPosition = "Centered";
         if(hasBat()){ verticalPosition = "Bottom";}
-        if(wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
+        if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
         player.position = drawImage(group, verticalPosition,"player.png");
     }
@@ -328,7 +337,9 @@ class Room {
             double imageY = 0;
             switch (verticalPosition){
                 case "Top":{
-                    imageY = hexagonPoint0XY[Y] + 10;
+                    // UNDONE - modified to better position bat & wumpus - isn't really TOP
+                    //          but this hack will do for now
+                    imageY = hexagonPoint0XY[Y] + 45;
                     break;
                 }
                 case "Bottom": {

@@ -17,13 +17,17 @@ class Cave {
     //
     static String caveName;
     static boolean valid = false;
+    static Bat[] bats = new Bat[2];
+    static int initialRoom;
+    static Wumpus wumpus;
 
     //
     // Cave constructor
     //
     Cave(String caveName, int initialRoom){
         this.caveName = caveName;
-        loadCave(caveName, initialRoom);
+        this.initialRoom = initialRoom;
+        loadCave(caveName);
     }
 
     //
@@ -34,7 +38,7 @@ class Cave {
     //
     // Cave helper functions
     //
-    private void loadCave(String caveName, int initialRoom){
+    private void loadCave(String caveName){
         BufferedReader br;
         try {
             // cave CSV format in BNF notation is:
@@ -75,7 +79,7 @@ class Cave {
 
             // create a couple of pits
             if(useDefaults){
-                rooms[7].hasPit = true;
+                rooms[13].hasPit = true;
                 rooms[9].hasPit = true;
             } else {
                 Random random = new Random();
@@ -91,31 +95,14 @@ class Cave {
             }
 
             // create a couple of bats
-            if(useDefaults){
-                Game.map.batRooms[0] = 3;
-                Game.map.batRooms[1] = 13;
-            } else {
-                Random random = new Random();
-                setBatRoomNumber(0, initialRoom, random);
-                setBatRoomNumber(1, initialRoom, random);
-                }
+            bats[0] = new Bat(1);
+            bats[1] = new Bat(2);
             Debug.log("");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         verifyCave(caveName);
-    }
-
-    private void setBatRoomNumber(int batRoomIndex, int initialRoom, Random random){
-        // generate a different random room from 1 to 30
-        int batRoomNumber = random.nextInt(29) + 1;
-
-        if(batRoomNumber == initialRoom){
-            // don't put a bat in the initial room
-            batRoomNumber = random.nextInt(29) + 1;
-        }
-        Game.map.batRooms[batRoomIndex] = batRoomNumber;
     }
 
     private void verifyCave(String caveName){

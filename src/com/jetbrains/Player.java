@@ -1,5 +1,7 @@
 package com.jetbrains;
 
+import static com.jetbrains.Game.cave;
+
 //
 // NOTE there should only be one Player object
 //
@@ -10,6 +12,7 @@ public class Player {
     int roomNumber;
     // position[X, Y, width, height];
     double[] position;
+
     //
     // Player methods
     //
@@ -22,7 +25,7 @@ public class Player {
     //
     // Player constructor
     //
-    Player(int initialRoom){
-        roomNumber = initialRoom;
+    Player(){
+        roomNumber = cave.initialRoom;
     }
 }

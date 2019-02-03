@@ -1,15 +1,13 @@
 package com.jetbrains;
 
 import javafx.scene.Group;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import static com.jetbrains.Game.player;
-import static com.jetbrains.Game.wumpus;
+import static com.jetbrains.Game.*;
 
 //
 // NOTE there should only be one Player object
@@ -18,34 +16,33 @@ public class Bow {
     //
     // Bow  constants
     //
-        final int TOP = 0;
-        final int LEFT = 1;
-        final int BOTTOM = 2;
-        final int RIGHT = 3;
+        private final int TOP = 0;
+        private final int LEFT = 1;
+        private final int BOTTOM = 2;
+        private final int RIGHT = 3;
+
     //
     // Bow instance variables
     //
     int arrowsRemaining;
     double[] rect;
-    Button btnArrow;
     boolean fired = false;
 
     //
     // Bow methods
     //
-    boolean shoot(int targetRoomNumber){
-        boolean hitWumpus = false;
-        if(targetRoomNumber == wumpus.roomNumber){hitWumpus = true;}
-        return hitWumpus;
+    void shoot(int targetRoomNumber){
+        fired = false;
+        if(targetRoomNumber == Cave.wumpus.roomNumber) {
+            Game.youWon();
+        }
+        else{
+            gio.updateInfo("No Wumpus in that room.  The arrow fell to cave floor");
+        }
     }
 
     void draw(){
-        btnArrow.setLayoutY(400);
-        btnArrow.setLayoutX(150);
-        btnArrow.setMaxSize(30,50);
         Group group = Game.gio.gioGroup;
-        group.getChildren().add(btnArrow);
-
 
         try {
             Image bowImage = new Image(new FileInputStream("src/bow.png"));
@@ -66,13 +63,11 @@ public class Bow {
         }
     }
 
-
     //
     // Bow constructor
     //
     Bow(int initialArrows){
         arrowsRemaining = initialArrows;
-        btnArrow = new Button();
         rect = new double[4];
     }
 }
