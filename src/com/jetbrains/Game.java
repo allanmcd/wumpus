@@ -30,7 +30,6 @@ class Game {
     static Stage gameStage;
     static GIO gio;
     static Map map;
-    static String name;
     static Player player;
     static boolean youWon;
     static boolean  youLost;
@@ -50,10 +49,10 @@ class Game {
         gio.updateInfo("You shot the wumpus.  YOU WIN !!!!!!!");
     }
 
-    static void youLost(){
+    static void youLost(String msg){
         youLost = true;
         stillPlayiing = false;
-        gio.showDialog("The Wumpus got you.  YOU LOSE :-(");
+        gio.showDialog(msg + " YOU LOSE :-(");
     }
 
     //

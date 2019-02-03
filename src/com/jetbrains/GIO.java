@@ -86,10 +86,13 @@ class GIO {
         Game.gameStage.show();
 
         if (roomNumber == Cave.wumpus.roomNumber) {
-            Game.youLost();
+            Game.youLost("The Wumpus got you");
         }
         else if (Cave.rooms[roomNumber].hasBat()) {
             relocatePlayer();
+        }
+        else if (Cave.rooms[roomNumber].hasPit) {
+            Game.youLost("You fell into a bottomless pit");
         }
         else {
             // have to examine all mouse clicks because clicking on the transparent part of
