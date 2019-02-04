@@ -15,7 +15,7 @@ class Cave {
     //
     // Cave static variables
     //
-    static String caveName;
+    static String name;
     static Bat[] bats = new Bat[2];
     static int initialRoom;
     static Wumpus wumpus;
@@ -30,7 +30,7 @@ class Cave {
     //
     //
     Cave(String caveName, int initialRoom){
-        this.caveName = caveName;
+        name = caveName;
         this.initialRoom = initialRoom;
         loadCave(caveName);
     }
@@ -50,7 +50,7 @@ class Cave {
             //      <roomNumber> <1>#<3>{<comma><tunnelRoom>}
             // multiple lines are used to define the rooms
             // we currently don't test for duplicate room definitions
-            br = new BufferedReader(new FileReader("src/" + caveName + ".csv"));
+            br = new BufferedReader(new FileReader("src/" + caveName + ".cave"));
             String line;
 
             // process all the lines from the cave file
@@ -208,13 +208,13 @@ class Cave {
 
         // make sure this room has exactly 2 pits
         if (numberOfPits != 2) {
-            Debug.warning("cave " + caveName +" has " + numberOfPits + " pits - it should have 2");
+            Debug.warning("cave " + name +" has " + numberOfPits + " pits - it should have 2");
             return false;
         }
 
         // make sure this room has exactly 2 bats
         if (numberOfBats != 2) {
-            Debug.warning("cave " + caveName + " has " + numberOfBats + " bats - it should have 2");
+            Debug.warning("cave " + name + " has " + numberOfBats + " bats - it should have 2");
             return false;
         }
 

@@ -10,9 +10,14 @@ public class Main extends Application{
     static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception{
+        this.primaryStage = primaryStage;
+
         //UNDONE get cave number from user
         String caveName = "cave1";
-        this.primaryStage = primaryStage;
+        newGame(caveName);
+    }
+
+    public static void newGame(String caveName){
         game = new Game(caveName, primaryStage);
 
         if(game.valid){

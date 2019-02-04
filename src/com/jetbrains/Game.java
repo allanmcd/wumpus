@@ -52,7 +52,7 @@ class Game {
     static void youLost(String msg){
         youLost = true;
         stillPlayiing = false;
-        gio.showDialog(msg + " YOU LOSE :-(");
+        gio.showDialog("YOU LOSE :-)",msg );
     }
 
     //
@@ -75,7 +75,7 @@ class Game {
 
         player = new Player();
 
-        gio = new GIO();
+        gio = new GIO(caveName);
         map = new Map();
         cave = new Cave(caveName, initialRoom);
         valid = cave.valid;

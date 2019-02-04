@@ -4,11 +4,14 @@
 package com.jetbrains;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
+import java.io.File;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -18,17 +21,21 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.geometry.Pos;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-import static com.jetbrains.Cave.caveName;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.game;
+import static com.jetbrains.Main.primaryStage;
 
 //
 // NOTE there should only be one GIO object
@@ -48,6 +55,9 @@ class GIO {
     static Group gioGroup;
     static Label lblInfo;
     static Scene gioScene;
+    static String newCaveName;
+    static boolean cavePickerDblClicked;
+
 
     //
     // GIO methods
@@ -64,7 +74,7 @@ class GIO {
         gridpane.add(lblRoomNumber, 15, 0);
 
         Label lblBlankLine = new Label("");
-        lblRoomNumber.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
+        lblBlankLine.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
         gridpane.add(lblBlankLine, 23, 1);
 
         lblInfo = new Label();
@@ -78,7 +88,7 @@ class GIO {
         gioGroup.getChildren().add(gridpane);
         Game.cave.rooms[roomNumber].draw();
 
-        BorderPane.setAlignment(gioGroup,Pos.CENTER);
+        BorderPane.setAlignment(gioGroup, Pos.CENTER);
 
         bpGame.setCenter(gioGroup);
 
@@ -87,14 +97,12 @@ class GIO {
 
         if (roomNumber == Cave.wumpus.roomNumber) {
             Game.youLost("The Wumpus got you");
-        }
-        else if (Cave.rooms[roomNumber].hasBat()) {
+        } else if (Cave.rooms[roomNumber].hasBat()) {
             relocatePlayer();
-        }
-        else if (Cave.rooms[roomNumber].hasPit) {
+        } else if (Cave.rooms[roomNumber].hasPit) {
+            // FEATURE would be nice if the player spun and vanished
             Game.youLost("You fell into a bottomless pit");
-        }
-        else {
+        } else {
             // have to examine all mouse clicks because clicking on the transparent part of
             // the mow does not generate a mouseclick event for the bow image
             gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
@@ -116,10 +124,11 @@ class GIO {
         gio.lblInfo.setText(infoText);
     }
 
-    void showDialog(String dlgMsg) {
+    void showDialog(String dlgTitle, String dlgMsg) {
         Label msgLabel = new Label(dlgMsg);
 
         Dialog dialog = new Dialog<>();
+        dialog.setHeaderText(dlgTitle);
         dialog.setResizable(false);
 
         GridPane grid = new GridPane();
@@ -142,10 +151,77 @@ class GIO {
         dialog.showAndWait();
     }
 
+    String cavePicker() {
+        // ADVANCED - need to implement scroll bars
+        Dialog dialog = new Dialog<>();
+        dialog.setHeaderText("Pick a cave");
+        dialog.setResizable(false);
+        dialog.setHeight(250);
+
+        List<String> caveNames = new ArrayList<String>();
+
+        File directory = new File("src/");
+
+        // get all the files from the "src" directory
+        File[] fList = directory.listFiles();
+        for(File file :fList){
+            if (file.isFile() && fileExtension(file).equals("cave")) {
+                String nextCaveName =file.getName();
+                // strip off the extension
+                nextCaveName = nextCaveName.substring(0,nextCaveName.length()- ".cave".length());
+                // add cave name to list of other cave names
+                caveNames.add(nextCaveName);
+            }
+        }
+
+        ObservableList<String> names = FXCollections.observableArrayList(caveNames);
+        ListView<String> caveView = new ListView<String>(names);
+        caveView.setStyle("-fx-border-color: black;");
+        caveView.setLayoutY(200);
+        cavePickerDblClicked = false;
+        caveView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent click) {
+                newCaveName = caveView.getSelectionModel().getSelectedItem();
+                if (click.getClickCount() == 2) {
+                    cavePickerDblClicked = true;
+                    //Use ListView's getSelected Item
+                    dialog.close();
+                }
+            }
+        });
+
+        dialog.getDialogPane().setContent(caveView);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        Platform.runLater(() -> {
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Window window = dialog.getDialogPane().getScene().getWindow();
+            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+            window.setY((screenBounds.getHeight() - window.getHeight()) / 2 + 100);
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        String dialogResult = result.toString();
+
+        // the emply if and if else statements are used to try to clarify the users action
+        // a logical expression using negatives would be harder to understand
+        if(cavePickerDblClicked){
+            // Player double clicked - newCaveName was updated - don't need to do anything
+        } else if(dialogResult.contains("OK_DONE")){
+            // Player clicked on OK button - newCaveName was updated (though it may be "") - don't need to do anything
+        } else {
+            // Player clicked on CANCEL button or closed the dialog - no cave name to return
+            newCaveName = "";
+        }
+        return newCaveName;
+    }
+
     //
     // GIO constructor
     //
-    GIO() {
+    GIO(String caveName) {
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 250);
@@ -154,32 +230,52 @@ class GIO {
 
         // build the menu bar
         //Build the first menu.
-        Menu gameMenu = new Menu("Game");
-        MenuItem newMenuItem = new MenuItem("New");
-        MenuItem replayMenuItem = new MenuItem("Replay Current Game");
-        MenuItem quitMenuItem = new MenuItem("Quit");
+        Menu gameMenu = new Menu("Wumpus");
 
+        MenuItem newGameMenuItem = new MenuItem("New Game");
+        newGameMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                String caveName = cavePicker();
+                Main.newGame(caveName);
+            }
+        });
+
+        MenuItem replayMenuItem = new MenuItem("Replay Current Game");
         replayMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                game = new Game(caveName, Main.primaryStage);
+                game = new Game(Cave.name, primaryStage);
                 if(game.valid){game.play();};
             }
         });
 
+        MenuItem quitMenuItem = new MenuItem("Quit");
         quitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 System.exit(0);
             }
         });
 
-        gameMenu.getItems().addAll(newMenuItem, replayMenuItem, quitMenuItem);
+        gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().add(gameMenu);
-        bpGame.setTop(gameMenuBar);
-    }
 
-    ;
+        // add the cave name to the TOP area of the Borderpane
+        Label lblCaveName = new Label(caveName);
+        lblCaveName.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
+
+        TilePane tpTop = new TilePane();
+        tpTop.setPrefRows(2);
+        tpTop.setVgap(5);
+
+        // make each tile the entire width of the game window
+        // effectively making it a vertical list of single horizontal tiles
+        double stageWidth = primaryStage.getWidth();
+        tpTop.setPrefTileWidth(stageWidth);
+        tpTop.getChildren().add(gameMenuBar);
+        tpTop.getChildren().add(lblCaveName);
+        bpGame.setTop(tpTop);
+    }
 
     //
     // javafx controls
@@ -192,8 +288,17 @@ class GIO {
     // GIO helper functions
     //
 
+    private String fileExtension(File file){
+        String extension = "";
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0){
+            extension = fileName.substring(fileName.lastIndexOf(".")+1);
+        }
+        return extension;
+    }
+
     private void relocatePlayer() {
-        showDialog("A bat has captured you and will transport you to another room");
+        showDialog("A bat has captured you", "It will transport you to another room");
         gio.gotoRoom(nextEmptyRoom());
     }
 
