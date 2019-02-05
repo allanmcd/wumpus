@@ -18,6 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -28,6 +30,8 @@ import javafx.geometry.Pos;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -151,7 +155,7 @@ class GIO {
         dialog.showAndWait();
     }
 
-    String cavePicker() {
+    static String cavePicker() {
         // ADVANCED - need to implement scroll bars
         Dialog dialog = new Dialog<>();
         dialog.setHeaderText("Pick a cave");
@@ -228,6 +232,11 @@ class GIO {
         gameStage.setWidth(600);
         gameStage.setHeight(600);
 
+        // display the wumpus image as the splash screen
+        addSplash(bpGame, "src/wumpus.png");
+        Game.gameStage.setScene(gioScene);
+        Game.gameStage.show();
+
         // build the menu bar
         //Build the first menu.
         Menu gameMenu = new Menu("Wumpus");
@@ -244,7 +253,7 @@ class GIO {
         replayMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 game = new Game(Cave.name, primaryStage);
-                if(game.valid){game.play();};
+                if(game.cave.valid){game.play();};
             }
         });
 
@@ -260,7 +269,7 @@ class GIO {
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().add(gameMenu);
 
-        // add the cave name to the TOP area of the Borderpane
+        // create the cave name label for the TOP area of the Borderpane
         Label lblCaveName = new Label(caveName);
         lblCaveName.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
 
@@ -288,7 +297,7 @@ class GIO {
     // GIO helper functions
     //
 
-    private String fileExtension(File file){
+    static private String fileExtension(File file){
         String extension = "";
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0){
@@ -333,5 +342,21 @@ class GIO {
         } while (generateAnotherRoomNumber);
 
         return nextEmptyRoomNumber;
+    }
+
+    void addSplash(BorderPane bpGame, String imageFileName) {
+        try
+        {
+            Image splashImage = new Image(new FileInputStream(imageFileName));
+            ImageView splashImageView = new ImageView(splashImage);
+            splashImageView.setPreserveRatio(true);
+            splashImageView.setFitWidth(300);
+            bpGame.setCenter(splashImageView);
+        }
+        catch (FileNotFoundException e)
+        {
+            // UNDONE should probably add code to display "e"
+            Debug.error(("could not add \"" + imageFileName + "\" to the splash page"));
+        }
     }
 }

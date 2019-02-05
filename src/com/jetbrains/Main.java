@@ -8,19 +8,20 @@ public class Main extends Application{
     static boolean useDefaults;
     static Game game;
     static Stage primaryStage;
+    static String userName;
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
 
-        //UNDONE get cave number from user
-        String caveName = "cave1";
+        // a blank cave name will force the user to pick one
+        String caveName = "";
         newGame(caveName);
     }
 
     public static void newGame(String caveName){
         game = new Game(caveName, primaryStage);
 
-        if(game.valid){
+        if(game.cave.valid){
             game.play();
         }
     }
@@ -32,6 +33,7 @@ public class Main extends Application{
             // see if we are in debug mode
             String arg0 = args[0];
             useDefaults = arg0.equals("useDefaults");
+            System.out.println((useDefaults ? "" : "NOT ") + " using defaults");
         }
 
         launch(args);}

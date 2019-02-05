@@ -5,7 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -34,7 +36,7 @@ class Game {
     static boolean youWon;
     static boolean  youLost;
     static boolean stillPlayiing;
-    static boolean valid;
+    static int maxBats = 2;
 
     //
     // Game methods
@@ -47,12 +49,19 @@ class Game {
     static void youWon(){
         game.youWon = true;
         gio.updateInfo("You shot the wumpus.  YOU WIN !!!!!!!");
+        ended();
     }
 
     static void youLost(String msg){
         youLost = true;
         stillPlayiing = false;
         gio.showDialog("YOU LOSE :-)",msg );
+        ended();
+    }
+
+    static void ended(){
+        // display the wumpus image as the splash screen
+        gio.addSplash(gio.bpGame, "src/wumpus.png");
     }
 
     //
@@ -64,36 +73,58 @@ class Game {
 
         if(useDefaults){
             initialRoom = 1;
+            if(caveName.equals("")) {
+                if (gio == null || gio.newCaveName == null || gio.newCaveName.equals(null)) {
+                    caveName = "cave1";
+                }
+            }
         }
         else {
-            login();
+            // ask the user to sign in the first time a game is created
+            if(Main.userName == null) {
+                Main.userName = signIn();
+            }
+
             // start in a random room
             Random random = new Random();
             initialRoom = random.nextInt(29) + 1;
         }
-        Cave.wumpus = new Wumpus();
 
         player = new Player();
 
+        // which cave should we load
+        if(caveName.equals("")){
+            // must be from initial launch
+            caveName = Game.gio.cavePicker();
+            if(caveName.equals("") || caveName.equals(null) ){
+                // could not load a cave
+                Debug.error("no cave selected");
+                System.exit(-1);
+            }
+        }
+
         gio = new GIO(caveName);
+
         map = new Map();
+
+        Cave.wumpus = new Wumpus(initialRoom);
+
         cave = new Cave(caveName, initialRoom);
-        valid = cave.valid;
+
         bow = new Bow(3);
     }
 
     //
     // Game helper functions
     //
-    private void login() {
+    String signIn() {
+        String userName;
         Dialog dialog = new Dialog<>();
-        dialog.setTitle("Login");
-        dialog.setHeaderText("Please enter User Name and Password to login.");
+        dialog.setTitle("Sign In");
+        dialog.setHeaderText("Please sign in.");
         dialog.setResizable(false);
-        Label userNameLabel = new Label("User Name:");
-        Label passwordLabel = new Label("Password:");
+        Label userNameLabel = new Label("Name:");
         TextField userNameField = new TextField();
-        PasswordField passwordField = new PasswordField();
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -101,13 +132,12 @@ class Game {
         grid.setPadding(new Insets(20, 35, 20, 35));
         grid.add(userNameLabel, 1, 1);
         grid.add(userNameField, 2, 1);
-        grid.add(passwordLabel, 1, 2);
-        grid.add(passwordField, 2, 2);
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             event.consume();
+            dialog.close();
         });
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         Platform.runLater(() -> {
@@ -115,9 +145,11 @@ class Game {
             Window window = dialog.getDialogPane().getScene().getWindow();
             window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
             window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+            userNameField.requestFocus();
         });
         dialog.showAndWait();
+        userName = userNameField.getText();
+        return userName;
     }
-
 }
 

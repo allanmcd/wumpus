@@ -25,10 +25,10 @@ public class Bat {
     //
     // Bat constructor
     //
-    Bat(int batNumber){
-        int batIndex = batNumber - 1;
+    Bat(int batIndex){
         if(useDefaults){
-            if(batNumber == 1) {
+            if(batIndex == 0) {
+                // set default value for bat 1
                 Game.map.batRooms[batIndex] = 26;
             }
             else{
@@ -39,7 +39,7 @@ public class Bat {
             setBatRoomNumber(batIndex, cave.initialRoom, batRandom);
         }
 
-        number = batNumber;
+        number = batIndex + 1;
     }
 
     //
@@ -74,6 +74,13 @@ public class Bat {
             if (batRoomNumber == Cave.wumpus.roomNumber) {
                 // don't put a bat in a room with the Wumpus
                 generateAnotherBatRoomNumber = true;
+            }
+
+            for(int batIndex = 0; batIndex < Game.maxBats; batIndex++){
+                if(Game.map.batRooms[batIndex] == batRoomNumber){
+                    // this room already has a bat in it - keep looking
+                    generateAnotherBatRoomNumber = true;
+                }
             }
 
             if(generateAnotherBatRoomNumber) {

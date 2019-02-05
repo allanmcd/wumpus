@@ -26,17 +26,17 @@ public class Wumpus {
     //
     // Wumpus constructor
     //
-    Wumpus(){
+    Wumpus(int initialRoom){
         if(useDefaults){
             roomNumber = 6;
         } else {
             Random random = new Random();
             // generate a random room from 1 to 30
              roomNumber = random.nextInt(29) + 1;
-            if(roomNumber == cave.initialRoom){
+            if(roomNumber == initialRoom){
                 // don't put the wumpus in the initial room
                 roomNumber = random.nextInt(29) + 1;
             }
         }
-    }
+                             }
 }
