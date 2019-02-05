@@ -1,12 +1,14 @@
 package com.jetbrains;
 
-import javafx.scene.Group;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import static com.jetbrains.GIO.gioGroup;
 import static com.jetbrains.Game.*;
 
 //
@@ -25,8 +27,8 @@ public class Bow {
     // Bow instance variables
     //
     int arrowsRemaining;
-    double[] rect;
     boolean fired = false;
+    ImageView imageView;
 
     //
     // Bow methods
@@ -42,19 +44,16 @@ public class Bow {
     }
 
     void draw(){
-        Group group = Game.gio.gioGroup;
-
         try {
             Image bowImage = new Image(new FileInputStream("src/bow.png"));
-            ImageView bowImageView = new ImageView(bowImage);
-            rect[LEFT] = player.position[0]+30;
-            bowImageView.setX(rect[LEFT]);
-            rect[TOP] = player.position[1] + player.position[3]/2 - 10;
-            bowImageView.setY(rect[TOP]);
-            group.getChildren().add(bowImageView);
+            imageView = new ImageView(bowImage);
 
-            rect[RIGHT] = rect[LEFT] + bowImage.getWidth();
-            rect[BOTTOM] = rect[TOP] + bowImage.getHeight();
+            double imageViewLeft = player.position[0]+30;
+            imageView.setX(imageViewLeft);
+
+            Double bowTop = player.position[1] + player.position[3]/2 - 10;
+            imageView.setY(bowTop);
+            gioGroup.getChildren().add(imageView);
         }
         catch (FileNotFoundException e)
         {
@@ -68,6 +67,5 @@ public class Bow {
     //
     Bow(int initialArrows){
         arrowsRemaining = initialArrows;
-        rect = new double[4];
     }
 }

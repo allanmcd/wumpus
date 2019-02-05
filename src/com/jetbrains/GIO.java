@@ -8,10 +8,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
+
 import java.io.File;
+
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -24,9 +25,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.geometry.Pos;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
@@ -48,10 +50,7 @@ class GIO {
     //
     // GIO  constants
     //
-    final int TOP = 0;
-    final int LEFT = 1;
-    final int BOTTOM = 2;
-    final int RIGHT = 3;
+    final int BP_TOP_HEIGHT =  20;
 
     //
     // GIO static variables
@@ -61,7 +60,6 @@ class GIO {
     static Scene gioScene;
     static String newCaveName;
     static boolean cavePickerDblClicked;
-
 
     //
     // GIO methods
@@ -97,6 +95,7 @@ class GIO {
         bpGame.setCenter(gioGroup);
 
         Game.gameStage.setScene(gioScene);
+
         Game.gameStage.show();
 
         if (roomNumber == Cave.wumpus.roomNumber) {
@@ -112,11 +111,29 @@ class GIO {
             gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent evt) {
+                    // mouse coordinates are relative to bpGame
                     double mouseX = evt.getX();
                     double mouseY = evt.getY();
-                    if (mouseX > bow.rect[LEFT] && mouseX < bow.rect[RIGHT]) {
-                        if (mouseY > bow.rect[TOP] && mouseY < bow.rect[BOTTOM]) {
+
+                    // need the bow Image to get the width and height
+                    Image bowImage= bow.imageView.getImage();
+
+                    // convert the bow image Top and Left coordinates to bpGame relative
+                    Point2D bowTopLeft = game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
+
+                    // calculate the BorderPane relative values for the bow Top, Left, Bottom & Right
+                    // UNDONE try to figure out a way to GET the ImageView margin
+                    double apparentImageViewTopMargin = 5;
+                    double bowTop = bowTopLeft.getY() + apparentImageViewTopMargin;
+                    double bowLeft = bowTopLeft.getX();
+                    double bowBottom = bowTopLeft.getY() + bowImage.getHeight();
+                    double bowRight = bowTopLeft.getX() + bowImage.getWidth();
+
+                    // see if the mouse click occured inside the bow image
+                    if (mouseX > bowLeft && mouseX < bowRight) {
+                        if (mouseY > bowTop && mouseY < bowBottom) {
                             bow.fired = true;
+                            System.out.println("bow fired");
                         }
                     }
                 }
@@ -229,6 +246,7 @@ class GIO {
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 250);
+
         gameStage.setWidth(600);
         gameStage.setHeight(600);
 
@@ -281,6 +299,7 @@ class GIO {
         // effectively making it a vertical list of single horizontal tiles
         double stageWidth = primaryStage.getWidth();
         tpTop.setPrefTileWidth(stageWidth);
+        tpTop.setPrefTileHeight(BP_TOP_HEIGHT);
         tpTop.getChildren().add(gameMenuBar);
         tpTop.getChildren().add(lblCaveName);
         bpGame.setTop(tpTop);
