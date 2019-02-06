@@ -12,7 +12,6 @@ import javafx.geometry.*;
 
 import java.io.File;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -22,13 +21,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
@@ -40,8 +37,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Game.*;
-import static com.jetbrains.Main.game;
-import static com.jetbrains.Main.primaryStage;
+import static com.jetbrains.Main.*;
 
 //
 // NOTE there should only be one GIO object
@@ -56,15 +52,22 @@ class GIO {
     // GIO static variables
     //
     static Group gioGroup;
-    static Label lblInfo;
+    static GridPane statusGridPane;
     static Scene gioScene;
     static String newCaveName;
     static boolean cavePickerDblClicked;
 
+    static Text txtInfo;
+    static Text txtHint;
+    static Text txtArrows;
+    static Text txtCoins;
+    static Text txtPoints;
+    static Text txtOther;
     //
     // GIO methods
     //
     void gotoRoom(int roomNumber) {
+        gio.txtInfo.setText("");
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(5));
         gridpane.setHgap(10);
@@ -78,10 +81,6 @@ class GIO {
         Label lblBlankLine = new Label("");
         lblBlankLine.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
         gridpane.add(lblBlankLine, 23, 1);
-
-        lblInfo = new Label();
-        lblInfo.setFont(Font.font("Verdana", 18));
-        gridpane.add(lblInfo, 0, 35);
 
         game.player.roomNumber = roomNumber;
 
@@ -109,7 +108,7 @@ class GIO {
     }
 
     void updateInfo(String infoText) {
-        gio.lblInfo.setText(infoText);
+        gio.txtInfo.setText(infoText);
     }
 
     void showDialog(String dlgTitle, String dlgMsg) {
@@ -271,6 +270,8 @@ class GIO {
         tpTop.getChildren().add(lblCaveName);
         bpGame.setTop(tpTop);
 
+        addStatusPanel();
+
         // have to examine all mouse clicks because clicking on the transparent part of
         // the mow does not generate a mouseclick event for the bow image
         gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
@@ -316,6 +317,83 @@ class GIO {
     //
     // GIO helper functions
     //
+
+    private void addStatusPanel() {
+
+        // define the sizes of the columns of the status grid
+        statusGridPane = new GridPane();
+
+        // Arrow status
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(100));
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(40));
+
+        // Coin status
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(80));
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(40));
+
+        // Points Status
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(80));
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(60));
+
+        statusGridPane.setPadding(new Insets(5, 20, 5, 20));
+
+        // create the status and info controls for the bottom pane of the BorderPane
+        txtInfo = new Text();
+        txtHint = new Text();
+
+//UNDONE use the actual values for these
+        Label lblArrows = new Label("Arrows: ");
+        txtArrows = new Text("3");
+
+        Label lblCoins = new Label("Coins: ");
+        txtCoins = new Text("0");
+
+        Label lblPoints = new Label("Points: ");
+        txtPoints = new Text("0");
+
+        setLabelStyles(lblArrows, lblCoins, lblPoints);
+        setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtPoints);
+
+        statusGridPane.add(txtInfo, 0, 0);
+        statusGridPane.add(txtHint, 0, 1);
+        statusGridPane.add(lblArrows, 0, 2);
+        statusGridPane.add(txtArrows, 1, 2);
+        statusGridPane.add(lblCoins, 2, 2);
+        statusGridPane.add(txtCoins, 3, 2);
+        statusGridPane.add(lblPoints, 4, 2);
+        statusGridPane.add(txtPoints, 5, 2);
+
+        // center the status values
+        statusGridPane.setHalignment(lblArrows,HPos.RIGHT);
+        statusGridPane.setHalignment(txtArrows,HPos.LEFT);
+        statusGridPane.setHalignment(lblCoins,HPos.RIGHT);
+        statusGridPane.setHalignment(txtCoins,HPos.LEFT);
+        statusGridPane.setHalignment(lblPoints,HPos.RIGHT);
+        statusGridPane.setHalignment(txtPoints,HPos.LEFT);
+
+        statusGridPane.setAlignment(Pos.CENTER);
+
+        // package the status objects together into a vertical box
+        // so that they will be on top of each other
+        VBox statusVBox = new VBox();
+        statusVBox.setAlignment(Pos.CENTER);
+        statusVBox.getChildren().addAll(txtInfo, txtHint, statusGridPane);
+        statusVBox.setPadding(new Insets(0,0,20,0));
+
+        bpGame.setBottom(statusVBox);
+    }
+
+    private void setTextStyles(Text... texts) {
+        for (Text text : texts) {
+            text.setFont(Font.font("Verdana", 18));
+        }
+    }
+
+    private void setLabelStyles(Label... labels) {
+        for (Label label : labels) {
+            label.setFont(Font.font("Verdana", FontWeight.BOLD, 16));
+        }
+    }
 
     static private String fileExtension(File file){
         String extension = "";

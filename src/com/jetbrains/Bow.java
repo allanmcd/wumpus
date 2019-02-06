@@ -39,6 +39,7 @@ public class Bow {
             Game.youWon();
         } else if( Main.game.cave.bats.inRoom(targetRoomNumber)){
             gio.updateInfo("You killed the bat in room " + targetRoomNumber);
+            System.out.println("bat killed");
         }
         else{
             gio.updateInfo("Nothing in that room.  The arrow can not be recovered");
