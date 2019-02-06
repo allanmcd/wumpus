@@ -257,6 +257,7 @@ class Room {
                         bow.shoot(targetRoom);
                     } else {
                         gio.gotoRoom(wall.adjacentRoom);
+                        event.consume();
                     }
                 }
             });
