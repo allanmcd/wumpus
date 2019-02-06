@@ -19,8 +19,9 @@ public class Bat {
     int roomNumber;
     int number;
 
-    // UNDONE - make the number of bats variable
-    //          but for now create 2
+    //
+    // Bat methods
+    //
 
     //
     // Bat constructor
@@ -30,15 +31,16 @@ public class Bat {
             if(batIndex == 0) {
                 // set default value for bat 1
                 Game.map.batRooms[batIndex] = 26;
+                roomNumber = 26;
             }
             else{
                 // use default for bat 2
                 Game.map.batRooms[batIndex] = 16;
+                roomNumber = 16;
             }
         } else {
             setBatRoomNumber(batIndex, cave.initialRoom, batRandom);
         }
-
         number = batIndex + 1;
     }
 

@@ -16,7 +16,7 @@ class Cave {
     // Cave static variables
     //
     static String name;
-    static Bat[] bats = new Bat[2];
+    static Bats bats;
     static int initialRoom;
     static Wumpus wumpus;
     static boolean valid;
@@ -30,6 +30,8 @@ class Cave {
         name = caveName;
         this.initialRoom = initialRoom;
         rooms = newCaveRooms(30);
+
+        bats = new Bats();
 
         loadCave(caveName);
     }
@@ -99,10 +101,6 @@ class Cave {
                 }
             }
 
-            // create some bats
-            for(int batIndex = 0; batIndex < Game.maxBats; batIndex++) {
-                bats[batIndex] = new Bat(batIndex);
-            }
             Debug.log("");
 
         } catch (IOException e) {
