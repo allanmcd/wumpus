@@ -25,16 +25,19 @@ class Game {
     // game static variables
     // most are accessed before game object is created
     //
-    static Bow bow;
-    static Cave cave;
     static Stage gameStage;
-    static GIO gio;
-    static Map map;
-    static Player player;
     static boolean youWon;
     static boolean  youLost;
     static boolean stillPlayiing;
     static int maxBats = 2;
+
+    // game component objects
+    static Bow bow;
+    static Cave cave;
+    static GIO gio;
+    static Map map;
+    static Player player;
+    static Stats stats;
 
     //
     // Game methods
@@ -89,6 +92,8 @@ class Game {
         }
 
         player = new Player();
+
+        stats = new Stats();
 
         // which cave should we load
         if(caveName.equals("")){
