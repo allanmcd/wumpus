@@ -44,7 +44,8 @@ public class Bow {
 
         if(targetRoomNumber == Cave.wumpus.roomNumber) {
             Game.youWon();
-        } else if( game.cave.bats.inRoom(targetRoomNumber)){
+        } else if( game.cave.bats.isInRoom(targetRoomNumber)){
+            cave.bats.makeDead(targetRoomNumber);
             gio.updateInfo("You killed the bat in room " + targetRoomNumber);
             System.out.println("bat killed");
         }

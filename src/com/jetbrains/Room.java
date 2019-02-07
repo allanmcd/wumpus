@@ -51,7 +51,7 @@ class Room {
 
         drawPlayer(group);
 
-        if(hasBat()){drawBat(group);}
+        if(hasBat(roomNumber)){drawBat(group);}
 
         if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
@@ -83,11 +83,8 @@ class Room {
         initRoomTunnels();
     }
 
-    boolean hasBat(){
-        boolean hasBat = false;
-        if(Game.map.batRooms[0] == roomNumber){hasBat = true;}
-        if(Game.map.batRooms[1] == roomNumber){hasBat = true;}
-        return hasBat;
+    boolean hasBat(int roomNumber){
+        return cave.bats.isInRoom(roomNumber);
     }
     //
     // Room constructor
@@ -300,7 +297,7 @@ class Room {
         // display the player image centered in the room
 
         String verticalPosition = "Centered";
-        if(hasBat()){ verticalPosition = "Bottom";}
+        if(cave.bats.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
         if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
         player.position = drawImage(group, verticalPosition,"player.png");

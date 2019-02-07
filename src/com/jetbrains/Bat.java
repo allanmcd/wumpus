@@ -18,6 +18,7 @@ public class Bat {
     //
     int roomNumber;
     int number;
+    boolean isDead;
 
     //
     // Bat methods
@@ -30,12 +31,12 @@ public class Bat {
         if(useDefaults){
             if(batIndex == 0) {
                 // set default value for bat 1
-                Game.map.batRooms[batIndex] = 26;
+                cave.bats.batRooms[batIndex] = 26;
                 roomNumber = 26;
             }
             else{
                 // use default for bat 2
-                Game.map.batRooms[batIndex] = 16;
+                cave.bats.batRooms[batIndex] = 16;
                 roomNumber = 16;
             }
         } else {
@@ -79,7 +80,7 @@ public class Bat {
             }
 
             for(int batIndex = 0; batIndex < Game.maxBats; batIndex++){
-                if(Game.map.batRooms[batIndex] == batRoomNumber){
+                if(cave.bats.batRooms[batIndex] == batRoomNumber){
                     // this room already has a bat in it - keep looking
                     generateAnotherBatRoomNumber = true;
                 }
@@ -91,6 +92,6 @@ public class Bat {
             }
             }while(generateAnotherBatRoomNumber);
 
-        Game.map.batRooms[batRoomIndex] = batRoomNumber;
+        cave.bats.batRooms[batRoomIndex] = batRoomNumber;
     }
 }

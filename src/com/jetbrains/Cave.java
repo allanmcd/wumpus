@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.util.*;
 
+import static com.jetbrains.Game.cave;
 import static com.jetbrains.Main.useDefaults;
 
 //
@@ -17,6 +18,7 @@ class Cave {
     //
     static String name;
     static Bats bats;
+    static Pits pits;
     static int initialRoom;
     static Wumpus wumpus;
     static boolean valid;
@@ -30,10 +32,6 @@ class Cave {
         name = caveName;
         this.initialRoom = initialRoom;
         rooms = newCaveRooms(30);
-
-        bats = new Bats();
-
-        loadCave(caveName);
     }
 
     //
@@ -84,22 +82,13 @@ class Cave {
                 room.initWallPoints();
             }
 
+            // create a couple of bats
+            bats = new Bats();
+            bats.addBats(2);
+
             // create a couple of pits
-            if (useDefaults) {
-                rooms[13].hasPit = true;
-                rooms[9].hasPit = true;
-            } else {
-                Random random = new Random();
-                for (int pitNumber = 1; pitNumber < 3; pitNumber++) {
-                    // generate a random room from 1 to 30
-                    int pitRoomNumber = random.nextInt(29) + 1;
-                    if (pitRoomNumber == initialRoom) {
-                        // don't put a pit in the initial room
-                        pitRoomNumber = random.nextInt(29) + 1;
-                    }
-                    rooms[pitRoomNumber].hasPit = true;
-                }
-            }
+            pits = new Pits();
+            cave.pits.addPits(2);
 
             Debug.log("");
 
@@ -200,7 +189,7 @@ class Cave {
             if (room.hasPit) {
                 numberOfPits++;
             }
-            if (room.hasBat()) {
+            if (cave.bats.isInRoom(room.roomNumber)) {
                 numberOfBats++;
             }
         }

@@ -14,6 +14,7 @@ import javafx.stage.Window;
 import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
+import static com.jetbrains.Cave.loadCave;
 import static com.jetbrains.Main.game;
 import static com.jetbrains.Main.useDefaults;
 
@@ -134,6 +135,9 @@ class Game {
         Cave.wumpus = new Wumpus(initialRoom);
 
         cave = new Cave(caveName, initialRoom);
+        loadCave(caveName);
+
+        cave.pits = new Pits();
 
         bow = new Bow(3);
     }

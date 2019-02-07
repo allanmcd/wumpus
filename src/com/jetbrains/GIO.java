@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.jetbrains.Cave.*;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 
@@ -63,6 +64,7 @@ class GIO {
     //
     void gotoRoom(int roomNumber) {
         stats.txtInfo.setText("Entered room " + roomNumber);
+        stats.txtHint.setText("");
         stats.anotherTurn();
 
         // REDO - a vBox would work better here
@@ -95,9 +97,10 @@ class GIO {
 
         Game.gameStage.show();
 
-        if (roomNumber == Cave.wumpus.roomNumber) {
+        if (roomNumber == wumpus.roomNumber) {
             Game.youLost("The Wumpus got you");
-        } else if (Cave.rooms[roomNumber].hasBat()) {
+        //} else if (Cave.rooms[roomNumber].hasBat()) {
+        } else if (Cave.bats.isInRoom(roomNumber)) {
             relocatePlayer();
         } else if (Cave.rooms[roomNumber].hasPit) {
             // FEATURE would be nice if the player spun and vanished
@@ -106,10 +109,28 @@ class GIO {
             // nothing interesting happened - you get a coin
             stats.addCoin();
         }
+
+        // any interesting objects nearby
+        if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
+            updateHint("Wings flapping nearby with foul odor in the air and cool breeze");
+        } else if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom()){
+            updateHint("Wings flapping nearby and there is a foul odor in the air");
+        } else if(pits.inAdjacentRoom()){
+            updateHint("There is cool breeze");
+        } else if(wumpus.inAdjacentRoom()){
+            updateHint("There is a foul odor in the air");
+        } else if (bats.inAdjacentRoom()) {
+            updateHint("Wings flapping nearby");
+        }
+
     }
 
     void updateInfo(String infoText) {
         stats.txtInfo.setText(infoText);
+    }
+
+    void updateHint(String hintText) {
+        stats.txtHint.setText(hintText);
     }
 
     void showDialog(String dlgTitle, String dlgMsg) {
@@ -344,7 +365,7 @@ class GIO {
             // assume the current room number is OK
             generateAnotherRoomNumber = false;
 
-            if (Cave.rooms[nextEmptyRoomNumber].hasBat()) {
+            if (Cave.rooms[nextEmptyRoomNumber].hasBat(nextEmptyRoomNumber)) {
                 // not empty - bat in room
                 generateAnotherRoomNumber = true;
             }
@@ -354,7 +375,7 @@ class GIO {
                 generateAnotherRoomNumber = true;
             }
 
-            if (nextEmptyRoomNumber == Cave.wumpus.roomNumber) {
+            if (nextEmptyRoomNumber == wumpus.roomNumber) {
                 // not empty - wumpus in room
                 generateAnotherRoomNumber = true;
             }

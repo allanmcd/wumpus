@@ -80,7 +80,8 @@ public class Stats {
     }
 
     void updateScore(){
-        score = 10 * numberOfArrows + numberOfCoins - turns;
+        // i took artistic liberties to add 15 points for each bat killed
+        score = 10 * numberOfArrows + 15* cave.bats.numberKilled+ numberOfCoins - turns;
         if(cave.wumpus.dead){
             score += 100;
         }
