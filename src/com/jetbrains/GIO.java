@@ -3,6 +3,7 @@
 //
 package com.jetbrains;
 
+import com.sun.deploy.panel.TextFieldProperty;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -61,7 +62,10 @@ class GIO {
     // GIO methods
     //
     void gotoRoom(int roomNumber) {
-        stats.txtInfo.setText("Room Entered");
+        stats.txtInfo.setText("Entered room " + roomNumber);
+        stats.anotherTurn();
+
+        // REDO - a vBox would work better here
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(5));
         gridpane.setHgap(10);

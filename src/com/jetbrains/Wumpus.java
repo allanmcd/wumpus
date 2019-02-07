@@ -13,6 +13,7 @@ public class Wumpus {
     // Wumpus instance variables
     //
     int roomNumber;
+    boolean dead;
 
     //
     // Wumpus methods

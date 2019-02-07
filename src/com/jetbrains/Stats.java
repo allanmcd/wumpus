@@ -12,6 +12,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import static com.jetbrains.GIO.statusGridPane;
+import static com.jetbrains.Game.cave;
+import static com.jetbrains.Main.game;
 
 /**
  * The Stats class is used to contain game stats
@@ -26,11 +28,14 @@ public class Stats {
     static Text txtHint;
     static Text txtArrows;
     static Text txtCoins;
-    static Text txtPoints;
+    static Text txtTurns;
+    static Text txtScore;
 
-    static int gamePoints = 0;
-    static int numberOfArrows = 3;
-    static int numberOfCoins = 0;
+    static int gamePoints;
+    static int numberOfArrows;
+    static int numberOfCoins;
+    static int turns;
+    static int score;
 
     VBox vBox;
 
@@ -40,27 +45,46 @@ public class Stats {
     void addCoin(){
         numberOfCoins++;
         txtCoins.setText(Integer.toString(numberOfCoins));
+        updateScore();
     }
 
     void subtractCoin(){
         numberOfCoins--;
         txtCoins.setText(Integer.toString(numberOfCoins));
+        updateScore();
     }
 
     void decrementArrows(){
         numberOfArrows--;
         txtArrows.setText(Integer.toString(numberOfArrows));
+        updateScore();
     }
 
     void addTwoArrows(){
         numberOfArrows = numberOfArrows + 2;
         txtArrows.setText(Integer.toString(numberOfArrows));
+        updateScore();
+    }
+
+    void anotherTurn(){
+        turns++;
+        txtTurns.setText(Integer.toString(turns));
+        updateScore();
     }
 
     void setInitialValues(){
         gamePoints = 0;
         numberOfArrows = 3;
-        numberOfCoins = 0;
+        numberOfCoins = -1;
+        turns = -1;
+    }
+
+    void updateScore(){
+        score = 10 * numberOfArrows + numberOfCoins - turns;
+        if(cave.wumpus.dead){
+            score += 100;
+        }
+        txtScore.setText(Integer.toString(score));
     }
 
     VBox panel() {
@@ -75,7 +99,11 @@ public class Stats {
         statusGridPane.getColumnConstraints().add(new ColumnConstraints(80));
         statusGridPane.getColumnConstraints().add(new ColumnConstraints(40));
 
-        // Points Status
+        // number of turns Status
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(80));
+        statusGridPane.getColumnConstraints().add(new ColumnConstraints(60));
+
+        // Score Status
         statusGridPane.getColumnConstraints().add(new ColumnConstraints(80));
         statusGridPane.getColumnConstraints().add(new ColumnConstraints(60));
 
@@ -91,11 +119,14 @@ public class Stats {
         Label lblCoins = new Label("Coins: ");
         txtCoins = new Text(Integer.toString(numberOfCoins));
 
-        Label lblPoints = new Label("Points: ");
-        txtPoints = new Text(Integer.toString(gamePoints));
+        Label lblTurns = new Label("Turns: ");
+        txtTurns = new Text(Integer.toString(turns));
 
-        setLabelStyles(lblArrows, lblCoins, lblPoints);
-        setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtPoints);
+        Label lblPoints = new Label("Score: ");
+        txtScore = new Text(Integer.toString(gamePoints));
+
+        setLabelStyles(lblArrows, lblCoins, lblTurns, lblPoints);
+        setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtTurns, txtScore);
 
         // add the info, hint and stat labels and text boxes to the gridpane
         statusGridPane.add(txtInfo, 0, 0);
@@ -104,16 +135,20 @@ public class Stats {
         statusGridPane.add(txtArrows, 1, 2);
         statusGridPane.add(lblCoins, 2, 2);
         statusGridPane.add(txtCoins, 3, 2);
-        statusGridPane.add(lblPoints, 4, 2);
-        statusGridPane.add(txtPoints, 5, 2);
+        statusGridPane.add(lblTurns, 4, 2);
+        statusGridPane.add(txtTurns, 5, 2);
+        statusGridPane.add(lblPoints, 6, 2);
+        statusGridPane.add(txtScore, 7, 2);
 
         // aligh the status labels and values
         statusGridPane.setHalignment(lblArrows, HPos.RIGHT);
         statusGridPane.setHalignment(txtArrows,HPos.LEFT);
         statusGridPane.setHalignment(lblCoins,HPos.RIGHT);
         statusGridPane.setHalignment(txtCoins,HPos.LEFT);
+        statusGridPane.setHalignment(lblTurns,HPos.RIGHT);
+        statusGridPane.setHalignment(txtTurns,HPos.LEFT);
         statusGridPane.setHalignment(lblPoints,HPos.RIGHT);
-        statusGridPane.setHalignment(txtPoints,HPos.LEFT);
+        statusGridPane.setHalignment(txtScore,HPos.LEFT);
 
         statusGridPane.setAlignment(Pos.CENTER);
 
@@ -137,6 +172,7 @@ public class Stats {
     //
     // Stats helper functions
     //
+
     private void setTextStyles(Text... texts) {
         for (Text text : texts) {
             text.setFont(Font.font("Verdana", 18));
