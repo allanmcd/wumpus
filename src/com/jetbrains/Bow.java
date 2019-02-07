@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 
 import static com.jetbrains.GIO.gioGroup;
 import static com.jetbrains.Game.*;
+import static com.jetbrains.Main.game;
 
 //
 // NOTE there should only be one Player object
@@ -35,9 +36,15 @@ public class Bow {
     //
     void shoot(int targetRoomNumber){
         fired = false;
+        stats.decrementArrows();
+
+        if(stats.numberOfArrows == 0){
+            game.youLost("You ran out of arrrows");
+        }
+
         if(targetRoomNumber == Cave.wumpus.roomNumber) {
             Game.youWon();
-        } else if( Main.game.cave.bats.inRoom(targetRoomNumber)){
+        } else if( game.cave.bats.inRoom(targetRoomNumber)){
             gio.updateInfo("You killed the bat in room " + targetRoomNumber);
             System.out.println("bat killed");
         }

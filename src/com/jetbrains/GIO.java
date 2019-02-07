@@ -61,7 +61,7 @@ class GIO {
     // GIO methods
     //
     void gotoRoom(int roomNumber) {
-        stats.txtInfo.setText("");
+        stats.txtInfo.setText("Room Entered");
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(5));
         gridpane.setHgap(10);
@@ -98,6 +98,9 @@ class GIO {
         } else if (Cave.rooms[roomNumber].hasPit) {
             // FEATURE would be nice if the player spun and vanished
             Game.youLost("You fell into a bottomless pit");
+        } else {
+            // nothing interesting happened - you get a coin
+            stats.addCoin();
         }
     }
 
@@ -248,7 +251,7 @@ class GIO {
         gameMenuBar.getMenus().add(gameMenu);
 
         // create the cave name label for the TOP area of the Borderpane
-        Label lblCaveName = new Label(caveName);
+        lblCaveName = new Label(caveName);
         lblCaveName.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
 
         TilePane tpTop = new TilePane();
@@ -307,6 +310,8 @@ class GIO {
     TextField tfRoomNumber = new TextField();
 
     BorderPane bpGame = new BorderPane();
+
+    Label lblCaveName;
 
     //
     // GIO helper functions

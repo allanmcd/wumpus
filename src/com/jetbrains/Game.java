@@ -44,11 +44,18 @@ class Game {
     //
     void play(){
         gameStage.setTitle("Find The Wumpus");
+
+        // make the stats pane visible
+        stats.vBox.setVisible(true);
+
+        // initialize the stats
+        stats.setInitialValues();
+
         gio.gotoRoom(1);
     }
 
     static void youWon(){
-        game.youWon = true;
+        youWon = true;
         gio.updateInfo("You shot the wumpus.  YOU WIN !!!!!!!");
         ended();
     }
@@ -56,11 +63,23 @@ class Game {
     static void youLost(String msg){
         youLost = true;
         stillPlayiing = false;
-        gio.showDialog("YOU LOSE :-)",msg );
+        gio.showDialog("YOU LOSE :-(",msg );
         ended();
     }
 
     static void ended(){
+        // clear out the info text
+        stats.txtInfo.setText("");
+
+        // clear out the hint text
+        stats.txtHint.setText("");
+
+        // no longer in a cave
+        gio.lblCaveName.setText("");
+
+        // hide the stats pane
+        stats.vBox.setVisible(false);
+
         // display the wumpus image as the splash screen
         gio.addSplash(gio.bpGame, "src/wumpus.png");
     }
@@ -98,7 +117,7 @@ class Game {
         // which cave should we load
         if(caveName.equals("")){
             // must be from initial launch
-            caveName = Game.gio.cavePicker();
+            caveName = gio.cavePicker();
             if(caveName.equals("") || caveName.equals(null) ){
                 // could not load a cave
                 Debug.error("no cave selected");

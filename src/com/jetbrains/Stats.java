@@ -32,9 +32,37 @@ public class Stats {
     static int numberOfArrows = 3;
     static int numberOfCoins = 0;
 
+    VBox vBox;
+
     //
     // Stats member function(s)
     //
+    void addCoin(){
+        numberOfCoins++;
+        txtCoins.setText(Integer.toString(numberOfCoins));
+    }
+
+    void subtractCoin(){
+        numberOfCoins--;
+        txtCoins.setText(Integer.toString(numberOfCoins));
+    }
+
+    void decrementArrows(){
+        numberOfArrows--;
+        txtArrows.setText(Integer.toString(numberOfArrows));
+    }
+
+    void addTwoArrows(){
+        numberOfArrows = numberOfArrows + 2;
+        txtArrows.setText(Integer.toString(numberOfArrows));
+    }
+
+    void setInitialValues(){
+        gamePoints = 0;
+        numberOfArrows = 3;
+        numberOfCoins = 0;
+    }
+
     VBox panel() {
         // define the sizes of the columns of the status grid
         statusGridPane = new GridPane();
@@ -91,13 +119,13 @@ public class Stats {
 
         // package the status objects together into a vertical box
         // so that they will be on top of each other
-        VBox statusVBox = new VBox();
-        statusVBox.setAlignment(Pos.CENTER);
-        statusVBox.getChildren().addAll(txtInfo, txtHint, statusGridPane);
-        statusVBox.setPadding(new Insets(0,0,20,0));
+        vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(txtInfo, txtHint, statusGridPane);
+        vBox.setPadding(new Insets(0,0,20,0));
 
 
-        return statusVBox;
+        return vBox;
     }
 
     //
