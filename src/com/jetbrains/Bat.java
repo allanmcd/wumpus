@@ -93,5 +93,6 @@ public class Bat {
             }while(generateAnotherBatRoomNumber);
 
         cave.bats.batRooms[batRoomIndex] = batRoomNumber;
+        roomNumber = batRoomNumber;
     }
 }

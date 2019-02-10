@@ -58,7 +58,7 @@ class Game {
     static void youWon(){
         cave.wumpus.dead = true;
         youWon = true;
-        game.stats.updateScore();
+        game.stats.update();
         gio.showDialog(  "YOU WIN","You shot the wumpus");
         ended();
     }

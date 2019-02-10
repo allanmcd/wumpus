@@ -59,7 +59,7 @@ public class Bats {
             if(bats[batIndex].roomNumber == caveRoomNumber) {
                 bats[batIndex].isDead = true;
                 numberKilled++;
-                game.stats.updateScore();
+                game.stats.update();
             }
         }
     }

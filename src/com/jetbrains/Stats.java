@@ -13,7 +13,6 @@ import javafx.scene.text.Text;
 
 import static com.jetbrains.GIO.statusGridPane;
 import static com.jetbrains.Game.cave;
-import static com.jetbrains.Main.game;
 
 /**
  * The Stats class is used to contain game stats
@@ -34,7 +33,7 @@ public class Stats {
     static int gamePoints;
     static int numberOfArrows;
     static int numberOfCoins;
-    static int turns;
+    static int numberOfTurns;
     static int score;
 
     VBox vBox;
@@ -45,47 +44,50 @@ public class Stats {
     void addCoin(){
         numberOfCoins++;
         txtCoins.setText(Integer.toString(numberOfCoins));
-        updateScore();
+        update();
     }
 
     void subtractCoin(){
         numberOfCoins--;
         txtCoins.setText(Integer.toString(numberOfCoins));
-        updateScore();
+        update();
     }
 
     void decrementArrows(){
         numberOfArrows--;
         txtArrows.setText(Integer.toString(numberOfArrows));
-        updateScore();
+        update();
     }
 
     void addTwoArrows(){
         numberOfArrows = numberOfArrows + 2;
         txtArrows.setText(Integer.toString(numberOfArrows));
-        updateScore();
+        update();
     }
 
     void anotherTurn(){
-        turns++;
-        txtTurns.setText(Integer.toString(turns));
-        updateScore();
+        numberOfTurns++;
+        txtTurns.setText(Integer.toString(numberOfTurns));
+        update();
     }
 
     void setInitialValues(){
         gamePoints = 0;
         numberOfArrows = 3;
         numberOfCoins = -1;
-        turns = -1;
+        numberOfTurns = -1;
     }
 
-    void updateScore(){
+    void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows + 15* cave.bats.numberKilled+ numberOfCoins - turns;
+        score = 10 * numberOfArrows + 15* cave.bats.numberKilled+ numberOfCoins - numberOfTurns;
         if(cave.wumpus.dead){
             score += 100;
         }
         txtScore.setText(Integer.toString(score));
+        txtArrows.setText(Integer.toString(numberOfArrows));
+        txtCoins.setText(Integer.toString(numberOfCoins));
+        txtTurns.setText(Integer.toString(numberOfTurns));
     }
 
     VBox panel() {
@@ -121,7 +123,7 @@ public class Stats {
         txtCoins = new Text(Integer.toString(numberOfCoins));
 
         Label lblTurns = new Label("Turns: ");
-        txtTurns = new Text(Integer.toString(turns));
+        txtTurns = new Text(Integer.toString(numberOfTurns));
 
         Label lblPoints = new Label("Score: ");
         txtScore = new Text(Integer.toString(gamePoints));
