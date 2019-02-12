@@ -249,7 +249,7 @@ class Room {
             // define code to be executed when a click occurs on the tunnel
             tunnelPoly.setOnMouseClicked((event) -> {
                 if(stillPlayiing) {
-                    if (bow.fired) {
+                    if (bow.drawn) {
                         int targetRoom = wall.adjacentRoom;
                         bow.shoot(targetRoom);
                     } else {

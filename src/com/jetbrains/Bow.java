@@ -1,7 +1,5 @@
 package com.jetbrains;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -28,15 +26,20 @@ public class Bow {
     // Bow instance variables
     //
     int arrowsRemaining;
-    boolean fired = false;
+    boolean fired;
     ImageView imageView;
+    boolean drawn;
 
     //
     // Bow methods
     //
     void shoot(int targetRoomNumber){
-        fired = false;
+        drawn = false;
+        fired = true;
         stats.decrementArrows();
+
+        // update the bow image
+        draw();
 
         if(stats.numberOfArrows == 0){
             game.youLost("You ran out of arrrows");
@@ -52,15 +55,34 @@ public class Bow {
         else{
             gio.updateInfo("Nothing in that room.  The arrow can not be recovered");
         }
+        fired = false;
+        draw();
     }
 
     void draw(){
         try {
-            Image bowImage = new Image(new FileInputStream("src/bow.png"));
+            // remove any existing bow image
+            if(imageView != null){
+                gioGroup.getChildren().remove(imageView);
+            }
+
+            // create the appropriate bow image to implement some crude animation
+            Image bowImage;
+            if(fired){
+                // draw the empty bow image - no arrow
+                bowImage = new Image(new FileInputStream("src/bow.empty.png"));
+            } else if(drawn){
+                // draw the bow is drawn image
+                bowImage = new Image(new FileInputStream("src/bow.drawn.png"));
+            } else{
+                // draw the bow not drawn image
+                bowImage = new Image(new FileInputStream("src/bow.png"));
+            }
             imageView = new ImageView(bowImage);
 
             double imageViewLeft = player.position[0]+30;
-            imageView.setX(imageViewLeft);
+            Double bowLeft = player.position[0] + player.position[2] - bowImage.getWidth();
+            imageView.setX(bowLeft);
 
             Double bowTop = player.position[1] + player.position[3]/2 - 10;
             imageView.setY(bowTop);

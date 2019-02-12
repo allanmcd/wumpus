@@ -173,6 +173,7 @@ class GIO {
 
         // get all the files from the "src" directory
         File[] fList = directory.listFiles();
+        String firstCave="";
         for(File file :fList){
             if (file.isFile() && fileExtension(file).equals("cave")) {
                 String nextCaveName =file.getName();
@@ -180,6 +181,9 @@ class GIO {
                 nextCaveName = nextCaveName.substring(0,nextCaveName.length()- ".cave".length());
                 // add cave name to list of other cave names
                 caveNames.add(nextCaveName);
+                if(firstCave.equals("")){
+                    // UNDONe - figure out how to pre-select the 1st cave name
+                }
             }
         }
 
@@ -320,8 +324,9 @@ class GIO {
                 // see if the mouse click occured inside the bow image
                 if (mouseX > bowLeft && mouseX < bowRight) {
                     if (mouseY > bowTop && mouseY < bowBottom) {
-                        bow.fired = true;
-                        System.out.println("arrow notched");
+                        bow.drawn = true;
+                        bow.draw();
+                        System.out.println("the bow is drawn - an arrow is nocked");
                         evt.consume();
                     }
                 }
