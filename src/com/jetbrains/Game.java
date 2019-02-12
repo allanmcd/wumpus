@@ -46,13 +46,15 @@ class Game {
     void play(){
         gameStage.setTitle("Find The Wumpus");
 
-        // make the stats pane visible
-        stats.vBox.setVisible(true);
+        if (cave.valid) {
+            // make the stats pane visible
+            stats.vBox.setVisible(true);
 
-        // initialize the stats
-        stats.setInitialValues();
+            // initialize the stats
+            stats.setInitialValues();
 
-        gio.gotoRoom(1);
+            gio.gotoRoom(1);
+        }
     }
 
     static void youWon(){
@@ -118,17 +120,17 @@ class Game {
         stats = new Stats();
 
         // which cave should we load
-        if(caveName.equals("")){
+        if(caveName.equals("")) {
             // must be from initial launch
             caveName = gio.cavePicker();
-            if(caveName.equals("") || caveName.equals(null) ){
-                // could not load a cave
-                Debug.error("no cave selected");
-                System.exit(-1);
-            }
         }
 
         gio = new GIO(caveName);
+
+        if(caveName.equals("") || caveName.equals(null) ){
+            // could not load a cave so bail - should display splash screen
+            return;
+        }
 
         map = new Map();
 

@@ -21,9 +21,7 @@ public class Main extends Application{
     public static void newGame(String caveName){
         game = new Game(caveName, primaryStage);
 
-        if(game.cave.valid){
-            game.play();
-        }
+        game.play();
     }
 
     public static void main(String[] args) {

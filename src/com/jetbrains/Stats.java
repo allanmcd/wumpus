@@ -170,6 +170,7 @@ public class Stats {
     // Stats constructor
     //
     Stats(){
+        vBox = panel();
     }
 
     //
