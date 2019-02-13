@@ -379,7 +379,7 @@ class GIO {
             // assume the current room number is OK
             generateAnotherRoomNumber = false;
 
-            if (Cave.rooms[nextEmptyRoomNumber].hasBat(nextEmptyRoomNumber)) {
+            if (Cave.rooms[nextEmptyRoomNumber].hasBat()) {
                 // not empty - bat in room
                 generateAnotherRoomNumber = true;
             }

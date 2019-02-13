@@ -54,5 +54,6 @@ public class Wumpus {
                 roomNumber = random.nextInt(29) + 1;
             }
         }
-                             }
+        System.out.println("Wumpus assigned to " + roomNumber);
+    }
 }

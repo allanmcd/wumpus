@@ -51,7 +51,7 @@ class Room {
 
         drawPlayer(group);
 
-        if(hasBat(roomNumber)){drawBat(group);}
+        if(hasBat()){drawBat(group);}
 
         if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
 
@@ -83,7 +83,7 @@ class Room {
         initRoomTunnels();
     }
 
-    boolean hasBat(int roomNumber){
+    boolean hasBat(){
         return cave.bats.isInRoom(roomNumber);
     }
     //

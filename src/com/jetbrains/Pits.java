@@ -13,6 +13,10 @@ import static com.jetbrains.Main.useDefaults;
 
 public class Pits {
     //
+    // Pit constants
+    //
+    final int NUMBER_OF_PITS = 2;
+    //
     // Pit instance variables
     //
     int roomNumber;
@@ -46,14 +50,45 @@ public class Pits {
             rooms[9].hasPit = true;
         } else {
             Random random = new Random();
-            for (int pitNumber = 1; pitNumber < 3; pitNumber++) {
-                // generate a random room from 1 to 30
-                int pitRoomNumber = random.nextInt(29) + 1;
-                if (pitRoomNumber == initialRoom) {
-                    // don't put a pit in the initial room
+            int pitRoomNumber;
+            Boolean generateAnotherPitRoomNumber = false;
+
+            for (int pitNumber = 1; pitNumber <= NUMBER_OF_PITS; pitNumber++) {
+                do {
+                    // assume the current bat room number is OK
+                    generateAnotherPitRoomNumber = false;
+
                     pitRoomNumber = random.nextInt(29) + 1;
-                }
+
+                    if (pitRoomNumber == initialRoom) {
+                        // don't put a pit in the initial room
+                        generateAnotherPitRoomNumber = true;
+                    }
+
+                    if (Cave.rooms[pitRoomNumber].hasBat()) {
+                        // don't put a pit in a room with a bat
+                        generateAnotherPitRoomNumber = true;
+                    }
+
+                    if (Cave.rooms[pitRoomNumber].hasPit) {
+                        // don't put a pit in a room that already has a pit
+                        generateAnotherPitRoomNumber = true;
+                    }
+
+                    if (pitRoomNumber == Cave.wumpus.roomNumber) {
+                        // don't put a pit in a room with the Wumpus
+                        generateAnotherPitRoomNumber = true;
+                    }
+
+                    if (generateAnotherPitRoomNumber) {
+                        // generate another pit room number to test
+                        pitRoomNumber = random.nextInt(29) + 1;
+                    }
+                } while (generateAnotherPitRoomNumber);
+
                 rooms[pitRoomNumber].hasPit = true;
+                System.out.println("pit assigned to room " + pitRoomNumber);
+
             }
         }
     }

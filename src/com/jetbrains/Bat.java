@@ -94,5 +94,6 @@ public class Bat {
 
         cave.bats.batRooms[batRoomIndex] = batRoomNumber;
         roomNumber = batRoomNumber;
+        System.out.println("bat assigned to " + batRoomNumber );
     }
 }

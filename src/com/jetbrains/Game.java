@@ -53,7 +53,7 @@ class Game {
             // initialize the stats
             stats.setInitialValues();
 
-            gio.gotoRoom(1);
+            gio.gotoRoom(cave.initialRoom);
         }
     }
 
@@ -114,7 +114,7 @@ class Game {
             Random random = new Random();
             initialRoom = random.nextInt(29) + 1;
         }
-
+        System.out.println("Initial Room is " + initialRoom);
         player = new Player();
 
         stats = new Stats();
