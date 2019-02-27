@@ -252,7 +252,7 @@ class GIO {
 
         // build the menu bar
         //Build the first menu.
-        Menu gameMenu = new Menu("Wumpus");
+        Menu gameMenu = new Menu("Game");
 
         MenuItem newGameMenuItem = new MenuItem("New Game");
         newGameMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -282,8 +282,16 @@ class GIO {
 
         gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
 
+        MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
+        moreArrrowsMenuItem.setOnAction(e -> {
+            Store.purchaseArrows();
+        });
+
+        Menu storeMenu = new Menu("Store");
+        storeMenu.getItems().addAll(moreArrrowsMenuItem);
+
         MenuBar gameMenuBar = new MenuBar();
-        gameMenuBar.getMenus().add(gameMenu);
+        gameMenuBar.getMenus().addAll(gameMenu, storeMenu);
 
         // create the cave name label for the TOP area of the Borderpane
         lblCaveName = new Label(caveName);

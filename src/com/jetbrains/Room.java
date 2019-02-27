@@ -250,11 +250,12 @@ class Room {
             tunnelPoly.setOnMouseClicked((event) -> {
                 if(stillPlayiing) {
                     if (bow.drawn) {
+                        event.consume();
                         int targetRoom = wall.adjacentRoom;
                         bow.shoot(targetRoom);
                     } else {
-                        gio.gotoRoom(wall.adjacentRoom);
                         event.consume();
+                        gio.gotoRoom(wall.adjacentRoom);
                     }
                 }
             });

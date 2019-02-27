@@ -21,7 +21,11 @@ public class Main extends Application{
     public static void newGame(String caveName){
         game = new Game(caveName, primaryStage);
 
-        game.play();
+        if(game.loaded) {
+            game.play();
+        } else {
+            game.ended();
+        }
     }
 
     public static void main(String[] args) {

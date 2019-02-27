@@ -27,6 +27,7 @@ class Game {
     // most are accessed before game object is created
     //
     static Stage gameStage;
+    static boolean loaded;
     static boolean youWon;
     static boolean  youLost;
     static boolean stillPlayiing;
@@ -96,6 +97,9 @@ class Game {
         stillPlayiing = true;
         gameStage = stage;
 
+        // assume that the game will load without errors
+        loaded = true;
+
         if(useDefaults){
             initialRoom = 1;
             if(caveName.equals("")) {
@@ -142,6 +146,8 @@ class Game {
         cave.pits = new Pits();
 
         bow = new Bow(3);
+
+        loaded &= Trivia.init();
     }
 
     //

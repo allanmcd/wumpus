@@ -1,7 +1,10 @@
 package com.jetbrains;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -80,12 +83,24 @@ public class Bow {
             }
             imageView = new ImageView(bowImage);
 
+            //UNDONE - add tool tips to bow
+            //Tooltip bowToolTip = new Tooltip("click on to shoot");
+            //Tooltip.install(imageView,bowToolTip);
+
+            // position the bow near the players left arm
             double imageViewLeft = player.position[0]+30;
             Double bowLeft = player.position[0] + player.position[2] - bowImage.getWidth();
             imageView.setX(bowLeft);
 
             Double bowTop = player.position[1] + player.position[3]/2 - 10;
             imageView.setY(bowTop);
+
+            //UNDONE
+            // draw a border aroung the bow if the user moves the mouse over it
+            //imageView.setOnMouseEntered(e -> imageView.setStyle("-fx-border-color: blue"));
+            //imageView.setStyle("-fx-border-color:red; -fx-background-radius:15.0" );
+            //imageView.setStyle("-fx-border-width:24px solid;");
+
             gioGroup.getChildren().add(imageView);
         }
         catch (FileNotFoundException e)
@@ -93,6 +108,7 @@ public class Bow {
             // UNDONE should probably add code to display "e"
             Debug.error(("could not load bow.png"));
         }
+
     }
 
     //

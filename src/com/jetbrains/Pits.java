@@ -65,7 +65,7 @@ public class Pits {
                         generateAnotherPitRoomNumber = true;
                     }
 
-                    if (Cave.rooms[pitRoomNumber].hasBat()) {
+                    if (                                                                                                                                                                                 Cave.rooms[pitRoomNumber].hasBat()) {
                         // don't put a pit in a room with a bat
                         generateAnotherPitRoomNumber = true;
                     }
