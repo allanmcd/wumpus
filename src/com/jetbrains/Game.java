@@ -15,23 +15,23 @@ import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.loadCave;
-import static com.jetbrains.Main.game;
 import static com.jetbrains.Main.useDefaults;
 
 //
 // NOTE there should only be one Game object
 //
-class Game {
+public final class Game {
     //
     // game static variables
     // most are accessed before game object is created
     //
-    static Stage gameStage;
+    static Stage stage;
     static boolean loaded;
     static boolean youWon;
     static boolean  youLost;
     static boolean stillPlayiing;
     static int maxBats = 2;
+    static String playerName;
 
     // game component objects
     static Bow bow;
@@ -44,8 +44,37 @@ class Game {
     //
     // Game methods
     //
-    void play(){
-        gameStage.setTitle("Find The Wumpus");
+    /*
+    static void start(){
+
+        // a blank cave name will force the user to pick one
+        String caveName = "";
+        if(useDefaults){
+            initialRoom = 1;
+            if(caveName.equals("")) {
+                if (gio == null || gio.newCaveName == null || gio.newCaveName.equals(null)) {
+                    caveName = "cave1";
+                }
+            }
+        }
+        else {
+            // ask the user to sign in the first time a game is created
+            if(Main.userName == null) {
+                Main.userName = signIn();
+            }
+
+            // start in a random room
+            Random random = new Random();
+            initialRoom = random.nextInt(29) + 1;
+        }
+
+        newGame(caveName);
+
+    }
+    */
+
+    static void play(){
+        stage.setTitle("Find The Wumpus");
 
         if (cave.valid) {
             // make the stats pane visible
@@ -61,7 +90,7 @@ class Game {
     static void youWon(){
         cave.wumpus.dead = true;
         youWon = true;
-        game.stats.update();
+        Game.stats.update();
         gio.showDialog(  "YOU WIN","You shot the wumpus");
         ended();
     }
@@ -90,30 +119,17 @@ class Game {
         gio.addSplash(gio.bpGame, "src/wumpus.png");
     }
 
-    //
-    // Game constructor
-    //
-    Game(String caveName, Stage stage){
+    static void init(String caveName, Stage gameStage){
         stillPlayiing = true;
-        gameStage = stage;
+        stage = gameStage;
 
         // assume that the game will load without errors
         loaded = true;
 
         if(useDefaults){
             initialRoom = 1;
-            if(caveName.equals("")) {
-                if (gio == null || gio.newCaveName == null || gio.newCaveName.equals(null)) {
-                    caveName = "cave1";
-                }
-            }
         }
         else {
-            // ask the user to sign in the first time a game is created
-            if(Main.userName == null) {
-                Main.userName = signIn();
-            }
-
             // start in a random room
             Random random = new Random();
             initialRoom = random.nextInt(29) + 1;
@@ -151,10 +167,16 @@ class Game {
     }
 
     //
+    // Game constructor
+    //
+    private Game(){
+        // force it to be a static singleton
+    }
+
+    //
     // Game helper functions
     //
-    String signIn() {
-        String userName;
+    public static void signIn() {
         Dialog dialog = new Dialog<>();
         dialog.setTitle("Sign In");
         dialog.setHeaderText("Please sign in.");
@@ -184,8 +206,7 @@ class Game {
             userNameField.requestFocus();
         });
         dialog.showAndWait();
-        userName = userNameField.getText();
-        return userName;
+        playerName = userNameField.getText();
     }
 }
 

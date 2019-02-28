@@ -8,7 +8,6 @@ import java.util.Random;
 import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.rooms;
 import static com.jetbrains.Game.cave;
-import static com.jetbrains.Main.game;
 import static com.jetbrains.Main.useDefaults;
 
 public class Pits {
@@ -31,7 +30,7 @@ public class Pits {
 
     boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
-        Room playerRoom = rooms[game.player.roomNumber];
+        Room playerRoom = rooms[Game.player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
             Wall wall = playerRoom.walls[wallNumber];
             if(wall.hasTunne1) {

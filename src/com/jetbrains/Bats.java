@@ -1,7 +1,6 @@
 package com.jetbrains;
 
 import static com.jetbrains.Game.cave;
-import static com.jetbrains.Main.game;
 
 public class Bats {
     //
@@ -34,7 +33,7 @@ public class Bats {
 
     boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
-        Room playerRoom = cave.rooms[game.player.roomNumber];
+        Room playerRoom = cave.rooms[Game.player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
             Wall wall = playerRoom.walls[wallNumber];
             if(wall.hasTunne1) {
@@ -59,7 +58,7 @@ public class Bats {
             if(bats[batIndex].roomNumber == caveRoomNumber) {
                 bats[batIndex].isDead = true;
                 numberKilled++;
-                game.stats.update();
+                Game.stats.update();
             }
         }
     }

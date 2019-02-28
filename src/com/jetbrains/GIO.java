@@ -3,7 +3,6 @@
 //
 package com.jetbrains;
 
-import com.sun.deploy.panel.TextFieldProperty;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,10 +22,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 
@@ -82,7 +79,7 @@ class GIO {
         lblBlankLine.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
         gridpane.add(lblBlankLine, 23, 1);
 
-        game.player.roomNumber = roomNumber;
+        Game.player.roomNumber = roomNumber;
 
         gioGroup = new Group();
 
@@ -93,9 +90,9 @@ class GIO {
 
         bpGame.setCenter(gioGroup);
 
-        Game.gameStage.setScene(gioScene);
+        Game.stage.setScene(gioScene);
 
-        Game.gameStage.show();
+        Game.stage.show();
 
         if (roomNumber == wumpus.roomNumber) {
             Game.youLost("The Wumpus got you");
@@ -242,13 +239,13 @@ class GIO {
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 250);
 
-        gameStage.setWidth(600);
-        gameStage.setHeight(600);
+        stage.setWidth(600);
+        stage.setHeight(600);
 
-        // display the wumpus image as the splash screen
+        // display the wumpus image 
         addSplash(bpGame, "src/wumpus.png");
-        Game.gameStage.setScene(gioScene);
-        Game.gameStage.show();
+        Game.stage.setScene(gioScene);
+        Game.stage.show();
 
         // build the menu bar
         //Build the first menu.
@@ -257,8 +254,7 @@ class GIO {
         MenuItem newGameMenuItem = new MenuItem("New Game");
         newGameMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                String caveName = cavePicker();
-                Main.newGame(caveName);
+                SplashScreen.newGame();
             }
         });
 
@@ -268,8 +264,7 @@ class GIO {
         }
         replayMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                game = new Game(Cave.name, primaryStage);
-                if(game.cave.valid){game.play();};
+                SplashScreen.replayGame();
             }
         });
 
@@ -327,7 +322,7 @@ class GIO {
                     Image bowImage = bow.imageView.getImage();
 
                     // convert the bow image Top and Left coordinates to bpGame relative
-                    Point2D bowTopLeft = game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
+                    Point2D bowTopLeft = Game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
 
                     // calculate the BorderPane relative values for the bow Top, Left, Bottom & Right
                     // UNDONE try to figure out a way to GET the ImageView margin

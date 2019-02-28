@@ -3,7 +3,6 @@ package com.jetbrains;
 import java.util.Random;
 
 import static com.jetbrains.Game.cave;
-import static com.jetbrains.Main.game;
 import static com.jetbrains.Main.useDefaults;
 
 //
@@ -27,7 +26,7 @@ public class Wumpus {
 
     boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
-        Room playerRoom = cave.rooms[game.player.roomNumber];
+        Room playerRoom = cave.rooms[Game.player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
             Wall wall = playerRoom.walls[wallNumber];
             if(wall.hasTunne1) {
