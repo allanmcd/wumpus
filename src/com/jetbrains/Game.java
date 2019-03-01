@@ -73,6 +73,10 @@ public final class Game {
     }
     */
 
+    static void quit(){
+        System.exit(0);
+    }
+
     static void play(){
         stage.setTitle("Find The Wumpus");
 
@@ -177,6 +181,7 @@ public final class Game {
     // Game helper functions
     //
     public static void signIn() {
+        if(useDefaults) { return;}
         Dialog dialog = new Dialog<>();
         dialog.setTitle("Sign In");
         dialog.setHeaderText("Please sign in.");

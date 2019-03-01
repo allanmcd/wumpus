@@ -159,6 +159,7 @@ class GIO {
 
     static String cavePicker() {
         // ADVANCED - need to implement scroll bars
+        if(useDefaults){return "cave1";}
         Dialog dialog = new Dialog<>();
         dialog.setHeaderText("Pick a cave");
         dialog.setResizable(false);
@@ -242,7 +243,7 @@ class GIO {
         stage.setWidth(600);
         stage.setHeight(600);
 
-        // display the wumpus image 
+        // display the wumpus image
         addSplash(bpGame, "src/wumpus.png");
         Game.stage.setScene(gioScene);
         Game.stage.show();
@@ -271,7 +272,7 @@ class GIO {
         MenuItem quitMenuItem = new MenuItem("Quit");
         quitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                System.exit(0);
+                Game.quit();
             }
         });
 
@@ -417,8 +418,9 @@ class GIO {
         }
         catch (FileNotFoundException e)
         {
-            // UNDONE should probably add code to display "e"
             Debug.error(("could not add \"" + imageFileName + "\" to the splash page"));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
