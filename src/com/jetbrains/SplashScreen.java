@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -25,6 +26,8 @@ import static com.jetbrains.Main.primaryStage;
 import static com.jetbrains.Main.useDefaults;
 import static javafx.scene.input.KeyCode.ENTER;
 import static javafx.scene.input.KeyCode.ESCAPE;
+import static javafx.scene.text.FontWeight.BOLD;
+import static javafx.scene.text.FontWeight.NORMAL;
 
 public final class SplashScreen {
 
@@ -34,7 +37,6 @@ public final class SplashScreen {
     public static Stage stage;
     private static Scene scene;
     public static boolean valid = false;
-    static String userName;
 
     // private statics
     private static boolean firstTime = true;
@@ -44,7 +46,6 @@ public final class SplashScreen {
     protected static final int SCORE_COL = 1;
     protected static final int NAME_INDEX = 0;
     protected static final int SCORE_INDEX = 1;
-
 
     //
     // SplashScreen methods
@@ -60,8 +61,6 @@ public final class SplashScreen {
     }
 
     public static void newGame() {
-        // has the player logged in yet?
-
         // which cave should we load
         if (useDefaults) {
             caveName = "cave1";
@@ -110,10 +109,10 @@ public final class SplashScreen {
 
                 Label lblBlank = new Label("");
                 Label lblWumpus = new Label("Wumpus");
-                lblWumpus.setFont(Font.font("Verdana", FontWeight.BOLD, 36));
+                lblWumpus.setFont(Font.font("Verdana", BOLD, 36));
 
                 Label lblCaveName = new Label("Welcome to " + caveName);
-                lblCaveName.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
+                lblCaveName.setFont(Font.font("Verdana", BOLD, 24));
 
                 VBox splashHeaderPanel = new VBox();
                 splashHeaderPanel.setAlignment(Pos.CENTER);
@@ -121,7 +120,7 @@ public final class SplashScreen {
                 splashBorderPane.setTop(splashHeaderPanel);
 
                 Label lblEnterToPlay = new Label("Press the ENTER key to play");
-                lblEnterToPlay.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
+                lblEnterToPlay.setFont(Font.font("Verdana", BOLD, 18));
                 VBox splashBottomPanel = new VBox();
                 splashBottomPanel.setAlignment(Pos.CENTER);
                 splashBottomPanel.getChildren().add(lblEnterToPlay);
@@ -218,50 +217,18 @@ public final class SplashScreen {
     }
 
     private static void addHighScoreTitle(GridPane playerPane){
-        Label lblHigh = new Label("High");
-        lblHigh.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
-        lblHigh.setStyle("-fx-background-color: #FFFFFF;");
-        //GridPane.setHalignment(lblHigh,HPos.RIGHT);
-        VBox titleHighPane = new VBox();
-        titleHighPane.getChildren().add(lblHigh);
-        titleHighPane.setStyle("-fx-background-color: #FFFFFF;");
-        titleHighPane.setAlignment(Pos.CENTER_RIGHT);
-        titleHighPane.setPadding(new Insets(0, 2, 0, 0));
-
-        Label lblScores = new Label("Scores");
-        lblScores.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
-        lblScores.setStyle("-fx-background-color: #FFFFFF;");
-        //GridPane.setHalignment(lblScores,HPos.LEFT);
-        VBox titleScorePane = new VBox();
-        titleScorePane.getChildren().add(lblScores);
-        titleScorePane.setStyle("-fx-background-color: #FFFFFF;");
-        titleScorePane.setAlignment(Pos.CENTER_LEFT);
-        titleScorePane.setPadding(new Insets(0, 0, 0, 2));
-
+        VBox titleHighPane = newLabelPane("High",BOLD, 24, Pos.CENTER_RIGHT, 0,2,0,0);
         playerPane.add(titleHighPane,0,0);
+
+        VBox titleScorePane = newLabelPane("Score",BOLD, 24, Pos.CENTER_LEFT, 0,0,0,2);
         playerPane.add(titleScorePane,1,0);
     }
 
     private static void addHighScoreHeader(GridPane playerPane) {
-        Label lblPlayerName = new Label("Name");
-        lblPlayerName.setStyle("-fx-background-color: #FFFFFF;");
-        lblPlayerName.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
-        GridPane.setHalignment(lblPlayerName, HPos.CENTER);
-        HBox playerNamePane = new HBox();
-        playerNamePane.getChildren().add(lblPlayerName);
-        playerNamePane.setStyle("-fx-background-color: #FFFFFF;");
-        playerNamePane.setAlignment(Pos.CENTER);
-
-        Label lblPlayerScore = new Label("Score");
-        lblPlayerScore.setStyle("-fx-background-color: #FFFFFF;");
-        lblPlayerScore.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
-        GridPane.setHalignment(lblPlayerScore, HPos.CENTER);
-        HBox playerScorePane = new HBox();
-        playerScorePane.getChildren().add(lblPlayerScore);
-        playerScorePane.setStyle("-fx-background-color: #FFFFFF;");
-        playerScorePane.setAlignment(Pos.CENTER);
-
+        VBox playerNamePane = newLabelPane("Name",BOLD, 18, Pos.CENTER, 0,0,0,0);
         playerPane.add(playerNamePane, NAME_COL, 1);
+
+        VBox playerScorePane = newLabelPane("Score",BOLD, 18, Pos.CENTER, 0,0,0,0);
         playerPane.add(playerScorePane, SCORE_COL, 1);
     }
 
@@ -272,41 +239,30 @@ public final class SplashScreen {
         for(int playerGridRow = 2; playerGridRow < highScores.size()+2; playerGridRow++){
             String[] highScoreRow = (String[])highScores.get(playerGridRow-2);
 
-            Label lblPlayerName = new Label(highScoreRow[NAME_INDEX]);
-            lblPlayerName.setStyle("-fx-background-color: #FFFFFF;");
-            lblPlayerName.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
-            //REMOVE
-            // GridPane.setHalignment(lblPlayerName,HPos.RIGHT);
-            HBox playerNamePane = new HBox();
-            playerNamePane.getChildren().add(lblPlayerName);
-            playerNamePane.setStyle("-fx-background-color: #FFFFFF;");
-            playerNamePane.setAlignment(Pos.CENTER_RIGHT);
-            playerNamePane.setPadding(new Insets(0, 10, 0, 0));
+            String name = highScoreRow[NAME_INDEX];
+            VBox playerNamePane = newLabelPane(name,NORMAL, 16, Pos.CENTER_RIGHT, 0,10,0,0);
 
-            //playerNamePane.setStyle("-fx-border-color: black");
-
-            Label lblPlayerScore = new Label(highScoreRow[SCORE_INDEX]);
-            lblPlayerScore.setStyle("-fx-background-color: #FFFFFF;");
-            lblPlayerScore.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
-            HBox playerScorePane = new HBox();
-            playerScorePane.getChildren().add(lblPlayerScore);
-            playerScorePane.setStyle("-fx-background-color: #FFFFFF;");
-            playerScorePane.setAlignment(Pos.CENTER_LEFT);
-            playerScorePane.setPadding(new Insets(0, 0, 0, 10));
-            //REMOVE
-            // GridPane.setHalignment(lblPlayerScore,HPos.LEFT);
-
-            //playerPane.add(lblPlayerName, NAME_COL,playerGridRow);
             playerPane.add(playerNamePane, NAME_COL,playerGridRow);
-            //REMOVE
-            // playerPane.add(new Label(""),1,0);
+
+            String score = highScoreRow[SCORE_INDEX];
+            VBox playerScorePane = newLabelPane(score,NORMAL, 16, Pos.CENTER_LEFT, 0,0,0,10);
             playerPane.add(playerScorePane,SCORE_COL,playerGridRow);
 
             playerPane.getRowConstraints().add(rcEntry);
         }
-
-
     }
+
+    private static VBox newLabelPane(String labelText, FontWeight fontWeight, int fontSize, Pos pos, int top, int right, int bottom, int left){
+        Label label = new Label(labelText);
+        label.setFont(Font.font("Verdana",fontWeight, fontSize));
+        VBox vbox = new VBox();
+        vbox.getChildren().add(label);
+        vbox.setStyle("-fx-background-color: #FFFFFF;");
+        vbox.setAlignment(pos);
+        vbox.setPadding(new Insets(top, right, bottom, left));
+        return vbox;
+    }
+
 
     private static void addWumpusImage(StackPane pane) {
         try
