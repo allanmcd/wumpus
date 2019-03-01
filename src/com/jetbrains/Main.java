@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application{
     // pass "useDefaults" as a command line arg while debugging this code
-    static boolean useDefaults;
+    static boolean useDefaults = false;
     static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception{

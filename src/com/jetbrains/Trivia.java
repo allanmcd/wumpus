@@ -45,11 +45,12 @@ public final class Trivia {
     public static boolean init(){
         // assume that the initialization will succeed
         boolean initSuceeded = true;
+        String fileName = "src/trivia.csv";
         BufferedReader br;
         try {
             // cave CSV format is:
             // question, correct answer, one to three wrong answers
-            br = new BufferedReader(new FileReader("src/" + Cave.name + ".trivia.csv"));
+            br = new BufferedReader(new FileReader(fileName));
             String line;
 
             // ignore the first line - it contains the format descriptino
@@ -74,7 +75,7 @@ public final class Trivia {
                 }
             }
         } catch (FileNotFoundException e) {
-            Debug.error("Could not find the file named " + Cave.name + "Trivia.csw");
+            Debug.error("Could not find the file named " + fileName);
             initSuceeded = false;
         } catch (Exception e) {
             e.printStackTrace();

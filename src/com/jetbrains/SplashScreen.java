@@ -53,6 +53,7 @@ public final class SplashScreen {
 
     public static void show(){
         if(firstTime){
+            Game.signIn();
             init();
         }
         if(valid){
@@ -78,7 +79,7 @@ public final class SplashScreen {
         if(Game.loaded) {
             Game.play();
         } else {
-            Game.ended();
+            newGame();
         }
     }
 
@@ -95,56 +96,62 @@ public final class SplashScreen {
     }
 
     private static void init() {
-        Game.signIn();
         caveName = gio.cavePicker();
-        if(caveName.length() > 0){
-            if (loadHighScores(highScores)) {
-                BorderPane splashBorderPane = new BorderPane();
 
-                StackPane splashStackPane = new StackPane();
-                splashStackPane.setPrefSize(400,250);
-                addWumpusImage(splashStackPane);
-                addPlayerPane(splashStackPane);
-                splashBorderPane.setCenter(splashStackPane);;
+        while(caveName.length() == 0 || loadHighScores(highScores) == false){
+            caveName = gio.cavePicker();
+        };
 
-                Label lblBlank = new Label("");
-                Label lblWumpus = new Label("Wumpus");
-                lblWumpus.setFont(Font.font("Verdana", BOLD, 36));
+        BorderPane splashBorderPane = new BorderPane();
 
-                Label lblCaveName = new Label("Welcome to " + caveName);
-                lblCaveName.setFont(Font.font("Verdana", BOLD, 24));
+        StackPane splashStackPane = new StackPane();
+        splashStackPane.setPrefSize(400,250);
+        addWumpusImage(splashStackPane);
+        addPlayerPane(splashStackPane);
+        splashBorderPane.setCenter(splashStackPane);;
 
-                VBox splashHeaderPanel = new VBox();
-                splashHeaderPanel.setAlignment(Pos.CENTER);
-                splashHeaderPanel.getChildren().addAll(lblBlank,lblWumpus, lblCaveName);
-                splashBorderPane.setTop(splashHeaderPanel);
+        // create Wumpus title pane
+        Label lblBlank = new Label("");
+        Label lblWumpus = new Label("Wumpus");
+        lblWumpus.setFont(Font.font("Verdana", BOLD, 36));
 
-                Label lblEnterToPlay = new Label("Press the ENTER key to play");
-                lblEnterToPlay.setFont(Font.font("Verdana", BOLD, 18));
-                VBox splashBottomPanel = new VBox();
-                splashBottomPanel.setAlignment(Pos.CENTER);
-                splashBottomPanel.getChildren().add(lblEnterToPlay);
-                splashBorderPane.setBottom(splashBottomPanel);
+        // create cave welcome pane
+        Label lblCaveName = new Label("Welcome to " + caveName);
+        lblCaveName.setFont(Font.font("Verdana", BOLD, 24));
 
-                Scene splashScene = new Scene(splashBorderPane, 400, 250);
-                splashScene.setOnKeyPressed(e -> {
-                    KeyCode keyCode = e.getCode();
-                    if(keyCode == ENTER){
-                        playGame(caveName);
-                    } else if(keyCode == ESCAPE){
-                        Game.quit();
-                    }
-                });
+        // create a panel to put the title and welcome panes in
+        VBox splashHeaderPanel = new VBox();
+        splashHeaderPanel.setAlignment(Pos.CENTER);
+        splashHeaderPanel.getChildren().addAll(lblBlank,lblWumpus, lblCaveName);
+        splashBorderPane.setTop(splashHeaderPanel);
 
-                stage = new Stage(StageStyle.UNDECORATED);
+        // create the "press ENTER"  hint
+        Label lblEnterToPlay = new Label("Press the ENTER key to play");
+        lblEnterToPlay.setFont(Font.font("Verdana", BOLD, 18));
+        VBox splashBottomPanel = new VBox();
+        splashBottomPanel.setAlignment(Pos.CENTER);
+        splashBottomPanel.getChildren().add(lblEnterToPlay);
+        splashBorderPane.setBottom(splashBottomPanel);
 
-                stage.setWidth(600);
-                stage.setHeight(600);
-
-                stage.setScene(splashScene);
-                valid = true;
+        // create the Splash Page scene
+        Scene splashScene = new Scene(splashBorderPane, 400, 250);
+        splashScene.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if(keyCode == ENTER){
+                playGame(caveName);
+            } else if(keyCode == ESCAPE){
+                Game.quit();
             }
-        }
+        });
+
+        // create the Splash Page stage
+        stage = new Stage(StageStyle.UNDECORATED);
+
+        stage.setWidth(600);
+        stage.setHeight(600);
+
+        stage.setScene(splashScene);
+        valid = true;
     }
 
     private static boolean loadHighScores(ArrayList highScores) {
@@ -220,7 +227,7 @@ public final class SplashScreen {
         VBox titleHighPane = newLabelPane("High",BOLD, 24, Pos.CENTER_RIGHT, 0,2,0,0);
         playerPane.add(titleHighPane,0,0);
 
-        VBox titleScorePane = newLabelPane("Score",BOLD, 24, Pos.CENTER_LEFT, 0,0,0,2);
+        VBox titleScorePane = newLabelPane("Scores",BOLD, 24, Pos.CENTER_LEFT, 0,0,0,2);
         playerPane.add(titleScorePane,1,0);
     }
 
