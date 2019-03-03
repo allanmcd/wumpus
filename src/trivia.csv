@@ -1,4 +1,14 @@
-// format: question,correct answer, one to three wrong answers
-Who is buried in grants tomb,Grant,Lincoln,Washington,nobody
-What city is the capital of Washington State,Olympia,Seattle,Portland
-What is the largest planed in our solar system,Jupiter,earth,Pluto
+// format:  question,correct answer, one to three wrong answers
+// surround the word(s) with {} that are to be replaced with the correct answer to form a statement
+// characters between [] will be deleted to form a statement
+{Who} is buried in grants tomb,Grant,Lincoln,Washington,nobody
+{What city} is the capital of Washington State,Olympia,Seattle,Portland
+{What} is the largest planet in our solar system,Jupiter,earth,Pluto,Saturn,Uranus
+{Who} invented the first AC induction motor,Nikola Tesla,Thomas Edison,Elon Musk,Benjamin Franklin
+{What} is the only national flag that is not square or rectangular,The flag of Nepal, The flag of Burma, The flag of Indonesia
+{Where} would one arrive at the second star to the right and straight on till morning,Neverland,Andromeda,Venus,Aquarius
+{What} three-word parting catchphrase is engraved on voice actor Mel Blanc's gravestone,thats all folks,I'll be back,to eternity and beyond,thanks for all the fish
+{Which German Philosopher} wrote "Thus Spoke Zarathustra",Friedrich Nietzsche,Immanuel Kant,Gottfried Leibniz,Friedrich Paulsen
+[What film did ]Randolph Hearst's media empire conspire to stop the release of{},Citizen Kane,War of the Worlds,Laura,Rear Window
+[What part of ]the {human body} contains five metacarpal bones,hand,foot,ear,spine
+In 1952, Albert Einstein was offered the presidency of {which country},Isreal,United States,France,Germany

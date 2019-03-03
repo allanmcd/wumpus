@@ -203,12 +203,6 @@ class GIO {
             }
         });
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent we) {
-                System.exit(0);
-            }
-        });
-
         dialog.getDialogPane().setContent(caveView);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
@@ -243,6 +237,12 @@ class GIO {
     // GIO constructor
     //
     GIO(String caveName) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                Game.quit();
+            }
+        });
+
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 250);
@@ -314,43 +314,48 @@ class GIO {
         bpGame.setTop(tpTop);
 
         if(caveName != null && caveName.length() > 0 ) {
-            bpGame.setBottom(stats.panel());
-            ;
+            VBox bottomPane = new VBox();
+            bottomPane.getChildren().addAll(stats.pane(),Store.purchasePane());
+            bpGame.setBottom(bottomPane);
 
             // have to examine all mouse clicks because clicking on the transparent part of
-            // the mow does not generate a mouseclick event for the bow image
+            // the bow does not generate a mouseclick event for the bow image
             gioScene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent evt) {
-                    // mouse coordinates are relative to bpGame
-                    double mouseX = evt.getX();
-                    double mouseY = evt.getY();
-
-                    // need the bow Image to get the width and height
-                    Image bowImage = bow.imageView.getImage();
-
-                    // convert the bow image Top and Left coordinates to bpGame relative
-                    Point2D bowTopLeft = Game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
-
-                    // calculate the BorderPane relative values for the bow Top, Left, Bottom & Right
-                    // UNDONE try to figure out a way to GET the ImageView margin
-                    double apparentImageViewTopMargin = 5;
-                    double bowTop = bowTopLeft.getY() + apparentImageViewTopMargin;
-                    double bowLeft = bowTopLeft.getX();
-                    double bowBottom = bowTopLeft.getY() + bowImage.getHeight();
-                    double bowRight = bowTopLeft.getX() + bowImage.getWidth();
-
-                    // see if the mouse click occured inside the bow image
-                    if (mouseX > bowLeft && mouseX < bowRight) {
-                        if (mouseY > bowTop && mouseY < bowBottom) {
-                            bow.drawn = true;
-                            bow.draw();
-                            System.out.println("the bow is drawn - an arrow is nocked");
-                            evt.consume();
-                        }
-                    }
+                    handleMouseEvent(evt);
                 }
             });
+        }
+    }
+
+    private void handleMouseEvent(MouseEvent evt){
+        // mouse coordinates are relative to bpGame
+        double mouseX = evt.getX();
+        double mouseY = evt.getY();
+
+        // need the bow Image to get the width and height
+        Image bowImage = bow.imageView.getImage();
+
+        // convert the bow image Top and Left coordinates to bpGame relative
+        Point2D bowTopLeft = Game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
+
+        // calculate the BorderPane relative values for the bow Top, Left, Bottom & Right
+        // UNDONE try to figure out a way to GET the ImageView margin
+        double apparentImageViewTopMargin = 5;
+        double bowTop = bowTopLeft.getY() + apparentImageViewTopMargin;
+        double bowLeft = bowTopLeft.getX();
+        double bowBottom = bowTopLeft.getY() + bowImage.getHeight();
+        double bowRight = bowTopLeft.getX() + bowImage.getWidth();
+
+        // see if the mouse click occured inside the bow image
+        if (mouseX > bowLeft && mouseX < bowRight) {
+            if (mouseY > bowTop && mouseY < bowBottom) {
+                bow.drawn = true;
+                bow.draw();
+                System.out.println("the bow is drawn - an arrow is nocked");
+                evt.consume();
+            }
         }
     }
 

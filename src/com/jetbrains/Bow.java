@@ -1,16 +1,14 @@
 package com.jetbrains;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Region;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import static com.jetbrains.GIO.gioGroup;
 import static com.jetbrains.Game.*;
+import static com.jetbrains.Player.numberOfArrows;
 
 //
 // NOTE there should only be one Player object
@@ -43,7 +41,7 @@ public class Bow {
         // update the bow image
         draw();
 
-        if(stats.numberOfArrows == 0){
+        if(numberOfArrows.get() == 0){
             Game.youLost("You ran out of arrrows");
         }
 

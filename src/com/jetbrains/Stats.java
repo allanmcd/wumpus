@@ -1,5 +1,6 @@
 package com.jetbrains;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +14,7 @@ import javafx.scene.text.Text;
 
 import static com.jetbrains.GIO.statusGridPane;
 import static com.jetbrains.Game.cave;
+import static com.jetbrains.Player.numberOfArrows;
 
 /**
  * The Stats class is used to contain game stats
@@ -31,7 +33,6 @@ public class Stats {
     static Text txtScore;
 
     static int gamePoints;
-    static int numberOfArrows;
     static int numberOfCoins;
     static int numberOfTurns;
     static int score;
@@ -54,14 +55,8 @@ public class Stats {
     }
 
     void decrementArrows(){
-        numberOfArrows--;
-        txtArrows.setText(Integer.toString(numberOfArrows));
-        update();
-    }
-
-    void addTwoArrows(){
-        numberOfArrows = numberOfArrows + 2;
-        txtArrows.setText(Integer.toString(numberOfArrows));
+        numberOfArrows.set((numberOfArrows.get())-1);
+        //txtArrows.setText(Integer.toString(numberOfArrows));
         update();
     }
 
@@ -73,24 +68,22 @@ public class Stats {
 
     void setInitialValues(){
         gamePoints = 0;
-        numberOfArrows = 3;
         numberOfCoins = -1;
         numberOfTurns = -1;
     }
 
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows + 15* cave.bats.numberKilled+ numberOfCoins - numberOfTurns;
+        score = 10 * numberOfArrows.get() + 15* cave.bats.numberKilled+ numberOfCoins - numberOfTurns;
         if(cave.wumpus.dead){
             score += 100;
         }
         txtScore.setText(Integer.toString(score));
-        txtArrows.setText(Integer.toString(numberOfArrows));
         txtCoins.setText(Integer.toString(numberOfCoins));
         txtTurns.setText(Integer.toString(numberOfTurns));
     }
 
-    VBox panel() {
+    VBox pane() {
         // define the sizes of the columns of the status grid
         statusGridPane = new GridPane();
 
@@ -117,7 +110,8 @@ public class Stats {
         txtHint = new Text();
 
         Label lblArrows = new Label("Arrows: ");
-        txtArrows = new Text(Integer.toString(numberOfArrows));
+        txtArrows = new Text(Integer.toString(numberOfArrows.get()));
+        txtArrows.textProperty().bind(Bindings.convert(numberOfArrows));
 
         Label lblCoins = new Label("Coins: ");
         txtCoins = new Text(Integer.toString(numberOfCoins));
@@ -170,7 +164,7 @@ public class Stats {
     // Stats constructor
     //
     Stats(){
-        vBox = panel();
+        vBox = pane();
     }
 
     //
