@@ -287,11 +287,16 @@ class GIO {
 
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
-            Store.purchaseArrows();
+            Store.buyArrows();
+        });
+
+        MenuItem buySecretMenuItem = new MenuItem("Buy A Secret");
+        buySecretMenuItem.setOnAction(e -> {
+            Store.buySecret();
         });
 
         Menu storeMenu = new Menu("Store");
-        storeMenu.getItems().addAll(moreArrrowsMenuItem);
+        storeMenu.getItems().addAll(buySecretMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu);

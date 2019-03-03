@@ -12,10 +12,10 @@ import static com.jetbrains.Debug.message;
 import static com.jetbrains.Player.numberOfArrows;
 
 public final class Store {
-    //
+    ////////////////
     // Store methods
-    //
-    public static void purchaseArrows(){
+    ////////////////
+    public static void buyArrows(){
         int maxQuestions = 3;
         int maxCorrect = 2;
         if(Trivia.ask(maxQuestions, maxCorrect)){
@@ -26,11 +26,23 @@ public final class Store {
         }
     }
 
+    public static void buySecret(){
+
+        int maxQuestions = 3;
+        int maxCorrect = 2;
+        if(Trivia.ask(maxQuestions, maxCorrect)){
+            //UNDONE - give some sort of secret
+            message("Congratulations - you now have two more arrows");
+        } else {
+            message("BUMMER - no secret for you");
+        }
+    }
+
     public static HBox purchasePane(){
         HBox pane = new HBox();
 
         Button btnBuyArrows = new Button("Buy Arrows");
-        btnBuyArrows.setOnAction(e -> purchaseArrows());
+        btnBuyArrows.setOnAction(e -> buyArrows());
 
         Button btnBuySecret = new Button("Buy A Secret");
         btnBuySecret.setAlignment(Pos.CENTER_RIGHT);
@@ -53,15 +65,14 @@ public final class Store {
         return pane;
     }
 
-    //
+    ///////////////////////////
     // Store class constructor
-    //
+    //////////////////////////
     private Store(){
         // ensure that Store is a public singleton
     };
 
+    //////////////////////////
     // Store helper functions
-    private static void buySecret(){
-        System.out.println("feature not yet implemented");
-    }
+    /////////////////////////
 }

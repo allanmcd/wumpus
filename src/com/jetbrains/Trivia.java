@@ -17,10 +17,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Random;
 
+import static com.jetbrains.Debug.message;
+import static com.jetbrains.Player.numberOfCoins;
 import static javafx.scene.input.KeyCode.ENTER;
 
 public final class Trivia {
-    
+
     ////////////////////////////
     // Trivia Instance variables
     ////////////////////////////
@@ -34,6 +36,13 @@ public final class Trivia {
     /////////////////
     public static boolean ask (int maxQuestions, int minCorrect)
     {
+        // make sure the player has enough coins to answer the required questions
+        if(minCorrect > numberOfCoins.get())
+        {
+            message("Sorry, you don't have enough coins to answer " + minCorrect + " questions");
+            return false;
+        }
+        // set up a dialog to inform the player of the min correct and max questions
         Stage stage = new Stage(StageStyle.UNDECORATED);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Trivia Dialog");
@@ -41,6 +50,7 @@ public final class Trivia {
         Label lbl = new Label();
         lbl.setText("You must answer " + minCorrect + " out of " + maxQuestions + " questions correctly");
 
+        // create an "OK" button at the bottom of the dialog
         Button btnOK = new Button();
         btnOK.setText("OK");
         btnOK.setOnAction(e -> stage.close());
@@ -53,6 +63,7 @@ public final class Trivia {
         pane.getChildren().addAll(lbl, btnOK);
         pane.setAlignment(Pos.CENTER);
 
+        // create the scene to display the dialog contents
         Scene scene = new Scene(pane);
         scene.setOnKeyPressed(e -> {
             KeyCode keyCode = e.getCode();
@@ -61,8 +72,11 @@ public final class Trivia {
             }
         });
 
+        // display the dialog and wait for player to click OK button
         stage.setScene(scene);
         stage.showAndWait();
+
+        // now start asking questions
         rightAnswers = 0;
         wrongAnswers = 0;
         boolean retVal = askQuestions(maxQuestions, minCorrect);
@@ -139,6 +153,11 @@ public final class Trivia {
 
     private static boolean askQuestions(int maxQuestions, int minCorrect){
         while(wrongAnswers <= maxQuestions - minCorrect && rightAnswers < minCorrect){
+            // each question costs a coin - make sure the player has at least one
+            if(numberOfCoins.get() < 1){
+                message("Sorry, you don't have any coins left and you still need to answer " + (minCorrect - rightAnswers) + " more question(s)");
+                return false;
+            }
             int triviaIndex = Player.nextTriviaIndex++;
             askQuestion(triviaIndex);
         }
@@ -149,12 +168,16 @@ public final class Trivia {
     }
 
     private static void askQuestion(int triviaIndex){
+        numberOfCoins.set(numberOfCoins.get() - 1);
+
+        // create a dialog to display the question on
         questionStage = new Stage(StageStyle.UNDECORATED);
         questionStage.initModality(Modality.APPLICATION_MODAL);
         questionStage.setAlwaysOnTop(true);
         questionStage.setTitle("Trivia Dialog");
         questionStage.setMinWidth(250);
 
+        // get the trivia question and clean it up for displaying
         String question = triviaQuestions[triviaIndex][0];
         question = question.replace("{","");
         question = question.replace("}","");
@@ -163,9 +186,10 @@ public final class Trivia {
         Label lblQuestion = new Label(question + "?");
         lblQuestion.setPadding(new Insets(10,0,0,20));
 
+        // get the corrrect answer
         String correctAnswer = triviaQuestions[triviaIndex][1];
 
-        // copy all the answers for this question
+        // copy all the wrong answers for this question (3 max)
         String answers[] = new String[4];
         int numberOfAnswers = 0;
         for(int i = 1; i < triviaQuestions[0].length ; i++){
@@ -177,10 +201,11 @@ public final class Trivia {
             numberOfAnswers++;
         }
 
+        // create a Border pane to put the question and answers in
         BorderPane questionPane = new BorderPane();
         questionPane.setTop(lblQuestion);
 
-        // fill in an answer for each check box
+        // create check boxes for each answer and fill it in
         Random rnd = new Random();
         VBox answerPane = new VBox(5);
         for(int i = 0; i < numberOfAnswers; i++) {
@@ -208,6 +233,7 @@ public final class Trivia {
         }
         answerPane.setAlignment(Pos.BASELINE_LEFT);
 
+        // put the questions and answers in a properly aligned pane
         HBox answerPaneCentered = new HBox();
         final Pane spacer1 = new Pane();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
@@ -222,6 +248,7 @@ public final class Trivia {
 
         questionPane.setCenter(answerPaneCentered);
 
+        // now display the question and answer dialog
         Scene scene = new Scene(questionPane);
         questionStage.setScene(scene);
         lblQuestion.requestFocus();

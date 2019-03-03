@@ -14,7 +14,9 @@ import javafx.scene.text.Text;
 
 import static com.jetbrains.GIO.statusGridPane;
 import static com.jetbrains.Game.cave;
+import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
+import static com.jetbrains.Player.numberOfCoins;
 
 /**
  * The Stats class is used to contain game stats
@@ -33,7 +35,6 @@ public class Stats {
     static Text txtScore;
 
     static int gamePoints;
-    static int numberOfCoins;
     static int numberOfTurns;
     static int score;
 
@@ -43,14 +44,12 @@ public class Stats {
     // Stats member function(s)
     //
     void addCoin(){
-        numberOfCoins++;
-        txtCoins.setText(Integer.toString(numberOfCoins));
+        numberOfCoins.set(numberOfCoins.get() + 1);
         update();
     }
 
     void subtractCoin(){
-        numberOfCoins--;
-        txtCoins.setText(Integer.toString(numberOfCoins));
+        numberOfCoins.set(numberOfCoins.get() - 1);
         update();
     }
 
@@ -68,18 +67,20 @@ public class Stats {
 
     void setInitialValues(){
         gamePoints = 0;
-        numberOfCoins = -1;
+        numberOfCoins.set(-1);
+        if(useDefaults){
+            numberOfCoins.set(1);
+        }
         numberOfTurns = -1;
     }
 
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows.get() + 15* cave.bats.numberKilled+ numberOfCoins - numberOfTurns;
+        score = 10 * numberOfArrows.get() + 15* cave.bats.numberKilled+ numberOfCoins.get() - numberOfTurns;
         if(cave.wumpus.dead){
             score += 100;
         }
         txtScore.setText(Integer.toString(score));
-        txtCoins.setText(Integer.toString(numberOfCoins));
         txtTurns.setText(Integer.toString(numberOfTurns));
     }
 
@@ -110,11 +111,12 @@ public class Stats {
         txtHint = new Text();
 
         Label lblArrows = new Label("Arrows: ");
-        txtArrows = new Text(Integer.toString(numberOfArrows.get()));
+        txtArrows = new Text();
         txtArrows.textProperty().bind(Bindings.convert(numberOfArrows));
 
         Label lblCoins = new Label("Coins: ");
-        txtCoins = new Text(Integer.toString(numberOfCoins));
+        txtCoins = new Text();
+        txtCoins.textProperty().bind(Bindings.convert(numberOfCoins));
 
         Label lblTurns = new Label("Turns: ");
         txtTurns = new Text(Integer.toString(numberOfTurns));

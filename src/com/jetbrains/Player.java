@@ -11,6 +11,8 @@ public class Player {
     // Player instance variables
     //
     static SimpleIntegerProperty numberOfArrows = new SimpleIntegerProperty();
+    static SimpleIntegerProperty numberOfCoins = new SimpleIntegerProperty();
+
     public static int nextTriviaIndex;
 
     int roomNumber;
