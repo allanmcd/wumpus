@@ -1,5 +1,7 @@
 package com.jetbrains;
 
+import java.util.Random;
+
 import static com.jetbrains.Game.cave;
 
 public class Bats {
@@ -9,26 +11,21 @@ public class Bats {
 
     // UNDONE - make the number of bats variable
     //          but for now create 2
+    int initialNumberOfBats = 2;
     Bat[] bats = new Bat[2];
 
     // used to keep track of where the bats are currently located
-    int batRooms[] = new int[2];
+    int batRooms[] = new int[initialNumberOfBats];
 
-    int numberKilled;
+    int numberOfBatsKilled;
     //
     // Bats methods
     //
-    boolean isInRoom(int caveRoomNumber){
-        boolean batInRoom = false;
-        for(int batIndex = 0; batIndex < bats.length; batIndex++){
-            if(bats[batIndex].isDead == false) {
-                if (bats[batIndex].roomNumber == caveRoomNumber) {
-                    batInRoom = true;
-                    break;
-                }
-            }
+    void addBats(int numberOfBats){
+        // create some bats
+        for(int batIndex = 0; batIndex < Game.maxBats; batIndex++) {
+            bats[batIndex] = new Bat(batIndex);
         }
-        return batInRoom;
     }
 
     boolean inAdjacentRoom(){
@@ -46,18 +43,39 @@ public class Bats {
         return inAdjacentRoom;
     }
 
-    void addBats(int numberOfBats){
-        // create some bats
-        for(int batIndex = 0; batIndex < Game.maxBats; batIndex++) {
-            bats[batIndex] = new Bat(batIndex);
+    boolean isInRoom(int caveRoomNumber){
+        boolean batInRoom = false;
+        for(int batIndex = 0; batIndex < bats.length; batIndex++){
+            if(bats[batIndex].isDead == false) {
+                if (bats[batIndex].roomNumber == caveRoomNumber) {
+                    batInRoom = true;
+                    break;
+                }
+            }
         }
+        return batInRoom;
+    }
+
+    int roomWithBatInIt(){
+        Random rnd = new Random();
+        int batRoomIndex = rnd.nextInt(initialNumberOfBats);
+        for(int i = 0; i < initialNumberOfBats; i++) {
+            if (batRooms[batRoomIndex] == 0) {
+                // no bat in this room - try another room
+                batRoomIndex = rnd.nextInt(initialNumberOfBats);
+            }
+        }
+        if(batRooms[batRoomIndex] == 0){
+            return 0;
+        }
+        return batRoomIndex;
     }
 
     void makeDead(int caveRoomNumber){
         for(int batIndex = 0; batIndex < bats.length; batIndex++){
             if(bats[batIndex].roomNumber == caveRoomNumber) {
                 bats[batIndex].isDead = true;
-                numberKilled++;
+                numberOfBatsKilled++;
                 Game.stats.update();
             }
         }

@@ -16,13 +16,14 @@ class Cave {
     //
     // Cave static variables
     //
-    static String name;
     static Bats bats;
-    static Pits pits;
+    static int currentRoom;
     static int initialRoom;
-    static Wumpus wumpus;
-    static boolean valid;
+    static String name;
+    static Pits pits;
     static Room rooms[] = new Room[30];
+    static boolean valid;
+    static Wumpus wumpus;
 
     //
     // Cave constructor

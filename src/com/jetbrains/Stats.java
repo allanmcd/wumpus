@@ -5,8 +5,10 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -76,7 +78,7 @@ public class Stats {
 
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows.get() + 15* cave.bats.numberKilled+ numberOfCoins.get() - numberOfTurns;
+        score = 10 * numberOfArrows.get() + 15* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns;
         if(cave.wumpus.dead){
             score += 100;
         }
@@ -106,7 +108,7 @@ public class Stats {
 
         statusGridPane.setPadding(new Insets(5, 20, 5, 20));
 
-        // create the status and info controls for the bottom pane of the BorderPane
+        // create the info, hint and trivia controls for the bottom pane of the BorderPane
         txtInfo = new Text();
         txtHint = new Text();
 
@@ -128,6 +130,7 @@ public class Stats {
         setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtTurns, txtScore);
 
         // add the info, hint and stat labels and text boxes to the gridpane
+
         statusGridPane.add(txtInfo, 0, 0);
         statusGridPane.add(txtHint, 0, 1);
         statusGridPane.add(lblArrows, 0, 2);
@@ -151,13 +154,18 @@ public class Stats {
 
         statusGridPane.setAlignment(Pos.CENTER);
 
+        RowConstraints rc1 = new RowConstraints();
+        RowConstraints rc2 = new RowConstraints();
+        RowConstraints rc3 = new RowConstraints();
+        rc3.setMaxHeight(40);
+        statusGridPane.getRowConstraints().addAll( rc1, rc2,rc3);
+
         // package the status objects together into a vertical box
         // so that they will be on top of each other
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().addAll(txtInfo, txtHint, statusGridPane);
         vBox.setPadding(new Insets(0,0,20,0));
-
 
         return vBox;
     }

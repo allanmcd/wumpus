@@ -18,6 +18,11 @@ public class Pits {
     //
     // Pit instance variables
     //
+
+    // not currently used - don't know why
+    Pit pits[] = new Pit[2];
+
+    int pitRooms[] = new int[2];
     int roomNumber;
 
     //
@@ -86,11 +91,20 @@ public class Pits {
                 } while (generateAnotherPitRoomNumber);
 
                 rooms[pitRoomNumber].hasPit = true;
+                pitRooms[pitNumber-1] = pitRoomNumber;
                 System.out.println("pit assigned to room " + pitRoomNumber);
 
             }
         }
     }
+
+    int roomWithPitInIt(){
+        Random rnd = new Random();
+        int pitRoomIndex = rnd.nextInt(NUMBER_OF_PITS);
+        return pitRooms[pitRoomIndex];
+    }
+
+
 }
 
 

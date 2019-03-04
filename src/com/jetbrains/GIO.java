@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Cave.*;
+import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 
@@ -61,8 +62,11 @@ class GIO {
     // GIO methods
     //
     void gotoRoom(int roomNumber) {
+        Cave.currentRoom = 0;
         stats.txtInfo.setText("Entered room " + roomNumber);
         stats.txtHint.setText("");
+        Trivia.txtTrivia.setText(Trivia.randomStatement());
+
         stats.anotherTurn();
 
         // REDO - a vBox would work better here
@@ -120,7 +124,11 @@ class GIO {
         } else if (bats.inAdjacentRoom()) {
             updateHint("Wings flapping nearby");
         }
+        else{
+            updateHint("");
+        }
 
+        Cave.currentRoom = roomNumber;
     }
 
     void updateInfo(String infoText) {
@@ -245,10 +253,10 @@ class GIO {
 
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
         // set up the sceeen display area
-        gioScene = new Scene(bpGame, 400, 250);
+        gioScene = new Scene(bpGame, 400, 400);
 
         stage.setWidth(600);
-        stage.setHeight(600);
+        stage.setHeight(700);
 
         // display the wumpus image
         addSplash(bpGame, "src/wumpus.png");
@@ -256,7 +264,7 @@ class GIO {
         Game.stage.show();
 
         // build the menu bar
-        //Build the first menu.
+        //Build the Game menu and its menu items
         Menu gameMenu = new Menu("Game");
 
         MenuItem newGameMenuItem = new MenuItem("New Game");
@@ -285,6 +293,7 @@ class GIO {
 
         gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
 
+        // create the Store menu and it's menu items
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
             Store.buyArrows();
@@ -295,11 +304,25 @@ class GIO {
             Store.buySecret();
         });
 
+        // create the Cheat menu and its menu items
         Menu storeMenu = new Menu("Store");
         storeMenu.getItems().addAll(buySecretMenuItem);
 
+        MenuItem moreCoinsMenuItem = new MenuItem("add 5 more coins");
+        moreCoinsMenuItem.setOnAction(e -> {
+            Store.addMoreCoins(5);
+        });
+
+        MenuItem showRoomContentsMenuItem = new MenuItem("show room contents");
+        showRoomContentsMenuItem.setOnAction(e -> {
+            message("not yet implemented");
+        });
+
+        Menu cheatMenu = new Menu("Cheat");
+        cheatMenu.getItems().addAll(moreCoinsMenuItem, showRoomContentsMenuItem);
+
         MenuBar gameMenuBar = new MenuBar();
-        gameMenuBar.getMenus().addAll(gameMenu, storeMenu);
+        gameMenuBar.getMenus().addAll(gameMenu, storeMenu, cheatMenu);
 
         // create the cave name label for the TOP area of the Borderpane
         lblCaveName = new Label(caveName);
@@ -320,7 +343,7 @@ class GIO {
 
         if(caveName != null && caveName.length() > 0 ) {
             VBox bottomPane = new VBox();
-            bottomPane.getChildren().addAll(stats.pane(),Store.purchasePane());
+            bottomPane.getChildren().addAll(stats.pane(),Store.purchasePane(), Trivia.pane());
             bpGame.setBottom(bottomPane);
 
             // have to examine all mouse clicks because clicking on the transparent part of
