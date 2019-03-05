@@ -5,9 +5,9 @@ import java.util.Random;
 import static com.jetbrains.Game.cave;
 
 public class Bats {
-    //
-    // Bats Instance variables
-    //
+    /////////////////////////////
+    // Bats Instance variables //
+    /////////////////////////////
 
     // UNDONE - make the number of bats variable
     //          but for now create 2
@@ -18,9 +18,10 @@ public class Bats {
     int batRooms[] = new int[initialNumberOfBats];
 
     int numberOfBatsKilled;
-    //
-    // Bats methods
-    //
+
+    //////////////////
+    // Bats methods //
+    //////////////////
     void addBats(int numberOfBats){
         // create some bats
         for(int batIndex = 0; batIndex < Game.maxBats; batIndex++) {

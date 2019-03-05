@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.jetbrains.Debug.message;
-import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfCoins;
 import static javafx.scene.input.KeyCode.ENTER;
 import static javafx.scene.text.FontWeight.BOLD;

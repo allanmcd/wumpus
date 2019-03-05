@@ -1,17 +1,11 @@
 package com.jetbrains;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,11 +17,9 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Debug.message;
-import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
 import static javafx.scene.input.KeyCode.ENTER;
-import static javafx.scene.input.KeyCode.ESCAPE;
 
 public final class Store {
     ////////////////

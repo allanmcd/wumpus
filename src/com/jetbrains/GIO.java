@@ -2,7 +2,6 @@
 // Wumpus Graphical Interface Object
 //
 package com.jetbrains;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +38,7 @@ import static com.jetbrains.Cave.*;
 import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
+import static com.jetbrains.Player.numberOfCoins;
 
 //
 // NOTE there should only be one GIO object
@@ -107,6 +107,7 @@ class GIO {
         //} else if (Cave.rooms[roomNumber].hasBat()) {
         } else if (Cave.bats.isInRoom(roomNumber)) {
             relocatePlayer();
+            Cave.bats.bats[0].relocateBatFrom(currentRoom);
         } else if (Cave.rooms[roomNumber].hasPit) {
             // FEATURE would be nice if the player spun and vanished
             String askMsgPrefix = "You have fallen into a pit.  To get out";
@@ -122,11 +123,11 @@ class GIO {
         } else if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom()){
             updateHint("Wings flapping nearby and there is a foul odor in the air");
         } else if(pits.inAdjacentRoom()){
-            updateHint("There is cool breeze");
+            updateHint("Pit - I feel a draft");
         } else if(wumpus.inAdjacentRoom()){
-            updateHint("There is a foul odor in the air");
+            updateHint("Wumpus - I smell a Wumpus");
         } else if (bats.inAdjacentRoom()) {
-            updateHint("Wings flapping nearby");
+            updateHint("Bat - Bat nearby ");
         }
         else{
             updateHint("");
@@ -318,9 +319,10 @@ class GIO {
             Store.addMoreCoins();
         });
 
+
         MenuItem showRoomContentsMenuItem = new MenuItem("show room contents");
         showRoomContentsMenuItem.setOnAction(e -> {
-            message("not yet implemented");
+           message("feature not yet implemented");
         });
 
         Menu debugMenu = new Menu("Cheat");
@@ -417,6 +419,8 @@ class GIO {
     private void relocatePlayer() {
         showDialog("A bat has captured you", "It will transport you to another room");
         gio.gotoRoom(nextEmptyRoom(), "You have been transported to");
+        // counteract the +1 for entering a room
+        numberOfCoins.set(numberOfCoins.get() - 1);
     }
 
     private int nextEmptyRoom() {

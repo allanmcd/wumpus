@@ -7,26 +7,44 @@ import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 
 public class Bat {
-    //
-    // Bat  constants
-    //
+    ////////////////////
+    // Bat  constants //
+    ////////////////////
     private final int BAT_1 = 0;
     private final int BAT_2 = 1;
 
-    //
-    // Bat instance variables
-    //
+    ////////////////////////////
+    // Bat instance variables //
+    ////////////////////////////
+
     int roomNumber;
     int number;
     boolean isDead;
 
-    //
-    // Bat methods
-    //
+    /////////////////////////
+    // Bat private variables //
+    /////////////////////////
 
-    //
-    // Bat constructor
-    //
+    // need to maintain a unique Random generator
+    // so that creating new bats uses the existing random number sequence
+    private static Random batRandom = new Random();
+
+    /////////////////
+    // Bat methods //
+    /////////////////
+
+    void relocateBatFrom(int currentRoomNumber){
+        for(int i = 0; i < cave.bats.batRooms.length; i++){
+            if(cave.bats.batRooms[i] == currentRoomNumber){
+                setBatRoomNumber(i,currentRoomNumber,batRandom);
+            }
+        }
+    }
+
+    /////////////////////
+    // Bat constructor //
+    /////////////////////
+
     Bat(int batIndex){
         if(useDefaults){
             if(batIndex == 0) {
@@ -45,16 +63,10 @@ public class Bat {
         number = batIndex + 1;
     }
 
-    //
-    // Bat local variables
-    //
-    // need to maintain a unique Random generator
-    // so that creating new bats uses the existing random number sequence
-    private static Random batRandom = new Random();
+    //////////////////////////
+    // Bat helper functions //
+    //////////////////////////
 
-    //
-    // Bat helper functions
-    //
     private void setBatRoomNumber(int batRoomIndex, int initialRoom, Random random){
         // generate a different random room from 1 to 30
         int batRoomNumber = random.nextInt(29) + 1;
