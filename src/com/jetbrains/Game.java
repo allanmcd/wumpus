@@ -11,6 +11,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
@@ -87,7 +88,7 @@ public final class Game {
             // initialize the stats
             stats.setInitialValues();
 
-            gio.gotoRoom(cave.initialRoom);
+            gio.gotoRoom(cave.initialRoom, "You entered");
         }
     }
 
@@ -211,6 +212,11 @@ public final class Game {
             userNameField.requestFocus();
         });
         dialog.showAndWait();
+        // can do the following if you want to ensure that the user clicked OK
+        // Optional<ButtonType> result = dialog.showAndWait();
+        // if (result.isPresent() && result.get() == ButtonType.OK) {
+        //     // input is valid
+        // }
         playerName = userNameField.getText();
     }
 }

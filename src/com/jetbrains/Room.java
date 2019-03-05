@@ -255,7 +255,7 @@ class Room {
                         bow.shoot(targetRoom);
                     } else {
                         event.consume();
-                        gio.gotoRoom(wall.adjacentRoom);
+                        gio.gotoRoom(wall.adjacentRoom, "You crawled through a tunnel into");
                     }
                 }
             });

@@ -1,32 +1,47 @@
 package com.jetbrains;
 
 import com.sun.org.apache.bcel.internal.generic.NEW;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.stage.Screen;
+import javafx.stage.Window;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Debug.message;
+import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
+import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.scene.input.KeyCode.ESCAPE;
 
 public final class Store {
     ////////////////
     // Store methods
     ////////////////
 
-    public static void addMoreCoins(int howMany){
-        numberOfCoins.set(numberOfCoins.get() + howMany);
+    public static void addMoreCoins(){
+        numberOfCoins.set(numberOfCoins.get() + getHowManyCoins());
     }
 
     public static void buyArrows(){
         int maxQuestions = 3;
         int maxCorrect = 2;
-        if(Trivia.ask(maxQuestions, maxCorrect)){
+        if(Trivia.ask(maxQuestions, maxCorrect, "To buy 2 arrows")){
             numberOfArrows.set(numberOfArrows.get() +2);
             message("Congratulations - you now have two more arrows");
         } else {
@@ -38,7 +53,7 @@ public final class Store {
 
         int maxQuestions = 3;
         int maxCorrect = 2;
-        if(Trivia.ask(maxQuestions, maxCorrect)){
+        if(Trivia.ask(maxQuestions, maxCorrect, "To buy a secret")){
             //UNDONE - give some sort of secret
             Random rnd = new Random();
             boolean anotherSecret = true;
@@ -116,4 +131,51 @@ public final class Store {
     //////////////////////////
     // Store helper functions
     /////////////////////////
+    public static int getHowManyCoins() {
+        int numberOfCoins = 0;
+        Dialog dialog = new Dialog<>();
+        //dialog.setTitle("Sign In");
+        //dialog.setHeaderText("How many coins would you like");
+        dialog.setResizable(false);
+
+        Label userNameLabel = new Label("How many coins would you like:");
+        TextField userNameField = new TextField();
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 35, 20, 35));
+        grid.add(userNameLabel, 1, 1);
+        grid.add(userNameField, 2, 1);
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        okButton.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if(keyCode == ENTER){
+                dialog.setResult(ButtonType.OK);
+            }
+        });
+
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        Platform.runLater(() -> {
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Window window = dialog.getDialogPane().getScene().getWindow();
+            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+            userNameField.requestFocus();
+        });
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                numberOfCoins = Integer.parseInt(userNameField.getText());
+            } catch (Exception e) {
+                numberOfCoins = 0;
+            }
+        }
+        return numberOfCoins;
+    }
 }

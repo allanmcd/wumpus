@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import javafx.geometry.*;
 
 import static com.jetbrains.Game.gio;
-import static com.jetbrains.Main.primaryStage;
-import static com.jetbrains.Main.useDefaults;
+import static com.jetbrains.Main.*;
+import static com.jetbrains.Trivia.init;
 import static javafx.scene.input.KeyCode.ENTER;
 import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.text.FontWeight.BOLD;
@@ -52,12 +52,17 @@ public final class SplashScreen {
     //
 
     public static void show(){
-        if(firstTime){
-            Game.signIn();
+        if(skipSplashScreen){
             init();
-        }
-        if(valid){
-            stage.show();
+            playGame(caveName);
+        } else {
+            if (firstTime) {
+                Game.signIn();
+                init();
+            }
+            if (valid) {
+                stage.show();
+            }
         }
     }
 

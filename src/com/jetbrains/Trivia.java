@@ -47,7 +47,7 @@ public final class Trivia {
     // Trivia methods
     /////////////////
 
-    static boolean ask (int maxQuestions, int minCorrect)
+    static boolean ask (int maxQuestions, int minCorrect, String msgPreText)
     {
         // make sure the player has enough coins to answer the required questions
         if(minCorrect > numberOfCoins.get())
@@ -61,7 +61,7 @@ public final class Trivia {
         stage.setTitle("Trivia Dialog");
         stage.setMinWidth(250);
         Label lbl = new Label();
-        lbl.setText("You must answer " + minCorrect + " out of " + maxQuestions + " questions correctly");
+        lbl.setText(msgPreText + " you must answer " + minCorrect + " out of " + maxQuestions + " questions correctly");
 
         // create an "OK" button at the bottom of the dialog
         Button btnOK = new Button();

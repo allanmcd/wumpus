@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 public class Main extends Application{
     // pass "useDefaults" as a command line arg while debugging this code
     static boolean useDefaults = false;
+    static boolean skipSplashScreen = false;
     static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -18,9 +19,25 @@ public class Main extends Application{
         if(args.length > 0) {
             //NOTE this assumes that there is only one possible arg
             // see if we are in debug mode
-            String arg0 = args[0];
-            useDefaults = arg0.equals("useDefaults");
-            System.out.println((useDefaults ? "" : "NOT ") + " using defaults");
+            for(int i = 0; i < args.length; i++)
+            {
+                switch(args[i]) {
+                    case "useDefaults":
+                        useDefaults = true;
+                        break;
+                    case "skipSplashScreen":
+                        skipSplashScreen = true;
+                        break;
+                        default:
+                            System.out.println("invalid command line switch ' " + args[i]);
+                            break;
+                }
+
+            }
+        }
+        System.out.println((useDefaults ? "" : "NOT ") + " using defaults");
+        if(skipSplashScreen) {
+            System.out.println("skipping the SplashScreen");
         }
 
         launch(args);}

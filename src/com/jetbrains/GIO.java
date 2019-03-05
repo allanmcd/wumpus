@@ -61,9 +61,12 @@ class GIO {
     //
     // GIO methods
     //
-    void gotoRoom(int roomNumber) {
+    void gotoRoom(int roomNumber, String msgPrefix) {
+        // you get a coin every time you enter a room - for any reason
+        stats.addCoin();
+
         Cave.currentRoom = 0;
-        stats.txtInfo.setText("Entered room " + roomNumber);
+        stats.txtInfo.setText(msgPrefix + " room " + roomNumber);
         stats.txtHint.setText("");
         Trivia.txtTrivia.setText(Trivia.randomStatement());
 
@@ -106,12 +109,13 @@ class GIO {
             relocatePlayer();
         } else if (Cave.rooms[roomNumber].hasPit) {
             // FEATURE would be nice if the player spun and vanished
-            Game.youLost("You fell into a bottomless pit");
-        } else {
-            // nothing interesting happened - you get a coin
-            stats.addCoin();
+            String askMsgPrefix = "You have fallen into a pit.  To get out";
+            if(Trivia.ask(3,2, askMsgPrefix)){
+                gotoRoom(initialRoom, "You have been returned to");
+            } else {
+                Game.youLost("You fell into a bottomless pit");
+            }
         }
-
         // any interesting objects nearby
         if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
             updateHint("Wings flapping nearby with foul odor in the air and cool breeze");
@@ -264,7 +268,8 @@ class GIO {
         Game.stage.show();
 
         // build the menu bar
-        //Build the Game menu and its menu items
+
+        //-- Build the Game menu and its menu items --//
         Menu gameMenu = new Menu("Game");
 
         MenuItem newGameMenuItem = new MenuItem("New Game");
@@ -293,7 +298,7 @@ class GIO {
 
         gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
 
-        // create the Store menu and it's menu items
+        //-- create the Store menu and it's menu items --//
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
             Store.buyArrows();
@@ -304,13 +309,13 @@ class GIO {
             Store.buySecret();
         });
 
-        // create the Cheat menu and its menu items
+        //--- create the Debug menu and its menu items ---//
         Menu storeMenu = new Menu("Store");
         storeMenu.getItems().addAll(buySecretMenuItem);
 
-        MenuItem moreCoinsMenuItem = new MenuItem("add 5 more coins");
+        MenuItem moreCoinsMenuItem = new MenuItem("add coins");
         moreCoinsMenuItem.setOnAction(e -> {
-            Store.addMoreCoins(5);
+            Store.addMoreCoins();
         });
 
         MenuItem showRoomContentsMenuItem = new MenuItem("show room contents");
@@ -318,11 +323,11 @@ class GIO {
             message("not yet implemented");
         });
 
-        Menu cheatMenu = new Menu("Cheat");
-        cheatMenu.getItems().addAll(moreCoinsMenuItem, showRoomContentsMenuItem);
+        Menu debugMenu = new Menu("Cheat");
+        debugMenu.getItems().addAll(moreCoinsMenuItem, showRoomContentsMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
-        gameMenuBar.getMenus().addAll(gameMenu, storeMenu, cheatMenu);
+        gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);
 
         // create the cave name label for the TOP area of the Borderpane
         lblCaveName = new Label(caveName);
@@ -411,7 +416,7 @@ class GIO {
 
     private void relocatePlayer() {
         showDialog("A bat has captured you", "It will transport you to another room");
-        gio.gotoRoom(nextEmptyRoom());
+        gio.gotoRoom(nextEmptyRoom(), "You have been transported to");
     }
 
     private int nextEmptyRoom() {
