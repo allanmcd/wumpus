@@ -3,13 +3,22 @@ package com.jetbrains;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import static com.jetbrains.Game.*;
+import static javafx.scene.text.FontWeight.*;
 
 class Room {
     //
@@ -29,6 +38,10 @@ class Room {
         private static final int POINT_4 = 4;
         private static final int POINT_5 = 5;
         private static final int POINT_6 = 6;
+
+        private final int smallDeltaY = 32;
+        private final int smallDeltaX1 = 20;
+        private final int smallDeltaX2 = 36;
 
     //
     // Room instance variables
@@ -71,6 +84,95 @@ class Room {
                 break;
             }
         }
+    }
+
+    void drawSmall(){
+        Group group = new Group();
+        double walls[][][] = new double [2][7][2];
+
+        int mapTop = 30;
+        int mapLeft = 30;
+
+        int top = mapTop + smallDeltaY;
+        int left = mapLeft;
+        drawSmallRoom(group, walls, Color.ALICEBLUE, 30, top, left);
+
+        top = mapTop;
+        left = mapLeft + smallDeltaX1 + smallDeltaX2 -6;
+        drawSmallRow(group,walls,Color.ALICEBLUE,25,6,top,left);
+
+        top = mapTop + 3 * smallDeltaY - 6;
+        left = mapLeft;
+        drawSmallColumn(group,walls,Color.ALICEBLUE,6,5,top,left);
+
+        top = mapTop + 2 * smallDeltaY - 6;
+        left = mapLeft + smallDeltaX1 + smallDeltaX2 - 6;
+        int firstRoomNumber = 1;
+        int numberOfRooms = 6;
+        for(int i = 1; i <= 5; i++) {
+            drawSmallRow(group, walls, Color.LIGHTGOLDENRODYELLOW, firstRoomNumber, numberOfRooms, top, left);
+            top += 2 * smallDeltaY - 6;
+            firstRoomNumber += numberOfRooms;
+        }
+
+        drawSmallRow(group,walls,Color.ALICEBLUE,1,6,top,left);
+
+        top = mapTop + 2 * smallDeltaY - 3;
+        left = mapLeft + 4 * (smallDeltaX2 + 2 * smallDeltaX1) + 2* smallDeltaX2 - smallDeltaX1 + 1;
+        drawSmallColumn(group,walls,Color.ALICEBLUE,1,5,top,left);
+
+        top += 9 * smallDeltaY;
+        drawSmallRoom(group, walls, Color.ALICEBLUE, 1, top, left);
+
+        Scene smallScene = new Scene(group);
+
+        Stage smallStage = new Stage(StageStyle.UTILITY);
+        smallStage.setTitle("Cave Map");
+        smallStage.setWidth(500);
+        smallStage.setHeight(520);
+
+        smallStage.setScene(smallScene);
+        smallStage.show();
+
+    }
+
+    private void drawSmallRow(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, int firstTop, int firstLeft){
+        int roomLeft = firstLeft;
+        int lastRoomNumber = firstRoomNumber + numberOfRooms - 1;
+        for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber++){
+            boolean even = roomNumber % 2 == 0;
+            int roomTop = (roomNumber % 2 == 0)? firstTop + smallDeltaY:firstTop;
+            drawSmallRoom(group, walls, fillColor, roomNumber, roomTop, roomLeft);
+            roomLeft += smallDeltaX1 + smallDeltaX2 -5;
+        }
+    }
+
+    private void drawSmallColumn(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, int firstTop, int firstLeft){
+        int roomTop = firstTop;
+        int lastRoomNumber = firstRoomNumber + 6 * (numberOfRooms - 1);
+        for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber += 6){
+            drawSmallRoom(group, walls, fillColor, roomNumber, roomTop, firstLeft);
+            roomTop += 2 * smallDeltaY - 6;
+        }
+    }
+
+    private void drawSmallRoom(Group group, double walls[][][], Color fillColor, int roomNumber, int top, int left){
+        initRoomHexagon(walls[OUTER_WALL],left,top,smallDeltaX1, smallDeltaX2,smallDeltaY);
+        initRoomHexagon(walls[INNER_WALL],left+5,top+3,smallDeltaX1 - 3, smallDeltaX2 -4,smallDeltaY - 4);
+        drawHexagonWalls(group, walls[OUTER_WALL], Color.BLACK);
+        drawHexagonWalls(group, walls[INNER_WALL], fillColor);
+        Label lblRoomNumber = new Label(Integer.toString(roomNumber));
+        //lblRoomNumber.setFont(Font.font("Verdana", EXTRA_LIGHT, 36));
+        lblRoomNumber.setStyle("-fx-text-fill: rgba(50, 100, 100, 0.5); -fx-font-size: 36px;");
+        lblRoomNumber.setAlignment(Pos.CENTER);
+        VBox roomNumberPane = new VBox();
+        roomNumberPane.setPrefSize(50,50);
+        roomNumberPane.getChildren().add(lblRoomNumber);
+        roomNumberPane.setLayoutX(left + smallDeltaX1 -8);
+        roomNumberPane.setLayoutY(top - 8 + smallDeltaY/2);
+        roomNumberPane.setAlignment(Pos.CENTER);
+        //roomNumberPane.setStyle("-fx-border-color: black");
+        group.getChildren().add(roomNumberPane);
     }
 
     void initWallPoints(){

@@ -320,9 +320,9 @@ class GIO {
         });
 
 
-        MenuItem showRoomContentsMenuItem = new MenuItem("show room contents");
+        MenuItem showRoomContentsMenuItem = new MenuItem("show cave map");
         showRoomContentsMenuItem.setOnAction(e -> {
-           message("feature not yet implemented");
+           Cave.rooms[0].drawSmall();
         });
 
         Menu debugMenu = new Menu("Cheat");
