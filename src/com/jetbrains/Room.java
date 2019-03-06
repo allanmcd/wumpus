@@ -7,18 +7,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import static com.jetbrains.Game.*;
-import static javafx.scene.text.FontWeight.*;
 
 class Room {
     //
@@ -43,6 +40,17 @@ class Room {
         private final int smallDeltaX1 = 20;
         private final int smallDeltaX2 = 36;
 
+        private final int FULL_SCALE_DELTA_X1 = 110;
+        private final int FULL_SCALE_DELTA_X2 = 190;
+        private final int FULL_SCALE_DELTA_Y = 170;
+
+        private final int X1 = 0;
+        private final int X2 = 1;
+        private final int Y1 = 2;
+
+        private final int TOP = 0;
+        private final int LEFT = 1;
+
     //
     // Room instance variables
     //
@@ -50,12 +58,15 @@ class Room {
     int roomNumber;
     boolean hasPit;
     boolean hasBeenVisited;
+    int wallDeltas[][] = new int[2][3];
+    int roomPos[][] = new int [2][2];
 
     //
     // Room methods
     //
-    void draw(){
-        Group group = Game.gio.gioGroup;
+    void draw(Group group, int scalePercent, Color floorColor, int roomTop, int roomLeft){
+
+        initRoomSizeParameters(scalePercent, roomTop, roomLeft);
 
         drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
@@ -71,6 +82,21 @@ class Room {
         drawTunnels(group, walls, Color.LIGHTGRAY);
 
         bow.draw();
+    }
+
+    private void initRoomSizeParameters(int scalePercent, int roomTop, int roomLeft){
+        double scale = scalePercent/100;
+        wallDeltas[OUTER_WALL][X1] = (int)Math.round(FULL_SCALE_DELTA_X1 * scale);
+        wallDeltas[INNER_WALL][X1] = (int)Math.round(wallDeltas[OUTER_WALL][X1] * .9);
+        wallDeltas[OUTER_WALL][X2] = (int)Math.round(FULL_SCALE_DELTA_X2 * scale);
+        wallDeltas[INNER_WALL][X2] = (int)Math.round(wallDeltas[OUTER_WALL][X2] * .95);
+        wallDeltas[OUTER_WALL][Y1] = (int)Math.round(FULL_SCALE_DELTA_Y * scale);
+        wallDeltas[INNER_WALL][Y1] = (int)Math.round(wallDeltas[OUTER_WALL][Y1] * .95);
+
+        roomPos[OUTER_WALL][TOP] = roomTop;
+        roomPos[INNER_WALL][TOP] = (int)Math.round(roomTop + 15* scale);
+        roomPos[OUTER_WALL][LEFT] = roomLeft;
+        roomPos[INNER_WALL][LEFT] = (int)Math.round(roomLeft + 10* scale);
     }
 
     void addTunnel(int roomToTunnelTo) {

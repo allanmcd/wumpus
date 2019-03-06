@@ -21,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Screen;
@@ -92,7 +93,11 @@ class GIO {
         gioGroup = new Group();
 
         gioGroup.getChildren().add(gridpane);
-        Game.cave.rooms[roomNumber].draw();
+        int scalePercent = 100;
+        Color floorColor = Color.LIGHTGRAY;
+        int roomTop = 40;
+        int roomLeft = 0;
+        Game.cave.rooms[roomNumber].draw(gioGroup, scalePercent, floorColor, roomTop, roomLeft);
 
         BorderPane.setAlignment(gioGroup, Pos.CENTER);
 
