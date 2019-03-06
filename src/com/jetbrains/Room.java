@@ -183,8 +183,8 @@ class Room {
     }
 
     private void drawSmallRoom(Group group, double walls[][][], Color fillColor, int roomNumber, int top, int left){
-        initRoomHexagon(walls[OUTER_WALL],left,top,smallDeltaX1, smallDeltaX2,smallDeltaY);
-        initRoomHexagon(walls[INNER_WALL],left+5,top+3,smallDeltaX1 - 3, smallDeltaX2 -4,smallDeltaY - 4);
+        initRoomHexagon(OUTER_WALL,walls,left,top,smallDeltaX1, smallDeltaX2,smallDeltaY);
+        initRoomHexagon(INNER_WALL,walls,left+5,top+3,smallDeltaX1 - 3, smallDeltaX2 -4,smallDeltaY - 4);
         drawHexagonWalls(group, walls[OUTER_WALL], Color.BLACK);
         drawHexagonWalls(group, walls[INNER_WALL], fillColor);
         Label lblRoomNumber = new Label(Integer.toString(roomNumber));
@@ -206,8 +206,8 @@ class Room {
         // initialize the hexagon points and tunnel rectangle
         // NOTE: must be done AFTER the Room class has been instantiated
         //
-        initRoomHexagon(hexagon[OUTER_WALL],0,40,110, 190,170);
-        initRoomHexagon(hexagon[INNER_WALL],15,50,100, 180,160);
+        initRoomHexagon(OUTER_WALL, hexagon,0,40,110, 190,170);
+        initRoomHexagon(INNER_WALL, hexagon,15,50,100, 180,160);
         initRoomTunnels();
     }
 
@@ -290,7 +290,7 @@ class Room {
         }
     }
 
-    private void initRoomHexagon(double[][] hexagon,int hexLeft, int hexTop, int deltaX1, int deltaX2, int deltaY){
+    private void initRoomHexagon(int whichWall, double[][][] walls,int hexLeft, int hexTop, int deltaX1, int deltaX2, int deltaY){
         //
         // compute and store the 6 points that define the room hexagon
         //
@@ -302,34 +302,35 @@ class Room {
         //
         //        point4    point3
         //
+        double wall[][] = walls[whichWall];
         double point0X = hexLeft + deltaX1;
         double point0Y = hexTop;
-        hexagon[0][X] = point0X;
-        hexagon[0][Y] = point0Y;
+        wall[POINT_0][X] = point0X;
+        wall[POINT_0][Y] = point0Y;
 
         double point1X = point0X + deltaX2;
         double point1Y = point0Y;
-        hexagon[1][X] = point1X;
-        hexagon[1][Y] = point1Y;
+        wall[POINT_1][X] = point1X;
+        wall[POINT_1][Y] = point1Y;
 
         double point2X = point1X + deltaX1;
         double point2Y = hexTop + deltaY;
-        hexagon[2][X] = point2X;
-        hexagon[2][Y] = point2Y;
+        wall[POINT_2][X] = point2X;
+        wall[POINT_2][Y] = point2Y;
 
         double point3Y = point2Y + deltaY;
-        hexagon[3][X] = point1X;
-        hexagon[3][Y] = point3Y;
+        wall[POINT_3][X] = point1X;
+        wall[POINT_3][Y] = point3Y;
 
-        hexagon[4][X] = point0X;
-        hexagon[4][Y] = point3Y;
+        wall[POINT_4][X] = point0X;
+        wall[POINT_4][Y] = point3Y;
 
-        hexagon[5][X] = hexLeft;
-        hexagon[5][Y] = point2Y;
+        wall[POINT_5][X] = hexLeft;
+        wall[POINT_5][Y] = point2Y;
 
         // add a seventh point to close the polygon
-        hexagon[6][X] = point0X;
-        hexagon[6][Y] = point0Y;
+        wall[POINT_6][X] = point0X;
+        wall[POINT_6][Y] = point0Y;
     }
 
     private void drawHexagonWalls(Group group, double[][] hexPoints, Color fillColor){
