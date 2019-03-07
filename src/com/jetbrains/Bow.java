@@ -29,7 +29,7 @@ public class Bow {
     boolean fired;
     ImageView imageView;
     boolean drawn;
-
+    RoomView roomView;
     //
     // Bow methods
     //
@@ -39,7 +39,7 @@ public class Bow {
         stats.decrementArrows();
 
         // update the bow image
-        draw();
+        draw(roomView);
 
         if(numberOfArrows.get() == 0){
             Game.youLost("You ran out of arrrows");
@@ -56,10 +56,11 @@ public class Bow {
             gio.updateInfo("Nothing in that room.  The arrow can not be recovered");
         }
         fired = false;
-        draw();
+        draw(roomView);
     }
 
-    void draw(){
+    void draw(RoomView roomView){
+        this.roomView = roomView;
         try {
             // remove any existing bow image
             if(imageView != null){
@@ -78,7 +79,13 @@ public class Bow {
                 // draw the bow not drawn image
                 bowImage = new Image(new FileInputStream("src/bow.png"));
             }
+
             imageView = new ImageView(bowImage);
+            double imageWidth = roomView.scaleFactor * bowImage.getWidth();
+            double imageHeight = roomView.scaleFactor * bowImage.getHeight();
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(imageWidth);
+            imageView.setFitHeight(imageHeight);
 
             //UNDONE - add tool tips to bow
             //Tooltip bowToolTip = new Tooltip("click on to shoot");
@@ -105,7 +112,6 @@ public class Bow {
             // UNDONE should probably add code to display "e"
             Debug.error(("could not load bow.png"));
         }
-
     }
 
     //

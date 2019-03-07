@@ -15,16 +15,17 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import static com.jetbrains.GIO.singleRoomView;
 import static com.jetbrains.Game.*;
+import static com.jetbrains.WumpusEquates.INNER_WALL;
+import static com.jetbrains.WumpusEquates.OUTER_WALL;
+
+import com.jetbrains.WumpusEquates.*;
 
 class Room {
     //
     // constants used for readability
     //
-        // INNER/OUTER refer to the inside/outside wall edges
-        private static final int INNER_WALL = 0;
-        private static final int OUTER_WALL = 1;
-
         private static final int X = 0;
         private static final int Y = 1;
 
@@ -54,49 +55,64 @@ class Room {
     //
     // Room instance variables
     //
-    Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
+    protected Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
     int roomNumber;
     boolean hasPit;
     boolean hasBeenVisited;
     int wallDeltas[][] = new int[2][3];
-    int roomPos[][] = new int [2][2];
 
     //
     // Room methods
     //
-    void draw(Group group, int scalePercent, Color floorColor, int roomTop, int roomLeft){
+//    void draw(Group group, Color floorColor, int roomTop, int roomLeft){
+    void draw(RoomView roomView){
 
-        initRoomSizeParameters(scalePercent, roomTop, roomLeft);
+        drawHexagonWalls(roomView.group, OUTER_WALL, hexagon, Color.BLACK);
+        drawHexagonWalls(roomView.group, INNER_WALL, hexagon, Color.LIGHTGRAY);
 
-        drawHexagonWalls(group, hexagon[OUTER_WALL], Color.BLACK);
-        drawHexagonWalls(group, hexagon[INNER_WALL], Color.LIGHTGRAY);
+        if(hasPit){drawPit(roomView.group);}
 
-        if(hasPit){drawPit(group);}
+        drawPlayer(roomView.group);
 
-        drawPlayer(group);
+        if(hasBat()){drawBat(roomView.group);}
 
-        if(hasBat()){drawBat(group);}
+        if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(roomView.group);}
 
-        if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(group);}
+        drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
 
-        drawTunnels(group, walls, Color.LIGHTGRAY);
-
-        bow.draw();
+        bow.draw(roomView);
     }
 
-    private void initRoomSizeParameters(int scalePercent, int roomTop, int roomLeft){
-        double scale = scalePercent/100;
-        wallDeltas[OUTER_WALL][X1] = (int)Math.round(FULL_SCALE_DELTA_X1 * scale);
-        wallDeltas[INNER_WALL][X1] = (int)Math.round(wallDeltas[OUTER_WALL][X1] * .9);
-        wallDeltas[OUTER_WALL][X2] = (int)Math.round(FULL_SCALE_DELTA_X2 * scale);
-        wallDeltas[INNER_WALL][X2] = (int)Math.round(wallDeltas[OUTER_WALL][X2] * .95);
-        wallDeltas[OUTER_WALL][Y1] = (int)Math.round(FULL_SCALE_DELTA_Y * scale);
-        wallDeltas[INNER_WALL][Y1] = (int)Math.round(wallDeltas[OUTER_WALL][Y1] * .95);
+    //private void initRoomSizeParameters(double scale, int roomTop, int roomLeft){
+    private void initRoomSizeParameters(RoomView roomView){
+        double scaleFactor = roomView.scaleFactor;
+        int roomTop = (int)roomView.topLefts[OUTER_WALL].y;
+        int roomLeft = (int)roomView.topLefts[OUTER_WALL].x;
+        wallDeltas[OUTER_WALL][X1] = (int)Math.round(FULL_SCALE_DELTA_X1 * scaleFactor);
+        wallDeltas[INNER_WALL][X1] = (int)Math.round(wallDeltas[OUTER_WALL][X1] * 100 / 110);
+        wallDeltas[OUTER_WALL][X2] = (int)Math.round(FULL_SCALE_DELTA_X2 * scaleFactor);
+        wallDeltas[INNER_WALL][X2] = (int)Math.round(wallDeltas[OUTER_WALL][X2] * 180 / 190);
+        wallDeltas[OUTER_WALL][Y1] = (int)Math.round(FULL_SCALE_DELTA_Y * scaleFactor);
+        wallDeltas[INNER_WALL][Y1] = (int)Math.round(wallDeltas[OUTER_WALL][Y1] * 160 / 170);
 
-        roomPos[OUTER_WALL][TOP] = roomTop;
-        roomPos[INNER_WALL][TOP] = (int)Math.round(roomTop + 15* scale);
-        roomPos[OUTER_WALL][LEFT] = roomLeft;
-        roomPos[INNER_WALL][LEFT] = (int)Math.round(roomLeft + 10* scale);
+        //roomView.topLefts[INNER_WALL].y = (int)Math.round(roomTop + 11* scaleFactor);
+        double innerWallY = Math.round(roomTop + 11* scaleFactor);
+        //roomView.topLefts[INNER_WALL].x = (int)Math.round(roomLeft + 14* scaleFactor);
+        double innerWallX= Math.round(roomLeft + 14* scaleFactor);
+        roomView.topLefts[INNER_WALL] = new Point(innerWallX, innerWallY);
+
+        System.out.println("initRoomSizeParameters");
+        System.out.println("  OUTTER top = " + roomView.topLefts[OUTER_WALL].y);
+        System.out.println("  INNER top = " + roomView.topLefts[INNER_WALL].y);
+        System.out.println("  OUTTER left = " + roomView.topLefts[OUTER_WALL].x);
+        System.out.println("  INNER left = " + roomView.topLefts[INNER_WALL].x);
+        System.out.println("wallDeltas[OUTER_WALL][X1] = " + wallDeltas[OUTER_WALL][X1]);
+        System.out.println("wallDeltas[INNER_WALL][X1] = " + wallDeltas[INNER_WALL][X1]);
+        System.out.println("wallDeltas[OUTER_WALL][X2] = " + wallDeltas[OUTER_WALL][X2]);
+        System.out.println("wallDeltas[INNER_WALL][X2] = " + wallDeltas[INNER_WALL][X2]);
+        System.out.println("wallDeltas[OUTER_WALL][Y1] = " + wallDeltas[OUTER_WALL][Y1]);
+        System.out.println("wallDeltas[INNER_WALL][Y1] = " + wallDeltas[INNER_WALL][Y1]);
+
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -115,40 +131,43 @@ class Room {
     void drawSmall(){
         Group group = new Group();
         double walls[][][] = new double [2][7][2];
-
         int mapTop = 30;
         int mapLeft = 30;
+        double scaleFactor = .1;
+        Point topLeft = new Point(mapLeft,mapTop);
+        RoomView smallView = new RoomView(group,true,scaleFactor,Color.ALICEBLUE, topLeft);
 
         int top = mapTop + smallDeltaY;
         int left = mapLeft;
-        drawSmallRoom(group, walls, Color.ALICEBLUE, 30, top, left);
+        drawSmallRoom(group, walls, Color.ALICEBLUE, 30, smallView);
 
         top = mapTop;
         left = mapLeft + smallDeltaX1 + smallDeltaX2 -6;
-        drawSmallRow(group,walls,Color.ALICEBLUE,25,6,top,left);
+        drawSmallRow(group,walls,Color.ALICEBLUE,25,6,smallView);
 
         top = mapTop + 3 * smallDeltaY - 6;
         left = mapLeft;
-        drawSmallColumn(group,walls,Color.ALICEBLUE,6,5,top,left);
+        drawSmallColumn(group,walls,Color.ALICEBLUE,6,5,smallView);
 
+        top += 9 * smallDeltaY;
+        drawSmallRoom(group, walls, Color.ALICEBLUE, 1, smallView);
+
+        smallView.floorColor = Color.LIGHTGOLDENRODYELLOW;
         top = mapTop + 2 * smallDeltaY - 6;
         left = mapLeft + smallDeltaX1 + smallDeltaX2 - 6;
         int firstRoomNumber = 1;
         int numberOfRooms = 6;
         for(int i = 1; i <= 5; i++) {
-            drawSmallRow(group, walls, Color.LIGHTGOLDENRODYELLOW, firstRoomNumber, numberOfRooms, top, left);
+            drawSmallRow(group, walls, Color.LIGHTGOLDENRODYELLOW, firstRoomNumber, numberOfRooms, smallView);
             top += 2 * smallDeltaY - 6;
             firstRoomNumber += numberOfRooms;
         }
 
-        drawSmallRow(group,walls,Color.ALICEBLUE,1,6,top,left);
+        drawSmallRow(group,walls,Color.ALICEBLUE,1,6,smallView);
 
         top = mapTop + 2 * smallDeltaY - 3;
         left = mapLeft + 4 * (smallDeltaX2 + 2 * smallDeltaX1) + 2* smallDeltaX2 - smallDeltaX1 + 1;
-        drawSmallColumn(group,walls,Color.ALICEBLUE,1,5,top,left);
-
-        top += 9 * smallDeltaY;
-        drawSmallRoom(group, walls, Color.ALICEBLUE, 1, top, left);
+        drawSmallColumn(group,walls,Color.ALICEBLUE,1,5,smallView);
 
         Scene smallScene = new Scene(group);
 
@@ -162,31 +181,38 @@ class Room {
 
     }
 
-    private void drawSmallRow(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, int firstTop, int firstLeft){
-        int roomLeft = firstLeft;
+    private void drawSmallRow(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, RoomView roomView){
+        int roomLeft = (int)roomView.topLefts[OUTER_WALL].x;
+        int firstTop = (int)roomView.topLefts[OUTER_WALL].y;
         int lastRoomNumber = firstRoomNumber + numberOfRooms - 1;
         for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber++){
             boolean even = roomNumber % 2 == 0;
             int roomTop = (roomNumber % 2 == 0)? firstTop + smallDeltaY:firstTop;
-            drawSmallRoom(group, walls, fillColor, roomNumber, roomTop, roomLeft);
+            drawSmallRoom(group, walls, fillColor, roomNumber, roomView);
             roomLeft += smallDeltaX1 + smallDeltaX2 -5;
         }
     }
 
-    private void drawSmallColumn(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, int firstTop, int firstLeft){
-        int roomTop = firstTop;
+    private void drawSmallColumn(Group group, double walls[][][], Color fillColor, int firstRoomNumber, int numberOfRooms, RoomView roomView){
+        int roomTop = (int)roomView.topLefts[OUTER_WALL].y;
         int lastRoomNumber = firstRoomNumber + 6 * (numberOfRooms - 1);
         for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber += 6){
-            drawSmallRoom(group, walls, fillColor, roomNumber, roomTop, firstLeft);
+            drawSmallRoom(group, walls, fillColor, roomNumber, roomView);
             roomTop += 2 * smallDeltaY - 6;
         }
     }
 
-    private void drawSmallRoom(Group group, double walls[][][], Color fillColor, int roomNumber, int top, int left){
-        initRoomHexagon(OUTER_WALL,walls,left,top,smallDeltaX1, smallDeltaX2,smallDeltaY);
-        initRoomHexagon(INNER_WALL,walls,left+5,top+3,smallDeltaX1 - 3, smallDeltaX2 -4,smallDeltaY - 4);
-        drawHexagonWalls(group, walls[OUTER_WALL], Color.BLACK);
-        drawHexagonWalls(group, walls[INNER_WALL], fillColor);
+    private void drawSmallRoom(Group group, double walls[][][], Color fillColor, int roomNumber, RoomView roomView){
+        int roomLeft = (int)roomView.topLefts[OUTER_WALL].x;
+        roomView.topLefts[INNER_WALL].x = roomLeft + 5;
+        int roomTop = (int)roomView.topLefts[OUTER_WALL].y;
+        roomView.topLefts[INNER_WALL].y = roomTop + 3;
+        //initRoomHexagon(OUTER_WALL,walls,smallDeltaX1, smallDeltaX2,smallDeltaY);
+        //initRoomHexagon(INNER_WALL,walls,smallDeltaX1 - 3, smallDeltaX2 -4,smallDeltaY - 4);
+        initRoomHexagon(roomView, OUTER_WALL,walls);
+        initRoomHexagon(roomView, INNER_WALL,walls);
+        drawHexagonWalls(group, OUTER_WALL, walls, Color.BLACK);
+        drawHexagonWalls(group, INNER_WALL, walls, fillColor);
         Label lblRoomNumber = new Label(Integer.toString(roomNumber));
         //lblRoomNumber.setFont(Font.font("Verdana", EXTRA_LIGHT, 36));
         lblRoomNumber.setStyle("-fx-text-fill: rgba(50, 100, 100, 0.5); -fx-font-size: 36px;");
@@ -194,20 +220,23 @@ class Room {
         VBox roomNumberPane = new VBox();
         roomNumberPane.setPrefSize(50,50);
         roomNumberPane.getChildren().add(lblRoomNumber);
-        roomNumberPane.setLayoutX(left + smallDeltaX1 -8);
-        roomNumberPane.setLayoutY(top - 8 + smallDeltaY/2);
+        roomNumberPane.setLayoutX(roomLeft + smallDeltaX1 -8);
+        roomNumberPane.setLayoutY(roomLeft - 8 + smallDeltaY/2);
         roomNumberPane.setAlignment(Pos.CENTER);
         //roomNumberPane.setStyle("-fx-border-color: black");
         group.getChildren().add(roomNumberPane);
     }
 
-    void initWallPoints(){
+    void initWallPoints(RoomView roomView){
+        initRoomSizeParameters(roomView);
         //
         // initialize the hexagon points and tunnel rectangle
         // NOTE: must be done AFTER the Room class has been instantiated
         //
-        initRoomHexagon(OUTER_WALL, hexagon,0,40,110, 190,170);
-        initRoomHexagon(INNER_WALL, hexagon,15,50,100, 180,160);
+        //initRoomHexagon(OUTER_WALL, hexagon,110, 190,170);
+        //initRoomHexagon(INNER_WALL, hexagon,100, 180,160);
+        initRoomHexagon(roomView, OUTER_WALL, hexagon);
+        initRoomHexagon(roomView, INNER_WALL, hexagon);
         initRoomTunnels();
     }
 
@@ -290,7 +319,8 @@ class Room {
         }
     }
 
-    private void initRoomHexagon(int whichWall, double[][][] walls,int hexLeft, int hexTop, int deltaX1, int deltaX2, int deltaY){
+//    private void initRoomHexagon(int whichWall, double[][][] walls, int deltaX1, int deltaX2, int deltaY){
+    private void initRoomHexagon(RoomView roomView, int whichWall, double[][][] walls){
         //
         // compute and store the 6 points that define the room hexagon
         //
@@ -302,9 +332,16 @@ class Room {
         //
         //        point4    point3
         //
+        int top = (int)roomView.topLefts[whichWall].y;
+        int left = (int)roomView.topLefts[whichWall].x;
+
+        int deltaX1 = wallDeltas[whichWall][X1];
+        int deltaX2 = wallDeltas[whichWall][X2];
+        int deltaY = wallDeltas[whichWall][Y1];
+
         double wall[][] = walls[whichWall];
-        double point0X = hexLeft + deltaX1;
-        double point0Y = hexTop;
+        double point0X = left + deltaX1;
+        double point0Y = top;
         wall[POINT_0][X] = point0X;
         wall[POINT_0][Y] = point0Y;
 
@@ -314,7 +351,7 @@ class Room {
         wall[POINT_1][Y] = point1Y;
 
         double point2X = point1X + deltaX1;
-        double point2Y = hexTop + deltaY;
+        double point2Y = top + deltaY;
         wall[POINT_2][X] = point2X;
         wall[POINT_2][Y] = point2Y;
 
@@ -325,15 +362,21 @@ class Room {
         wall[POINT_4][X] = point0X;
         wall[POINT_4][Y] = point3Y;
 
-        wall[POINT_5][X] = hexLeft;
+        wall[POINT_5][X] = left;
         wall[POINT_5][Y] = point2Y;
 
         // add a seventh point to close the polygon
         wall[POINT_6][X] = point0X;
         wall[POINT_6][Y] = point0Y;
+
+        System.out.println("initRoomHexagon");
+        System.out.println("  wall type = " + (whichWall == INNER_WALL?"INNER":"OUTER"));
+        System.out.println("  top = " + top);
+        System.out.println("  left = " + left);
     }
 
-    private void drawHexagonWalls(Group group, double[][] hexPoints, Color fillColor){
+    private void drawHexagonWalls(Group group, int whichWall, double[][][] walls, Color fillColor){
+        double[][] hexPoints = walls[whichWall];
         Polygon hexagon = new Polygon();
         hexagon.getPoints().addAll(new Double[]{
                 hexPoints[POINT_0][X], hexPoints[POINT_0][Y],
@@ -420,7 +463,7 @@ class Room {
         String verticalPosition = "Centered";
         if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
-        drawImage(group, verticalPosition, "bat.png");
+        drawImage(singleRoomView, verticalPosition, "bat.png");
     }
 
     private void drawPlayer(Group group) {
@@ -430,7 +473,7 @@ class Room {
         if(cave.bats.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
         if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
-        player.position = drawImage(group, verticalPosition,"player.png");
+        player.position = drawImage(singleRoomView, verticalPosition,"player.png");
     }
 
     private void drawWumpus(Group group) {
@@ -438,18 +481,27 @@ class Room {
         String verticalPosition = "Centered";
         if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
-        drawImage(group, verticalPosition, "wumpus.png");
+        drawImage(singleRoomView, verticalPosition, "wumpus.png");
     }
 
-    private double[] drawImage(Group group, String verticalPosition, String imageFileName) {
+    private double[] drawImage(RoomView roomView, String verticalPosition, String imageFileName) {
         // display an image centered in the current room
         double[] retVal = new double[4];
+        Group group = roomView.group;
+        double scaleFactor = roomView.scaleFactor;
         try
         {
+            int caveWidth = 2 * wallDeltas[INNER_WALL][X1] + wallDeltas[INNER_WALL][X2];
+            //int imageWidth = caveWidth / 3;
             Image image = new Image(new FileInputStream("src/" + imageFileName));
             ImageView imageView = new ImageView(image);
+            double imageWidth = scaleFactor * image.getWidth();
+            double imageHeight = scaleFactor * image.getHeight();
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(imageWidth);
+            imageView.setFitHeight(imageHeight);
 
-            double imageWidth = image.getWidth();
+            //double imageWidth = image.getWidth();
             double[] hexagonPoint0XY = hexagon[INNER_WALL][POINT_0];
             double[] hexagonPoint1XY = hexagon[INNER_WALL][POINT_1];
             double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
@@ -457,7 +509,7 @@ class Room {
             double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - imageWidth/2;
             imageView.setX(imageLeft);
 
-            double imageHeight = image.getHeight();
+            //double imageHeight = image.getHeight();
             double[] hexagonBottomXY = hexagon[INNER_WALL][POINT_3];
             double hexagonHeight = hexagonBottomXY[Y] - hexagonPoint0XY[Y];
 

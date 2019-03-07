@@ -80,7 +80,7 @@ class Cave {
             // initialize the wall and tunnel points for all the rooms
             for (int roomNumber = 1; roomNumber < 31; roomNumber++) {
                 Room room = rooms[roomNumber];
-                room.initWallPoints();
+                room.initWallPoints(GIO.singleRoomView);
             }
 
             // create a couple of bats

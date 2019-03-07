@@ -53,11 +53,12 @@ class GIO {
     //
     // GIO static variables
     //
-    static Group gioGroup;
+    static Group gioGroup = new Group();
     static GridPane statusGridPane;
     static Scene gioScene;
     static String newCaveName;
     static boolean cavePickerDblClicked;
+    static RoomView singleRoomView;
 
     //
     // GIO methods
@@ -90,14 +91,12 @@ class GIO {
 
         Game.player.roomNumber = roomNumber;
 
-        gioGroup = new Group();
+        cave.currentRoom = roomNumber;
 
+        //gioGroup = new Group();
         gioGroup.getChildren().add(gridpane);
-        int scalePercent = 100;
-        Color floorColor = Color.LIGHTGRAY;
-        int roomTop = 40;
-        int roomLeft = 0;
-        Game.cave.rooms[roomNumber].draw(gioGroup, scalePercent, floorColor, roomTop, roomLeft);
+
+        Game.cave.rooms[roomNumber].draw(singleRoomView);
 
         BorderPane.setAlignment(gioGroup, Pos.CENTER);
 
@@ -261,6 +260,15 @@ class GIO {
             }
         });
 
+        // set up the room views
+        Color floorColor = Color.LIGHTGRAY;
+        double roomTop = 40;
+        double roomLeft = 0;
+        Point topLeft = new Point(roomTop, roomLeft);
+        double scaleFactor = .25;
+        boolean showRoomNumber = false;
+        singleRoomView = new RoomView(gioGroup, showRoomNumber, scaleFactor, floorColor, topLeft);
+
         tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 400);
@@ -327,6 +335,7 @@ class GIO {
 
         MenuItem showRoomContentsMenuItem = new MenuItem("show cave map");
         showRoomContentsMenuItem.setOnAction(e -> {
+            // UNDONE - fix this
            Cave.rooms[0].drawSmall();
         });
 
@@ -392,7 +401,7 @@ class GIO {
         if (mouseX > bowLeft && mouseX < bowRight) {
             if (mouseY > bowTop && mouseY < bowBottom) {
                 bow.drawn = true;
-                bow.draw();
+                bow.draw(singleRoomView);
                 System.out.println("the bow is drawn - an arrow is nocked");
                 evt.consume();
             }
