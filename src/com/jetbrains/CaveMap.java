@@ -38,7 +38,14 @@ public final class CaveMap {
         int mapLeft = 30;
         double scaleFactor = .2;
         Point topLeft = new Point(mapLeft,mapTop);
-        RoomView smallView = new RoomView(group,true,scaleFactor, Color.ALICEBLUE, topLeft);
+        boolean showRoomNumber = true;
+        boolean showRoomContents = false;
+
+        RoomView smallView = new RoomView(group,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
+
+        // draw a ring of 'shadow' rooms around the actual array of cave rooms
+        smallView.showRoomTunnels = false;
+        smallView.showRoomContents = false;
 
         int top = mapTop + smallDeltaY;
         int left = mapLeft;
@@ -64,10 +71,9 @@ public final class CaveMap {
         smallView.topLefts[OUTER_WALL].y = mapTop +  smallView.wallDeltas[OUTER_WALL][Y1];
         drawSmallColumn(group,walls,1,5,smallView);
 
-        //smallView.topLefts[OUTER_WALL].x = mapLeft +  smallDeltaX1 + smallDeltaX2;
-        //smallView.topLefts[OUTER_WALL].y += smallDeltaY ;
         drawSmallRoom(group, walls, 1, smallView);
 
+        // now draw the small version of the cave rooms
 /*
         top += 9 * smallDeltaY;
         drawSmallRoom(group, walls, Color.ALICEBLUE, 1, smallView);

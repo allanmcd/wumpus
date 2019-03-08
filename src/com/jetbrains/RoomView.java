@@ -13,6 +13,8 @@ public class RoomView {
     Color floorColor;
     Point topLefts[] = new Point[2];
     boolean showRoomNumber;
+    boolean showRoomTunnels;
+    boolean showRoomContents;
     int wallDeltas[][] = new int[2][3];
 
     // hexagon[inner/outer][points][x/y];
@@ -44,6 +46,9 @@ public class RoomView {
         this.showRoomNumber = showRoomNumber;
         this.floorColor = floorColor;
         topLefts[OUTER_WALL] = topLeft;
+        // use these default values
+        this.showRoomContents = true;
+        this.showRoomTunnels = true;
     }
 
     public RoomView(RoomView roomView){

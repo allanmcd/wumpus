@@ -36,16 +36,24 @@ class Room {
         drawHexagonWalls(roomView, OUTER_WALL, Color.BLACK);
         drawHexagonWalls(roomView, INNER_WALL, roomView.floorColor);
 
-        if(hasPit) {
-            drawImage(roomView, "Centered", "pit.png");
+        if(roomView.showRoomContents) {
+            if (hasPit) {
+                drawImage(roomView, "Centered", "pit.png");
+            }
+            drawPlayer(roomView.group);
+
+            if (hasBat()) {
+                drawBat(roomView.group);
+            }
+
+            if (Cave.wumpus.isInRoom(roomNumber)) {
+                drawWumpus(roomView.group);
+            }
         }
-        drawPlayer(roomView.group);
 
-        if(hasBat()){drawBat(roomView.group);}
-
-        if (Cave.wumpus.isInRoom(roomNumber)) {drawWumpus(roomView.group);}
-
-        drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
+        if(roomView.showRoomTunnels) {
+            drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
+        }
 
         bow.draw(roomView);
     }
