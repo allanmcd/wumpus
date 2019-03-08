@@ -36,10 +36,11 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Cave.*;
-import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Player.numberOfCoins;
+import static com.jetbrains.Store.buyArrows;
+import static com.jetbrains.Store.buySecret;
 
 //
 // NOTE there should only be one GIO object
@@ -59,7 +60,6 @@ class GIO {
     static String newCaveName;
     static boolean cavePickerDblClicked;
     static RoomView singleRoomView;
-
     //
     // GIO methods
     //
@@ -67,6 +67,7 @@ class GIO {
         // you get a coin every time you enter a room - for any reason
         stats.addCoin();
 
+        gioGroup.getChildren().removeAll(gioGroup.getChildren());
         Cave.currentRoom = 0;
         stats.txtInfo.setText(msgPrefix + " room " + roomNumber);
         stats.txtHint.setText("");
@@ -74,27 +75,28 @@ class GIO {
 
         stats.anotherTurn();
 
-        // REDO - a vBox would work better here
-        GridPane gridpane = new GridPane();
-        gridpane.setPadding(new Insets(5));
-        gridpane.setHgap(10);
-        gridpane.setVgap(10);
+        HBox numberPane = new HBox();
 
         Label lblRoomNumber = new Label("Room " + roomNumber);
         lblRoomNumber.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
-        GridPane.setHalignment(lblRoomNumber, HPos.CENTER);
-        gridpane.add(lblRoomNumber, 15, 0);
+        lblRoomNumber.setAlignment(Pos.CENTER);
 
-        Label lblBlankLine = new Label("");
-        lblBlankLine.setFont(Font.font("Verdana", FontWeight.BOLD, 24));
-        gridpane.add(lblBlankLine, 23, 1);
+        final Pane spacer1 = new Pane();
+        HBox.setHgrow(spacer1, Priority.ALWAYS);
+        spacer1.setMinSize(150, 1);
+
+        final Pane spacer2 = new Pane();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+        spacer2.setMinSize(150, 1);
+
+        numberPane.getChildren().addAll(spacer1, lblRoomNumber, spacer2);
+        numberPane.setPadding(new Insets(0,0,10,0));
 
         Game.player.roomNumber = roomNumber;
 
         cave.currentRoom = roomNumber;
 
-        //gioGroup = new Group();
-        gioGroup.getChildren().add(gridpane);
+        gioGroup.getChildren().add(numberPane);
 
         Game.cave.rooms[roomNumber].draw(singleRoomView);
 
@@ -264,12 +266,12 @@ class GIO {
         Color floorColor = Color.LIGHTGRAY;
         double roomTop = 40;
         double roomLeft = 0;
-        Point topLeft = new Point(roomTop, roomLeft);
-        double scaleFactor = .25;
+        Point topLeft = new Point(roomLeft, roomTop);
+        double scaleFactor = 1.0;
         boolean showRoomNumber = false;
         singleRoomView = new RoomView(gioGroup, showRoomNumber, scaleFactor, floorColor, topLeft);
 
-        tfRoomNumber.setAlignment(Pos.CENTER_RIGHT);
+        tfRoomNumber.setAlignment(Pos.CENTER);
         // set up the sceeen display area
         gioScene = new Scene(bpGame, 400, 400);
 
@@ -315,12 +317,12 @@ class GIO {
         //-- create the Store menu and it's menu items --//
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
-            Store.buyArrows();
+            buyArrows();
         });
 
         MenuItem buySecretMenuItem = new MenuItem("Buy A Secret");
         buySecretMenuItem.setOnAction(e -> {
-            Store.buySecret();
+            buySecret();
         });
 
         //--- create the Debug menu and its menu items ---//
