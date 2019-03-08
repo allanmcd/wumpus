@@ -337,8 +337,7 @@ class GIO {
 
         MenuItem showRoomContentsMenuItem = new MenuItem("show cave map");
         showRoomContentsMenuItem.setOnAction(e -> {
-            // UNDONE - fix this
-           Cave.rooms[0].drawSmall();
+           CaveMap.draw();
         });
 
         Menu debugMenu = new Menu("Cheat");
