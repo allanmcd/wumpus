@@ -36,8 +36,9 @@ class Room {
         drawHexagonWalls(roomView, OUTER_WALL, Color.BLACK);
         drawHexagonWalls(roomView, INNER_WALL, roomView.floorColor);
 
-        if(hasPit){drawPit(roomView);}
-
+        if(hasPit) {
+            drawImage(roomView, "Centered", "pit.png");
+        }
         drawPlayer(roomView.group);
 
         if(hasBat()){drawBat(roomView.group);}
@@ -228,29 +229,6 @@ class Room {
         if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
         player.position = drawImage(singleRoomView, verticalPosition,"player.png");
-    }
-
-    private void drawPit(RoomView roomView) {
-        // display the pit image centered in the room
-        try
-        {
-            Image pitImagep = new Image(new FileInputStream("src/pit.png"));
-            ImageView imageView = new ImageView(pitImagep);
-
-            double[] hexagonPoint5XY = roomView.hexagon[INNER_WALL][POINT_5];
-            double pitImagepLeft = hexagonPoint5XY[X] - 5;
-            imageView.setX(pitImagepLeft);
-
-            double[] hexagonPoint0XY = roomView.hexagon[INNER_WALL][POINT_0];
-            double pitImagepTop = hexagonPoint0XY[Y] - 5;
-            imageView.setY(pitImagepTop);
-            roomView.group.getChildren().add(imageView);
-        }
-        catch (FileNotFoundException e)
-        {
-            // UNDONE should probably add code to display "e"
-            Debug.error(("could not load pit.png"));
-        }
     }
 
     private void drawTunnels(Group group, Wall[] walls, Color fillColor) {
