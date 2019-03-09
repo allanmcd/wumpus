@@ -11,7 +11,7 @@ public class RoomView {
     /////////////////////////////////
     // RoomView Instance variables //
     /////////////////////////////////
-    
+
     Group group;
     double  scaleFactor;
     Color floorColor;

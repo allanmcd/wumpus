@@ -24,14 +24,19 @@ public final class CaveMap {
     //
     // Cavemap Instance variables
     //
+    static boolean isOpen = false;
+    //
+    // Cavemap private Instance variables
+    //
     private static boolean initialized;
+    private static Stage caveMapStage;
 
     //
     // CaveMap methods
     //
 
     static void draw(){
-        Group group = new Group();
+        Group caveMapGroup = new Group();
         double walls[][][] = new double [2][7][2];
         int mapTop = 40;
         int mapLeft = 30;
@@ -40,32 +45,32 @@ public final class CaveMap {
         boolean showRoomNumber = true;
         boolean showPlayer = false;
 
-        RoomView smallView = new RoomView(group,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
+        RoomView smallView = new RoomView(caveMapGroup,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
         smallView.pitImageOpacity = .4;
 
         // draw a ring of 'shadow' rooms around the actual array of cave rooms
         smallView.showRoomTunnels = false;
         smallView.showPlayer = false;
 
-        drawSmallRoom(group, walls, 30, smallView);
+        drawSmallRoom(caveMapGroup, walls, 30, smallView);
 
         smallView.topLefts[OUTER_WALL].x = mapLeft + smallDeltaX1 + smallDeltaX2 + 2;
         smallView.topLefts[OUTER_WALL].y = mapTop - smallDeltaY ;
-        drawSmallRow(group,walls,25,6,smallView);
+        drawSmallRow(caveMapGroup,walls,25,6,smallView);
 
         smallView.topLefts[OUTER_WALL].x = mapLeft;
         smallView.topLefts[OUTER_WALL].y = mapTop + 2* smallDeltaY ;
-        drawSmallColumn(group,walls,6,5,smallView);
+        drawSmallColumn(caveMapGroup,walls,6,5,smallView);
 
         smallView.topLefts[OUTER_WALL].x = mapLeft + smallDeltaX1 + smallDeltaX2 + 2;
         smallView.topLefts[OUTER_WALL].y -= smallDeltaY ;
-        drawSmallRow(group,walls,1,6,smallView);
+        drawSmallRow(caveMapGroup,walls,1,6,smallView);
 
         smallView.topLefts[OUTER_WALL].x = mapLeft + 7 * smallDeltaX1 + 7* smallDeltaX2 + 3;
         smallView.topLefts[OUTER_WALL].y = mapTop +  smallView.wallDeltas[OUTER_WALL][Y1];
-        drawSmallColumn(group,walls,1,5,smallView);
+        drawSmallColumn(caveMapGroup,walls,1,5,smallView);
 
-        drawSmallRoom(group, walls, 1, smallView);
+        drawSmallRoom(caveMapGroup, walls, 1, smallView);
 
         // now draw the small version of the cave rooms
         smallView.showPlayer = true;
@@ -78,21 +83,32 @@ public final class CaveMap {
         int numberOfRooms = 6;
         for(int i = 1; i <= 5; i++) {
             smallView.topLefts[OUTER_WALL].x = rowLeft;
-            drawSmallRow(group,walls,firstRoomNumber,6,smallView);
+            drawSmallRow(caveMapGroup,walls,firstRoomNumber,6,smallView);
             smallView.topLefts[OUTER_WALL].y +=  smallDeltaY;
             firstRoomNumber += numberOfRooms;
         }
 
-        Scene smallScene = new Scene(group);
+        Scene caveMapScene = new Scene(caveMapGroup);
 
-        Stage smallStage = new Stage(StageStyle.UTILITY);
-        smallStage.setTitle("Cave Map");
-        smallStage.setWidth(525);
-        smallStage.setHeight(520);
+        if(isOpen == false) {
+            caveMapStage = new Stage(StageStyle.UTILITY);
+            caveMapStage.setOnCloseRequest(e -> {
+                isOpen = false;
+            });
+            caveMapStage.setTitle("Cave Map");
+            caveMapStage.setWidth(525);
+            caveMapStage.setHeight(520);
+        }
 
-        smallStage.setScene(smallScene);
-        smallStage.show();
+        caveMapStage.setScene(caveMapScene);
+        caveMapStage.show();
+        isOpen = true;
+    }
 
+    static void refresh(){
+        // turns out we don't need to do anything other than draw
+        // but that may change if we want to reduce flicker
+        draw();
     }
 
     //////////////////////////////

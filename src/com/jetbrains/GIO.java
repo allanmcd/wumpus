@@ -30,10 +30,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.jetbrains.Cave.*;
 import static com.jetbrains.Game.*;
@@ -66,7 +63,6 @@ class GIO {
     void gotoRoom(int roomNumber, String msgPrefix) {
         // you get a coin every time you enter a room - for any reason
         stats.addCoin();
-
         gioGroup.getChildren().removeAll(gioGroup.getChildren());
         Cave.currentRoom = 0;
         stats.txtInfo.setText(msgPrefix + " room " + roomNumber);
@@ -140,6 +136,11 @@ class GIO {
         }
 
         Cave.currentRoom = roomNumber;
+
+        // refresh the cave map if it is open
+        if(CaveMap.isOpen){
+            CaveMap.refresh();
+        }
     }
 
     void updateInfo(String infoText) {
