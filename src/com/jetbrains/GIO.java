@@ -335,6 +335,16 @@ class GIO {
             Store.addMoreCoins();
         });
 
+        MenuItem changeScoreMenuItem = new MenuItem("change score");
+        moreCoinsMenuItem.setOnAction(e -> {
+            Store.addMoreCoins();
+        });
+
+        MenuItem ignoreTriviaMenuItem = new MenuItem("ignore trivia questions");
+        moreCoinsMenuItem.setOnAction(e -> {
+            Trivia.ignoreTrivia = !Trivia.ignoreTrivia;
+        });
+
 
         MenuItem showCaveMapMenuItem = new MenuItem("show cave map");
         showCaveMapMenuItem.setOnAction(e -> {

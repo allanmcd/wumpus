@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.jetbrains.Debug.message;
+import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfCoins;
 import static javafx.scene.input.KeyCode.ENTER;
 import static javafx.scene.text.FontWeight.BOLD;
@@ -32,6 +33,10 @@ public final class Trivia {
     // Trivia Instance variables
     ////////////////////////////
     static TextArea txtTrivia;
+    static boolean ignoreTrivia;
+    static boolean answerAllCorrect = false;
+    static boolean answerAllWrong = false;
+
 
     ////////////////////////////
     // Trivia private variables
@@ -67,12 +72,62 @@ public final class Trivia {
         btnOK.setText("OK");
         btnOK.setOnAction(e -> stage.close());
 
+        // create an "Pass" button to sucessfully skip all trivia questions
+        HBox answerAllCorrectHbox = new HBox();
+        Label lblPass = new Label("simulate all correct answers  ");
+        Button btnPass = new Button();
+        btnPass.setText("Pass");
+
+        final Pane spacer1 = new Pane();
+        HBox.setHgrow(spacer1, Priority.ALWAYS);
+        spacer1.setMinSize(10, 1);
+
+        final Pane spacer2 = new Pane();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+        spacer2.setMinSize(10, 1);
+
+        answerAllCorrectHbox.getChildren().addAll(spacer1, lblPass, btnPass,spacer2);
+
+        btnPass.setOnAction(e -> {
+            e.consume();
+            answerAllCorrect = true;
+            stage.close();
+        });
+
+        // create an "Fail" button to simulate a trivia question failure
+        HBox answerAllWrongHbox = new HBox();
+        Label lblFail = new Label("simulate all wrong answeers");
+        Button btnFail = new Button();
+        btnFail.setText("Fail");
+        btnFail.setOnAction(e -> {
+            e.consume();
+            answerAllWrong = true;
+            stage.close();
+        });
+
+        final Pane spacer3 = new Pane();
+        HBox.setHgrow(spacer3, Priority.ALWAYS);
+        spacer3.setMinSize(10, 1);
+
+        final Pane spacer4 = new Pane();
+        HBox.setHgrow(spacer4, Priority.ALWAYS);
+        spacer4.setMinSize(10, 1);
+
+
+        answerAllWrongHbox.getChildren().addAll(spacer3, lblFail, btnFail, spacer4);
+
+
         Label blankLine = new Label("");
         blankLine.setMaxHeight(10);
 
         VBox pane = new VBox(20);
         VBox.setMargin(btnOK,new Insets(0,0,10,0));
         pane.getChildren().addAll(lbl, btnOK);
+
+        if(useDefaults) {
+            pane.getChildren().add(answerAllCorrectHbox);
+            pane.getChildren().add(answerAllWrongHbox);
+        }
         pane.setAlignment(Pos.CENTER);
 
         // create the scene to display the dialog contents
@@ -88,14 +143,29 @@ public final class Trivia {
         stage.setScene(scene);
         stage.showAndWait();
 
-        // now start asking questions
-        rightAnswers = 0;
-        wrongAnswers = 0;
-        boolean retVal = askQuestions(maxQuestions, minCorrect);
+        boolean retVal;
+        if(answerAllCorrect || answerAllWrong) {
+            // the Pass or Fail button must have been pressed
+            Player.numberOfCoins.set(numberOfCoins.get() - minCorrect);
+        }
+
+        if(answerAllCorrect){
+            retVal = true;
+        } else if(answerAllWrong){
+            retVal = false;
+        } else {
+            // start asking questions
+            rightAnswers = 0;
+            wrongAnswers = 0;
+            retVal = askQuestions(maxQuestions, minCorrect);
+        }
         return retVal;
     }
 
     static boolean init(){
+        if(useDefaults){
+            ignoreTrivia = true;
+        }
         // assume that the initialization will succeed
         boolean initSuceeded = true;
         String triviaFileName = "src/trivia.csv";
