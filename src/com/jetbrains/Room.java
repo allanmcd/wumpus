@@ -42,6 +42,7 @@ class Room {
         if (roomView.showPlayer) {
             if (player.roomNumber == roomNumber) {
                 drawPlayer(roomView);
+                bow.draw(roomView);
             }
         }
 
@@ -50,14 +51,10 @@ class Room {
         }
 
         if (Cave.wumpus.isInRoom(roomNumber)) {
-            drawWumpus(roomView.group);
+            drawWumpus(roomView);
         }
 
-        if (roomView.showRoomTunnels) {
-            drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
-        }
-
-        bow.draw(roomView);
+        drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
     }
 
     void addTunnel(int roomToTunnelTo) {
@@ -286,11 +283,11 @@ class Room {
         }
     }
 
-    private void drawWumpus(Group group) {
+    private void drawWumpus(RoomView roomView) {
         // display the wumpus image in the room
         String verticalPosition = "Centered";
         if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
-        drawImage(singleRoomView, OPAQUE, verticalPosition, "wumpus.png");
+        drawImage(roomView, OPAQUE, verticalPosition, "wumpus.png");
     }
 }

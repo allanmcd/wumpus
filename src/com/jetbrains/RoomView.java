@@ -17,7 +17,6 @@ public class RoomView {
     Color floorColor;
     Point topLefts[] = new Point[2];
     boolean showRoomNumber;
-    boolean showRoomTunnels;
     boolean showPlayer;
     int wallDeltas[][] = new int[2][3];
     double pitImageOpacity;
@@ -54,7 +53,6 @@ public class RoomView {
 
         // use these default values
         this.showPlayer = true;
-        this.showRoomTunnels = true;
         this.pitImageOpacity = 1.0;
     }
 
