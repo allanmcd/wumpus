@@ -335,13 +335,13 @@ class GIO {
         });
 
 
-        MenuItem showRoomContentsMenuItem = new MenuItem("show cave map");
-        showRoomContentsMenuItem.setOnAction(e -> {
+        MenuItem showCaveMapMenuItem = new MenuItem("show cave map");
+        showCaveMapMenuItem.setOnAction(e -> {
            CaveMap.draw();
         });
 
         Menu debugMenu = new Menu("Cheat");
-        debugMenu.getItems().addAll(moreCoinsMenuItem, showRoomContentsMenuItem);
+        debugMenu.getItems().addAll(moreCoinsMenuItem, showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);

@@ -26,6 +26,7 @@ public class Bats {
         // create some bats
         for(int batIndex = 0; batIndex < Game.maxBats; batIndex++) {
             bats[batIndex] = new Bat(batIndex);
+            System.out.println("putting bat in room " + bats[batIndex].roomNumber);
         }
     }
 

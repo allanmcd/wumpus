@@ -2,20 +2,25 @@ package com.jetbrains;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import com.jetbrains.WumpusEquates;
 
 import static com.jetbrains.WumpusEquates.*;
 import static com.jetbrains.WumpusEquates.Y1;
 
 public class RoomView {
+
+    /////////////////////////////////
+    // RoomView Instance variables //
+    /////////////////////////////////
+    
     Group group;
     double  scaleFactor;
     Color floorColor;
     Point topLefts[] = new Point[2];
     boolean showRoomNumber;
     boolean showRoomTunnels;
-    boolean showRoomContents;
+    boolean showPlayer;
     int wallDeltas[][] = new int[2][3];
+    double pitImageOpacity;
 
     // hexagon[inner/outer][points][x/y];
     double[][][]hexagon = new double[2][7][2];
@@ -46,13 +51,15 @@ public class RoomView {
         this.showRoomNumber = showRoomNumber;
         this.floorColor = floorColor;
         topLefts[OUTER_WALL] = topLeft;
+
         // use these default values
-        this.showRoomContents = true;
+        this.showPlayer = true;
         this.showRoomTunnels = true;
+        this.pitImageOpacity = 1.0;
     }
 
+    // make a copy of an existing RoomView
     public RoomView(RoomView roomView){
-        // make a copy of an existing RoomView
         this.group = roomView.group;
         this.scaleFactor = roomView.scaleFactor;
         this.showRoomNumber = roomView.showRoomNumber;
@@ -114,14 +121,17 @@ public class RoomView {
         wall[POINT_6][X] = point0X;
         wall[POINT_6][Y] = point0Y;
 
-        System.out.println("initRoomHexagon");
-        System.out.println("  wall type = " + (whichWall == INNER_WALL?"INNER":"OUTER"));
-        System.out.println("  top = " + top);
-        System.out.println("  left = " + left);
-        System.out.println("  wall[POINT_0][X] = " + wall[POINT_0][X]);
-        System.out.println("  wall[POINT_0][Y] = " + wall[POINT_0][Y]);
-        System.out.println("  wall[POINT_1][X] = " + wall[POINT_1][X]);
-        System.out.println("  wall[POINT_1][Y] = " + wall[POINT_1][Y]);
+        // UNDONE - eventually remove
+        if(false) {
+            System.out.println("initRoomHexagon");
+            System.out.println("  wall type = " + (whichWall == INNER_WALL ? "INNER" : "OUTER"));
+            System.out.println("  top = " + top);
+            System.out.println("  left = " + left);
+            System.out.println("  wall[POINT_0][X] = " + wall[POINT_0][X]);
+            System.out.println("  wall[POINT_0][Y] = " + wall[POINT_0][Y]);
+            System.out.println("  wall[POINT_1][X] = " + wall[POINT_1][X]);
+            System.out.println("  wall[POINT_1][Y] = " + wall[POINT_1][Y]);
+        }
     }
 
     private void initRoomSizeParameters(RoomView roomView){
@@ -137,24 +147,24 @@ public class RoomView {
         wallDeltas[OUTER_WALL][Y1] = (int)Math.round(FULL_SCALE_DELTA_Y * scaleFactor);
         wallDeltas[INNER_WALL][Y1] = (int)Math.round(wallDeltas[OUTER_WALL][Y1] * 160 / 170);
 
-        //roomView.topLefts[INNER_WALL].y = (int)Math.round(roomTop + 11* scaleFactor);
         double innerWallY = Math.round(roomTop + 11* scaleFactor);
-        //roomView.topLefts[INNER_WALL].x = (int)Math.round(roomLeft + 14* scaleFactor);
         double innerWallX= Math.round(roomLeft + 14* scaleFactor);
         roomView.topLefts[INNER_WALL] = new Point(innerWallX, innerWallY);
 
-        System.out.println("initRoomSizeParameters");
-        System.out.println("  OUTTER top = " + roomView.topLefts[OUTER_WALL].y);
-        System.out.println("  INNER top = " + roomView.topLefts[INNER_WALL].y);
-        System.out.println("  OUTTER left = " + roomView.topLefts[OUTER_WALL].x);
-        System.out.println("  INNER left = " + roomView.topLefts[INNER_WALL].x);
-        System.out.println("wallDeltas[OUTER_WALL][X1] = " + wallDeltas[OUTER_WALL][X1]);
-        System.out.println("wallDeltas[INNER_WALL][X1] = " + wallDeltas[INNER_WALL][X1]);
-        System.out.println("wallDeltas[OUTER_WALL][X2] = " + wallDeltas[OUTER_WALL][X2]);
-        System.out.println("wallDeltas[INNER_WALL][X2] = " + wallDeltas[INNER_WALL][X2]);
-        System.out.println("wallDeltas[OUTER_WALL][Y1] = " + wallDeltas[OUTER_WALL][Y1]);
-        System.out.println("wallDeltas[INNER_WALL][Y1] = " + wallDeltas[INNER_WALL][Y1]);
-
+        // UNDONE - eventually remove
+        if(false) {
+            System.out.println("initRoomSizeParameters");
+            System.out.println("  OUTTER top = " + roomView.topLefts[OUTER_WALL].y);
+            System.out.println("  INNER top = " + roomView.topLefts[INNER_WALL].y);
+            System.out.println("  OUTTER left = " + roomView.topLefts[OUTER_WALL].x);
+            System.out.println("  INNER left = " + roomView.topLefts[INNER_WALL].x);
+            System.out.println("wallDeltas[OUTER_WALL][X1] = " + wallDeltas[OUTER_WALL][X1]);
+            System.out.println("wallDeltas[INNER_WALL][X1] = " + wallDeltas[INNER_WALL][X1]);
+            System.out.println("wallDeltas[OUTER_WALL][X2] = " + wallDeltas[OUTER_WALL][X2]);
+            System.out.println("wallDeltas[INNER_WALL][X2] = " + wallDeltas[INNER_WALL][X2]);
+            System.out.println("wallDeltas[OUTER_WALL][Y1] = " + wallDeltas[OUTER_WALL][Y1]);
+            System.out.println("wallDeltas[INNER_WALL][Y1] = " + wallDeltas[INNER_WALL][Y1]);
+        }
     }
 
 

@@ -49,13 +49,13 @@ public class Bat {
         if(useDefaults){
             if(batIndex == 0) {
                 // set default value for bat 1
-                cave.bats.batRooms[batIndex] = 26;
                 roomNumber = 26;
+                cave.bats.batRooms[batIndex] = roomNumber;
             }
             else{
                 // use default for bat 2
-                cave.bats.batRooms[batIndex] = 16;
                 roomNumber = 16;
+                cave.bats.batRooms[batIndex] = roomNumber;
             }
         } else {
             setBatRoomNumber(batIndex, cave.initialRoom, batRandom);

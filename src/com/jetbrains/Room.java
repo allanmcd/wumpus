@@ -13,8 +13,6 @@ import static com.jetbrains.GIO.singleRoomView;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.WumpusEquates.*;
 
-import com.jetbrains.WumpusEquates.*;
-
 class Room {
 
     //
@@ -24,34 +22,38 @@ class Room {
     int roomNumber;
     boolean hasPit;
     boolean hasBeenVisited;
+    private final double OPAQUE = 1.0;
 
     //
     // Room methods
     //
 
-    void draw(RoomView roomView){
+    void draw(RoomView roomView) {
         roomView.initWallPoints(roomView);
         initRoomTunnels(roomView);
 
         drawHexagonWalls(roomView, OUTER_WALL, Color.BLACK);
         drawHexagonWalls(roomView, INNER_WALL, roomView.floorColor);
 
-        if(roomView.showRoomContents) {
-            if (hasPit) {
-                drawImage(roomView, "Centered", "pit.png");
-            }
-            drawPlayer(roomView.group);
+        if (hasPit) {
+            drawImage(roomView, roomView.pitImageOpacity, "Centered", "pit.png");
+        }
 
-            if (hasBat()) {
-                drawBat(roomView.group);
-            }
-
-            if (Cave.wumpus.isInRoom(roomNumber)) {
-                drawWumpus(roomView.group);
+        if (roomView.showPlayer) {
+            if (player.roomNumber == roomNumber) {
+                drawPlayer(roomView);
             }
         }
 
-        if(roomView.showRoomTunnels) {
+        if (hasBat()) {
+            drawBat(roomView);
+        }
+
+        if (Cave.wumpus.isInRoom(roomNumber)) {
+            drawWumpus(roomView.group);
+        }
+
+        if (roomView.showRoomTunnels) {
             drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
         }
 
@@ -143,13 +145,15 @@ class Room {
         }
     }
 
-    private void drawBat(Group group) {
+    private void drawBat(RoomView roomView) {
         // display the bat image centered in the room
 
         String verticalPosition = "Centered";
-        if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
+        if(player.isInRoom(roomNumber)){
+            verticalPosition = "Top";
+        }
 
-        drawImage(singleRoomView, verticalPosition, "bat.png");
+        drawImage(roomView, OPAQUE, verticalPosition, "bat.png");
     }
 
     private void drawHexagonWalls(RoomView roomView, int whichWall, Color fillColor){
@@ -168,7 +172,7 @@ class Room {
         roomView.group.getChildren().addAll(hexagon);
     }
 
-    private double[] drawImage(RoomView roomView, String verticalPosition, String imageFileName) {
+    private double[] drawImage(RoomView roomView, double opacity, String verticalPosition, String imageFileName) {
         // display an image centered in the current room
         double[] retVal = new double[4];
         Group group = roomView.group;
@@ -177,6 +181,7 @@ class Room {
         {
             Image image = new Image(new FileInputStream("src/" + imageFileName));
             ImageView imageView = new ImageView(image);
+            imageView.setOpacity(opacity);
             double imageWidth = scaleFactor * image.getWidth();
             double imageHeight = scaleFactor * image.getHeight();
             imageView.setPreserveRatio(true);
@@ -229,14 +234,13 @@ class Room {
         return retVal;
     }
 
-    private void drawPlayer(Group group) {
+    private void drawPlayer(RoomView roomView) {
         // display the player image centered in the room
-
         String verticalPosition = "Centered";
         if(cave.bats.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
         if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
-        player.position = drawImage(singleRoomView, verticalPosition,"player.png");
+        player.position = drawImage(roomView, OPAQUE, verticalPosition,"player.png");
     }
 
     private void drawTunnels(Group group, Wall[] walls, Color fillColor) {
@@ -287,6 +291,6 @@ class Room {
         String verticalPosition = "Centered";
         if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
-        drawImage(singleRoomView, verticalPosition, "wumpus.png");
+        drawImage(singleRoomView, OPAQUE, verticalPosition, "wumpus.png");
     }
 }
