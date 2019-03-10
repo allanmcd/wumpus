@@ -51,6 +51,8 @@ public class Bow {
             cave.bats.makeDead(targetRoomNumber);
             gio.updateInfo("You killed the bat in room " + targetRoomNumber);
             System.out.println("bat killed");
+            CaveMap.refresh();
+            gio.updateHint();
         }
         else{
             gio.updateInfo("Nothing in that room.  The arrow can not be recovered");

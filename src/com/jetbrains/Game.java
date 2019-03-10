@@ -165,8 +165,6 @@ public final class Game {
         cave = new Cave(caveName, initialRoom);
         loadCave(caveName);
 
-        cave.pits = new Pits();
-
         bow = new Bow(3);
 
         loaded &= Trivia.init();

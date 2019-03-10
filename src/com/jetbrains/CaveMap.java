@@ -112,7 +112,9 @@ public final class CaveMap {
     static void refresh(){
         // turns out we don't need to do anything other than draw
         // but that may change if we want to reduce flicker
-        draw();
+        if(isOpen) {
+            draw();
+        }
     }
 
     //////////////////////////////

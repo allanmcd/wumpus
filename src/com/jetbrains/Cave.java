@@ -87,8 +87,7 @@ class Cave {
             bats.addBats(2);
 
             // create a couple of pits
-            pits = new Pits();
-            cave.pits.addPits(2);
+            Pits.addPits(2);
 
             Debug.log("");
 

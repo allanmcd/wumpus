@@ -1,13 +1,10 @@
 package com.jetbrains;
 
-//
-// NOTE there should only be one Map object
-//
-public class Map {
-    // UNDONE - move bats here
-
-    // UNDONE - move wumpus here
-
-    // UNDONE - move player here
-
+public final class Map {
+    private void Map(){
+        //UNDONE is the map object needed
+        //
+        // NOTE there should only be one Map object
+        //
+    }
 }

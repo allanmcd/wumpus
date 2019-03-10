@@ -1,39 +1,32 @@
 package com.jetbrains;
 
-import com.jetbrains.Room;
-import com.jetbrains.Wall;
-
 import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.rooms;
-import static com.jetbrains.Game.cave;
 import static com.jetbrains.Main.useDefaults;
 
-public class Pits {
+public final class Pits {
     //
     // Pit constants
     //
-    final int NUMBER_OF_PITS = 2;
+    static final int NUMBER_OF_PITS = 2;
     //
     // Pit instance variables
     //
 
-    // not currently used - don't know why
-    Pit pits[] = new Pit[2];
-
-    int pitRooms[] = new int[2];
-    int roomNumber;
+    static int pitRooms[] = new int[2];
+    static int roomNumber;
 
     //
     // Pit methods
     //
-    boolean isInRoom(int roomNumber){
+    static boolean isInRoom(int roomNumber){
         Room room = rooms[roomNumber];
         return room.hasPit;
     }
 
-    boolean inAdjacentRoom(){
+    static boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
         Room playerRoom = rooms[Player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
@@ -48,10 +41,14 @@ public class Pits {
         return inAdjacentRoom;
     }
 
-    void addPits(int numberOfPits){
+    static void addPits(int numberOfPits){
         if (useDefaults) {
-            rooms[13].hasPit = true;
-            rooms[9].hasPit = true;
+            int pitRoom1 = 13;
+            int pitRoom2 = 9;
+            rooms[pitRoom1].hasPit = true;
+            rooms[pitRoom2].hasPit = true;
+            pitRooms[0] = pitRoom1;
+            pitRooms[1] = pitRoom2;
         } else {
             Random random = new Random();
             int pitRoomNumber;
@@ -93,18 +90,22 @@ public class Pits {
                 rooms[pitRoomNumber].hasPit = true;
                 pitRooms[pitNumber-1] = pitRoomNumber;
                 System.out.println("pit assigned to room " + pitRoomNumber);
-
             }
         }
     }
 
-    int roomWithPitInIt(){
+    static int roomWithPitInIt(){
         Random rnd = new Random();
-        int pitRoomIndex = rnd.nextInt(NUMBER_OF_PITS) + 1;
+        int pitRoomIndex = rnd.nextInt(NUMBER_OF_PITS);
         return pitRooms[pitRoomIndex];
     }
 
+    //////////////////////
+    // Pits constructor //
+    //////////////////////
+    private void Pits(){
 
+    }
 }
 
 

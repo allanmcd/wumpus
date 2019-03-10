@@ -15,6 +15,14 @@ import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
 
 public final class Store {
+    //
+    // Store Instance variables
+    //
+
+    // can be used during testing to specify the type of secret you want
+    // otherwise it's random
+    static int preferedSecretIndex = -1;
+
     ////////////////
     // Store methods
     ////////////////
@@ -40,41 +48,45 @@ public final class Store {
 
         int maxQuestions = 3;
         int maxCorrect = 2;
-        if(Trivia.ask(maxQuestions, maxCorrect, "To buy a secret")){
+        boolean answeredMaxCorrect = Trivia.ask(maxQuestions, maxCorrect, "To buy a secret");
+        if(answeredMaxCorrect){
             //UNDONE - add more types of secrets
             Random rnd = new Random();
             boolean anotherSecret = true;
             int numberOfTypesOfSecrets = 4;
-            int secretIndex = rnd.nextInt(numberOfTypesOfSecrets);
-            while(anotherSecret){
-                switch (secretIndex){
-                    case 0:
-                        // tell the player where a bat is
-                        int batRoomNumber = Cave.bats.roomWithBatInIt();
-                        int batRoomIndex = rnd.nextInt(2)+1;
-                        if (batRoomIndex == 0) {
-                        } else {
-                            message("There is a bat in room " + batRoomNumber);
-                        }
-                        break;
-                    case 1:
-                        // tell the player where the Wumpus is
-                        message("The Wumpus is in room " + Wumpus.roomNumber);
-                        anotherSecret = false;
-                        break;
-                    case 2:
-                        // tell the player where a pit is
-                        message("There is a pit in room " + Cave.pits.roomWithPitInIt());
-                        anotherSecret = false;
-                        break;
-                    case 3:
-                        // tell the player which room they are in
-                        message("You are in room " + Cave.currentRoom);
-                        anotherSecret = false;
-                        break;
+            int secretIndex;
+            if(preferedSecretIndex == -1) {
+                secretIndex = rnd.nextInt(numberOfTypesOfSecrets);
+            } else {
+                secretIndex = preferedSecretIndex;
+            }
+            switch (secretIndex){
+                case 0:
+                    // tell the player where a bat is
+                    int batRoomNumber = Cave.bats.roomWithBatInIt();
+                    if (batRoomNumber == 0) {
+                        message("There are no bats in the cave");
+                    } else {
+                        message("There is a bat in room " + batRoomNumber);
+                    }
+                    break;
+                case 1:
+                    // tell the player where the Wumpus is
+                    message("The Wumpus is in room " + Wumpus.roomNumber);
+                    anotherSecret = false;
+                    break;
+                case 2:
+                    // tell the player where a pit is
+                    message("There is a pit in room " + Cave.pits.roomWithPitInIt());
+                    anotherSecret = false;
+                    break;
+                case 3:
+                    // tell the player which room they are in
+                    message("You are in room " + Cave.currentRoom);
+                    anotherSecret = false;
+                    break;
 
-                        default:Debug.error("invalid secretIndex = " + secretIndex);
-                }
+                    default:Debug.error("invalid secretIndex = " + secretIndex);
             }
         } else {
             message("BUMMER - no secret for you");

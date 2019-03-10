@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
+import javafx.event.EventType;
 import javafx.geometry.*;
 
 import java.io.File;
@@ -39,7 +41,6 @@ import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Player.numberOfCoins;
 import static com.jetbrains.Store.*;
-import static java.awt.SystemColor.infoText;
 import static javafx.scene.input.KeyCode.ENTER;
 
 //
@@ -196,20 +197,7 @@ class GIO {
             }
         }
         // any interesting objects nearby
-        if(Wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
-            updateHint("Wings flapping nearby with foul odor in the air and cool breeze");
-        } else if(Wumpus.inAdjacentRoom() && bats.inAdjacentRoom()){
-            updateHint("Wings flapping nearby and there is a foul odor in the air");
-        } else if(pits.inAdjacentRoom()){
-            updateHint("Pit - I feel a draft");
-        } else if(Wumpus.inAdjacentRoom()){
-            updateHint("Wumpus - I smell a Wumpus");
-        } else if (bats.inAdjacentRoom()) {
-            updateHint("Bat - Bat nearby ");
-        }
-        else{
-            updateHint("");
-        }
+        updateHint();
 
         Cave.currentRoom = roomNumber;
 
@@ -219,11 +207,27 @@ class GIO {
         }
     }
 
+    void updateHint() {
+        // any interesting objects nearby
+        if (Wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
+            updateHintText("Wings flapping nearby with foul odor in the air and cool breeze");
+        } else if (Wumpus.inAdjacentRoom() && bats.inAdjacentRoom()) {
+            updateHintText("Wings flapping nearby and there is a foul odor in the air");
+        } else if (pits.inAdjacentRoom()) {
+            updateHintText("Pit - I feel a draft");
+        } else if (Wumpus.inAdjacentRoom()) {
+            updateHintText("Wumpus - I smell a Wumpus");
+        } else if (bats.inAdjacentRoom()) {
+            updateHintText("Bat - Bat nearby ");
+        } else {
+            updateHintText("");
+        }
+    }
     void updateInfo(String infoText) {
         stats.txtInfo.setText(infoText);
     }
 
-    void updateHint(String hintText) {
+    void updateHintText(String hintText) {
         stats.txtHint.setText(hintText);
     }
 
@@ -411,6 +415,30 @@ class GIO {
             Store.addMoreCoins();
         });
 
+        Menu setPreferedSecretMenu = new Menu("set Prefered Secret type");
+        CheckMenuItem cmiRandom = new CheckMenuItem("Random");
+        CheckMenuItem cmiBatLocations = new CheckMenuItem("Bat Locations");
+        CheckMenuItem cmiWumpusLocation = new CheckMenuItem("Wumpus Location");
+        CheckMenuItem cmiPitLocations = new CheckMenuItem("Pit Locations");
+        CheckMenuItem cmiYourLocation = new CheckMenuItem("Your Current Location");
+        setPreferedSecretMenu.getItems().addAll(cmiRandom, cmiBatLocations, cmiWumpusLocation, cmiPitLocations, cmiYourLocation);
+
+        setPreferedSecretMenu.setOnAction(e -> {
+            if(e.getTarget().equals(cmiRandom)){
+                preferedSecretIndex = -1;
+            } else if(e.getTarget().equals(cmiBatLocations)){
+                preferedSecretIndex = 0;
+            } else if(e.getTarget().equals(cmiWumpusLocation)){
+                preferedSecretIndex = 1;
+            }else if(e.getTarget().equals(cmiPitLocations)){
+                preferedSecretIndex = 2;
+            }else if(e.getTarget().equals(cmiYourLocation)){
+                preferedSecretIndex = 3;
+            } else{
+                Debug.error("Invallid Set Secret Preference target returned");
+            }
+        });
+
         MenuItem changeScoreMenuItem = new MenuItem("change score");
         changeScoreMenuItem.setOnAction(e -> {
             Game.stats.modifyScore();
@@ -433,8 +461,8 @@ class GIO {
            CaveMap.draw();
         });
 
-        Menu debugMenu = new Menu("Cheat");
-        debugMenu.getItems().addAll(moreCoinsMenuItem, gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
+        Menu debugMenu = new Menu("Testing");
+        debugMenu.getItems().addAll(moreCoinsMenuItem, setPreferedSecretMenu, gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);

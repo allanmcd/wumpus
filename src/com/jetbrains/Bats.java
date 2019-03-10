@@ -59,18 +59,29 @@ public class Bats {
     }
 
     int roomWithBatInIt(){
+        int roomNumberWithBatInIt = 0;
         Random rnd = new Random();
-        int batRoomIndex = rnd.nextInt(initialNumberOfBats);
-        for(int i = 0; i < initialNumberOfBats; i++) {
-            if (batRooms[batRoomIndex] == 0) {
-                // no bat in this room - try another room
-                batRoomIndex = rnd.nextInt(initialNumberOfBats);
+        int whichBat = rnd.nextInt(initialNumberOfBats);
+        boolean keepOnSearching = true;
+        while(keepOnSearching) {
+            // search for all possible bats
+            for(int batRoomNumber = 0; batRoomNumber < initialNumberOfBats; batRoomNumber++) {
+                for (int roomNumber = 0; roomNumber < Cave.numberOfRooms; roomNumber++) {
+                    if (Cave.rooms[roomNumber].hasBat()) {
+                        if (roomNumber == Cave.bats.batRooms[whichBat]) {
+                            // found the room that contains the desired bat
+                            keepOnSearching = false;
+                            batRoomNumber = initialNumberOfBats;  //abort outer for stmt
+                            roomNumberWithBatInIt = roomNumber;
+                            break;
+                        }
+                    }
+                }
             }
+            // we've already searched for all possible bats so give up
+            keepOnSearching = false;
         }
-        if(batRooms[batRoomIndex] == 0){
-            return 0;
-        }
-        return batRoomIndex;
+        return roomNumberWithBatInIt;
     }
 
     void makeDead(int caveRoomNumber){
