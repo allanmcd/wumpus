@@ -5,7 +5,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -79,7 +78,7 @@ public class Stats {
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
         score = 10 * numberOfArrows.get() + 15* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns;
-        if(cave.wumpus.dead){
+        if(Wumpus.isDead){
             score += 100;
         }
         txtScore.setText(Integer.toString(score));

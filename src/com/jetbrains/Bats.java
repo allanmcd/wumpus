@@ -32,7 +32,7 @@ public class Bats {
 
     boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
-        Room playerRoom = cave.rooms[Game.player.roomNumber];
+        Room playerRoom = cave.rooms[Player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
             Wall wall = playerRoom.walls[wallNumber];
             if(wall.hasTunne1) {

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.jetbrains.Game.cave;
-import static com.jetbrains.Main.useDefaults;
 
 //
 // NOTE there should only be one Cave object
@@ -21,9 +20,9 @@ class Cave {
     static int initialRoom;
     static String name;
     static Pits pits;
-    static Room rooms[] = new Room[30];
+    static int numberOfRooms = 30;
+    static Room rooms[] = new Room[numberOfRooms];
     static boolean valid;
-    static Wumpus wumpus;
 
     //
     // Cave constructor

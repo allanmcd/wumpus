@@ -35,7 +35,7 @@ public class Pits {
 
     boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
-        Room playerRoom = rooms[Game.player.roomNumber];
+        Room playerRoom = rooms[Player.roomNumber];
         for(int wallNumber = 0; wallNumber < 6; wallNumber++){
             Wall wall = playerRoom.walls[wallNumber];
             if(wall.hasTunne1) {
@@ -79,7 +79,7 @@ public class Pits {
                         generateAnotherPitRoomNumber = true;
                     }
 
-                    if (pitRoomNumber == Cave.wumpus.roomNumber) {
+                    if (pitRoomNumber == Wumpus.roomNumber) {
                         // don't put a pit in a room with the Wumpus
                         generateAnotherPitRoomNumber = true;
                     }

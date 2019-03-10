@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import static com.jetbrains.Cave.rooms;
+import static com.jetbrains.Game.gio;
 import static com.jetbrains.WumpusEquates.OUTER_WALL;
 import static com.jetbrains.WumpusEquates.*;
 
@@ -99,8 +100,13 @@ public final class CaveMap {
         }
 
         caveMapStage.setScene(caveMapScene);
+        caveMapStage.setX(Main.primaryStage.getX() + Main.primaryStage.getWidth() + 50);
+        caveMapStage.setY(Main.primaryStage.getY() - 50);
         caveMapStage.show();
         isOpen = true;
+
+        // WEIRD - for some reason the bow dissapears from current room so need to redraw it
+        Cave.rooms[Cave.currentRoom].draw(gio.singleRoomView);
     }
 
     static void refresh(){

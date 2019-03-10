@@ -45,7 +45,7 @@ public class Bow {
             Game.youLost("You ran out of arrrows");
         }
 
-        if(targetRoomNumber == Cave.wumpus.roomNumber) {
+        if(targetRoomNumber == Wumpus.roomNumber) {
             Game.youWon();
         } else if( Game.cave.bats.isInRoom(targetRoomNumber)){
             cave.bats.makeDead(targetRoomNumber);
@@ -92,11 +92,11 @@ public class Bow {
             //Tooltip.install(imageView,bowToolTip);
 
             // position the bow near the players left arm
-            double imageViewLeft = player.position[0]+30;
-            Double bowLeft = player.position[0] + player.position[2] - bowImage.getWidth();
+            double imageViewLeft = Player.position[0]+30;
+            Double bowLeft = Player.position[0] + Player.position[2] - bowImage.getWidth();
             imageView.setX(bowLeft);
 
-            Double bowTop = player.position[1] + player.position[3]/2 - 10;
+            Double bowTop = Player.position[1] + Player.position[3]/2 - 10;
             imageView.setY(bowTop);
 
             //UNDONE

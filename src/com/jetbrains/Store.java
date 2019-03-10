@@ -64,7 +64,7 @@ public final class Store {
                         break;
                     case 1:
                         // tell the player where the Wumpus is
-                        message("The Wumpus is in room " + Cave.wumpus.roomNumber);
+                        message("The Wumpus is in room " + Wumpus.roomNumber);
                         anotherSecret = false;
                         break;
                     case 2:
@@ -126,8 +126,6 @@ public final class Store {
     public static int getHowManyCoins() {
         int numberOfCoins = 0;
         Dialog dialog = new Dialog<>();
-        //dialog.setTitle("Sign In");
-        //dialog.setHeaderText("How many coins would you like");
         dialog.setResizable(false);
 
         Label userNameLabel = new Label("How many coins would you like:");

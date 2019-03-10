@@ -39,8 +39,8 @@ class Room {
             drawImage(roomView, roomView.pitImageOpacity, "Centered", "pit.png");
         }
 
-        if (roomView.showPlayer) {
-            if (player.roomNumber == roomNumber) {
+        if (roomView.showPlayer && !Player.isDead) {
+            if (Player.roomNumber == roomNumber) {
                 drawPlayer(roomView);
                 bow.draw(roomView);
             }
@@ -50,7 +50,7 @@ class Room {
             drawBat(roomView);
         }
 
-        if (Cave.wumpus.isInRoom(roomNumber)) {
+        if (Wumpus.isInRoom(roomNumber)) {
             drawWumpus(roomView);
         }
 
@@ -146,7 +146,7 @@ class Room {
         // display the bat image centered in the room
 
         String verticalPosition = "Centered";
-        if(player.isInRoom(roomNumber)){
+        if(Player.isInRoom(roomNumber)){
             verticalPosition = "Top";
         }
 
@@ -235,9 +235,9 @@ class Room {
         // display the player image centered in the room
         String verticalPosition = "Centered";
         if(cave.bats.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
-        if(Cave.wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
+        if(Wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
 
-        player.position = drawImage(roomView, OPAQUE, verticalPosition,"player.png");
+        Player.position = drawImage(roomView, OPAQUE, verticalPosition,"player.png");
     }
 
     private void drawTunnels(Group group, Wall[] walls, Color fillColor) {
@@ -286,7 +286,7 @@ class Room {
     private void drawWumpus(RoomView roomView) {
         // display the wumpus image in the room
         String verticalPosition = "Centered";
-        if(player.isInRoom(roomNumber)){ verticalPosition = "Top";}
+        if(Player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
         drawImage(roomView, OPAQUE, verticalPosition, "wumpus.png");
     }

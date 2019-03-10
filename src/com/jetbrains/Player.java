@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 //
 // NOTE there should only be one Player object
 //
-public class Player {
+public final class Player {
     //
     // Player instance variables
     //
@@ -15,26 +15,31 @@ public class Player {
 
     public static int nextTriviaIndex;
 
-    int roomNumber;
+    static int roomNumber;
+    static boolean isDead;
 
     // position[X, Y, width, height];
-    double[] position;
+    static double[] position;
 
     //
     // Player methods
     //
-    boolean isInRoom(int caveRoomNumber){
+    static boolean isInRoom(int caveRoomNumber){
         boolean isInRoom = false;
         if(roomNumber == caveRoomNumber){isInRoom = true;}
         return isInRoom;
     }
 
-    //
-    // Player constructor
-    //
-    Player(){
+    static void init(){
 
         roomNumber = cave.initialRoom;
         numberOfArrows.set(3);
+        isDead = false;
+    }
+    //
+    // Player constructor
+    //
+    private Player(){
+        // Player is a static object, much like Math
     }
 }

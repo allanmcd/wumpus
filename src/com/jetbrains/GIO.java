@@ -19,6 +19,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -33,11 +34,12 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import static com.jetbrains.Cave.*;
+import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Player.numberOfCoins;
-import static com.jetbrains.Store.buyArrows;
-import static com.jetbrains.Store.buySecret;
+import static com.jetbrains.Store.*;
+import static javafx.scene.input.KeyCode.ENTER;
 
 //
 // NOTE there should only be one GIO object
@@ -60,6 +62,61 @@ class GIO {
     //
     // GIO methods
     //
+    int getDesiredRoomNumber(){
+        int desiredRoom = 0;
+        Dialog dialog = new Dialog<>();
+        dialog.setResizable(false);
+
+        Label userNameLabel = new Label("Which room would you like to go to?");
+        TextField desiredRoomField = new TextField();
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 35, 20, 35));
+        grid.add(userNameLabel, 1, 1);
+        grid.add(desiredRoomField, 2, 1);
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        okButton.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if (keyCode == ENTER) {
+                dialog.setResult(ButtonType.OK);
+            }
+        });
+
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        Platform.runLater(() -> {
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Window window = dialog.getDialogPane().getScene().getWindow();
+            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+            desiredRoomField.requestFocus();
+        });
+
+        boolean invalidRoomNumber = true;
+        while (invalidRoomNumber) {
+            Optional<ButtonType> result = dialog.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    desiredRoom = Integer.parseInt(desiredRoomField.getText());
+                    if(desiredRoom <1 || desiredRoom > 30) {
+                        message("Please pick a number betweeen 1 and " + numberOfRooms);
+                    } else {
+                        invalidRoomNumber = false;
+                    }
+                } catch (Exception e) {
+                    message("Please pick a number betweeen 1 and " + numberOfRooms);
+                }
+            }
+        }
+        return desiredRoom;
+    }
+
     void gotoRoom(int roomNumber, String msgPrefix) {
         // you get a coin every time you enter a room - for any reason
         stats.addCoin();
@@ -88,7 +145,7 @@ class GIO {
         numberPane.getChildren().addAll(spacer1, lblRoomNumber, spacer2);
         numberPane.setPadding(new Insets(0,0,10,0));
 
-        Game.player.roomNumber = roomNumber;
+        Player.roomNumber = roomNumber;
 
         cave.currentRoom = roomNumber;
 
@@ -104,8 +161,17 @@ class GIO {
 
         Game.stage.show();
 
-        if (roomNumber == wumpus.roomNumber) {
-            Game.youLost("The Wumpus got you");
+        if (roomNumber == Wumpus.roomNumber) {
+            boolean success = Trivia.ask(5,3, "You have found the Wumpus");
+            if(success){
+                message("You have angered the Wumpus and it has fled");
+                Wumpus.moveToRandomRoom();
+                Cave.rooms[currentRoom].draw(gio.singleRoomView);
+            } else {
+                Game.youLost("The Wumpus ate you");
+                Player.isDead = true;
+                Cave.rooms[currentRoom].draw(gio.singleRoomView);
+            }
         //} else if (Cave.rooms[roomNumber].hasBat()) {
         } else if (Cave.bats.isInRoom(roomNumber)) {
             relocatePlayer();
@@ -120,13 +186,13 @@ class GIO {
             }
         }
         // any interesting objects nearby
-        if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
+        if(Wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
             updateHint("Wings flapping nearby with foul odor in the air and cool breeze");
-        } else if(wumpus.inAdjacentRoom() && bats.inAdjacentRoom()){
+        } else if(Wumpus.inAdjacentRoom() && bats.inAdjacentRoom()){
             updateHint("Wings flapping nearby and there is a foul odor in the air");
         } else if(pits.inAdjacentRoom()){
             updateHint("Pit - I feel a draft");
-        } else if(wumpus.inAdjacentRoom()){
+        } else if(Wumpus.inAdjacentRoom()){
             updateHint("Wumpus - I smell a Wumpus");
         } else if (bats.inAdjacentRoom()) {
             updateHint("Bat - Bat nearby ");
@@ -279,7 +345,7 @@ class GIO {
         stage.setWidth(600);
         stage.setHeight(700);
 
-        // display the wumpus image
+        // display the Wumpus image
         addSplash(bpGame, "src/wumpus.png");
         Game.stage.setScene(gioScene);
         Game.stage.show();
@@ -336,8 +402,14 @@ class GIO {
         });
 
         MenuItem changeScoreMenuItem = new MenuItem("change score");
-        moreCoinsMenuItem.setOnAction(e -> {
+        changeScoreMenuItem.setOnAction(e -> {
             Store.addMoreCoins();
+        });
+
+        MenuItem gotoRoomMenuItem = new MenuItem("Go To Room");
+        gotoRoomMenuItem.setOnAction(e -> {
+            int desiredRoomNumber = gio.getDesiredRoomNumber();
+            gio.gotoRoom(desiredRoomNumber, "You have been moved to ");
         });
 
         MenuItem ignoreTriviaMenuItem = new MenuItem("ignore trivia questions");
@@ -352,7 +424,7 @@ class GIO {
         });
 
         Menu debugMenu = new Menu("Cheat");
-        debugMenu.getItems().addAll(moreCoinsMenuItem, showCaveMapMenuItem);
+        debugMenu.getItems().addAll(moreCoinsMenuItem, gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);
@@ -468,8 +540,8 @@ class GIO {
                 generateAnotherRoomNumber = true;
             }
 
-            if (nextEmptyRoomNumber == wumpus.roomNumber) {
-                // not empty - wumpus in room
+            if (nextEmptyRoomNumber == Wumpus.roomNumber) {
+                // not empty - Wumpus in room
                 generateAnotherRoomNumber = true;
             }
 

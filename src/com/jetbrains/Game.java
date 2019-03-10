@@ -11,7 +11,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
@@ -39,7 +38,7 @@ public final class Game {
     static Cave cave;
     static GIO gio;
     static Map map;
-    static Player player;
+    //static Player player;
     static Stats stats;
 
     //
@@ -81,6 +80,8 @@ public final class Game {
     static void play(){
         stage.setTitle("Find The Wumpus");
 
+        Player.init();
+
         if (cave.valid) {
             // make the stats pane visible
             stats.vBox.setVisible(true);
@@ -93,7 +94,7 @@ public final class Game {
     }
 
     static void youWon(){
-        cave.wumpus.dead = true;
+        Wumpus.isDead = true;
         youWon = true;
         Game.stats.update();
         gio.showDialog(  "YOU WIN","You shot the wumpus");
@@ -140,7 +141,7 @@ public final class Game {
             initialRoom = random.nextInt(29) + 1;
         }
         System.out.println("Initial Room is " + initialRoom);
-        player = new Player();
+        Player.init();
 
         stats = new Stats();
 
@@ -159,7 +160,7 @@ public final class Game {
 
         map = new Map();
 
-        Cave.wumpus = new Wumpus(initialRoom);
+        Wumpus.init(initialRoom);
 
         cave = new Cave(caveName, initialRoom);
         loadCave(caveName);

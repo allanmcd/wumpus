@@ -86,7 +86,7 @@ public class Bat {
                 generateAnotherBatRoomNumber = true;
             }
 
-            if (batRoomNumber == Cave.wumpus.roomNumber) {
+            if (batRoomNumber == Wumpus.roomNumber) {
                 // don't put a bat in a room with the Wumpus
                 generateAnotherBatRoomNumber = true;
             }
