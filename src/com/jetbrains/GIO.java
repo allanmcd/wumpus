@@ -39,6 +39,7 @@ import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Player.numberOfCoins;
 import static com.jetbrains.Store.*;
+import static java.awt.SystemColor.infoText;
 import static javafx.scene.input.KeyCode.ENTER;
 
 //
@@ -63,58 +64,67 @@ class GIO {
     // GIO methods
     //
     int getDesiredRoomNumber(){
-        int desiredRoom = 0;
+        int desiredRoom = getHowMany(1, 30,"Which room would you like to go to?");
+        return desiredRoom;
+    }
+
+    int getHowMany(int minAmt, int maxAmt, String text) {
+        int howMany = 0;
         Dialog dialog = new Dialog<>();
         dialog.setResizable(false);
 
-        Label userNameLabel = new Label("Which room would you like to go to?");
-        TextField desiredRoomField = new TextField();
+        Label howManyLabel = new Label(text);
+        TextField howManyField = new TextField();
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 35, 20, 35));
-        grid.add(userNameLabel, 1, 1);
-        grid.add(desiredRoomField, 2, 1);
+        grid.add(howManyLabel, 1, 1);
+        grid.add(howManyField, 2, 1);
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
 
         okButton.setOnKeyPressed(e -> {
             KeyCode keyCode = e.getCode();
-            if (keyCode == ENTER) {
+            if(keyCode == ENTER){
                 dialog.setResult(ButtonType.OK);
             }
         });
 
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
-        Platform.runLater(() -> {
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            Window window = dialog.getDialogPane().getScene().getWindow();
-            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
-            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
-            desiredRoomField.requestFocus();
-        });
+        boolean invalidNumber = true;
+        while (invalidNumber) {
+            Platform.runLater(() -> {
+                Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+                Window window = dialog.getDialogPane().getScene().getWindow();
+                window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+                window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+                howManyField.requestFocus();
+            });
+            howManyField.setText("");
 
-        boolean invalidRoomNumber = true;
-        while (invalidRoomNumber) {
             Optional<ButtonType> result = dialog.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
-                    desiredRoom = Integer.parseInt(desiredRoomField.getText());
-                    if(desiredRoom <1 || desiredRoom > 30) {
-                        message("Please pick a number betweeen 1 and " + numberOfRooms);
+                    howMany = Integer.parseInt(howManyField.getText());
+                    if(howMany < minAmt|| howMany > maxAmt) {
+                        message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
                     } else {
-                        invalidRoomNumber = false;
+                        invalidNumber = false;
                     }
                 } catch (Exception e) {
-                    message("Please pick a number betweeen 1 and " + numberOfRooms);
+                    message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
                 }
+            } else if(result.get() == ButtonType.CANCEL) {
+                howMany = 0;
+                invalidNumber = false;
             }
         }
-        return desiredRoom;
+        return howMany;
     }
 
     void gotoRoom(int roomNumber, String msgPrefix) {
@@ -403,7 +413,7 @@ class GIO {
 
         MenuItem changeScoreMenuItem = new MenuItem("change score");
         changeScoreMenuItem.setOnAction(e -> {
-            Store.addMoreCoins();
+            Game.stats.modifyScore();
         });
 
         MenuItem gotoRoomMenuItem = new MenuItem("Go To Room");
@@ -413,7 +423,7 @@ class GIO {
         });
 
         MenuItem ignoreTriviaMenuItem = new MenuItem("ignore trivia questions");
-        moreCoinsMenuItem.setOnAction(e -> {
+        ignoreTriviaMenuItem.setOnAction(e -> {
             Trivia.ignoreTrivia = !Trivia.ignoreTrivia;
         });
 

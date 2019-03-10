@@ -9,7 +9,6 @@ import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static com.jetbrains.GIO.singleRoomView;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.WumpusEquates.*;
 

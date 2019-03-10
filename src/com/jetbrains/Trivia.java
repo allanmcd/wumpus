@@ -91,7 +91,6 @@ public final class Trivia {
         btnPass.setOnAction(e -> {
             e.consume();
             answerAllCorrect = true;
-            Player.numberOfCoins.set(numberOfCoins.get() - minCorrect - 1);
             stage.close();
         });
 
@@ -103,7 +102,6 @@ public final class Trivia {
         btnFail.setOnAction(e -> {
             e.consume();
             answerAllWrong = true;
-            Player.numberOfCoins.set(numberOfCoins.get() - maxQuestions - minCorrect - 2);
             stage.close();
         });
 

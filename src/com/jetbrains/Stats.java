@@ -1,10 +1,13 @@
 package com.jetbrains;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -12,12 +15,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
+import javafx.stage.Window;
+
+import java.util.Optional;
 
 import static com.jetbrains.GIO.statusGridPane;
 import static com.jetbrains.Game.cave;
+import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
+import static javafx.scene.input.KeyCode.ENTER;
 
 /**
  * The Stats class is used to contain game stats
@@ -41,11 +50,21 @@ public class Stats {
 
     VBox vBox;
 
+    ////////////////////////////////////
+    // Stats local instance variables //
+    ////////////////////////////////////
+    private int scoreFudgeFactor = 0;
+
     //
     // Stats member function(s)
     //
     void addCoin(){
         numberOfCoins.set(numberOfCoins.get() + 1);
+        update();
+    }
+
+    void modifyScore(){
+        scoreFudgeFactor = gio.getHowMany(-100, 100, "Add/Subtract how many points:");
         update();
     }
 
@@ -77,7 +96,7 @@ public class Stats {
 
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows.get() + 15* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns;
+        score = 10 * numberOfArrows.get() + 15* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns + scoreFudgeFactor;
         if(Wumpus.isDead){
             score += 100;
         }

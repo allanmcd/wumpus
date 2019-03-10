@@ -1,25 +1,18 @@
 package com.jetbrains;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.stage.Screen;
-import javafx.stage.Window;
 
-import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Debug.message;
+import static com.jetbrains.Game.gio;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
-import static javafx.scene.input.KeyCode.ENTER;
 
 public final class Store {
     ////////////////
@@ -27,7 +20,9 @@ public final class Store {
     ////////////////
 
     public static void addMoreCoins(){
-        numberOfCoins.set(numberOfCoins.get() + getHowManyCoins());
+        int coinDelta = gio.getHowMany(-10,10,"Add/Subtract how many coins:");
+        numberOfCoins.set(numberOfCoins.get() + coinDelta);
+        Game.stats.update();
     }
 
     public static void buyArrows(){
@@ -46,7 +41,7 @@ public final class Store {
         int maxQuestions = 3;
         int maxCorrect = 2;
         if(Trivia.ask(maxQuestions, maxCorrect, "To buy a secret")){
-            //UNDONE - give some sort of secret
+            //UNDONE - add more types of secrets
             Random rnd = new Random();
             boolean anotherSecret = true;
             int numberOfTypesOfSecrets = 4;
@@ -56,7 +51,7 @@ public final class Store {
                     case 0:
                         // tell the player where a bat is
                         int batRoomNumber = Cave.bats.roomWithBatInIt();
-                        int batRoomIndex = rnd.nextInt(2);
+                        int batRoomIndex = rnd.nextInt(2)+1;
                         if (batRoomIndex == 0) {
                         } else {
                             message("There is a bat in room " + batRoomNumber);
@@ -120,52 +115,4 @@ public final class Store {
         // ensure that Store is a public singleton
     };
 
-    //////////////////////////
-    // Store helper functions
-    /////////////////////////
-    public static int getHowManyCoins() {
-        int numberOfCoins = 0;
-        Dialog dialog = new Dialog<>();
-        dialog.setResizable(false);
-
-        Label userNameLabel = new Label("How many coins would you like:");
-        TextField userNameField = new TextField();
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 35, 20, 35));
-        grid.add(userNameLabel, 1, 1);
-        grid.add(userNameField, 2, 1);
-        dialog.getDialogPane().setContent(grid);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-
-        okButton.setOnKeyPressed(e -> {
-            KeyCode keyCode = e.getCode();
-            if(keyCode == ENTER){
-                dialog.setResult(ButtonType.OK);
-            }
-        });
-
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        Platform.runLater(() -> {
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            Window window = dialog.getDialogPane().getScene().getWindow();
-            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
-            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
-            userNameField.requestFocus();
-        });
-
-        Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                numberOfCoins = Integer.parseInt(userNameField.getText());
-            } catch (Exception e) {
-                numberOfCoins = 0;
-            }
-        }
-        return numberOfCoins;
-    }
 }

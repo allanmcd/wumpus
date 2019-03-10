@@ -100,7 +100,7 @@ public class Pits {
 
     int roomWithPitInIt(){
         Random rnd = new Random();
-        int pitRoomIndex = rnd.nextInt(NUMBER_OF_PITS);
+        int pitRoomIndex = rnd.nextInt(NUMBER_OF_PITS) + 1;
         return pitRooms[pitRoomIndex];
     }
 
