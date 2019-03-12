@@ -139,12 +139,15 @@ public class Stats {
     void setHighScore(){
         boolean newScoreAdded = false;
         int oldScore = 0;
+        boolean playerAlreadyInTop10 = false;
         // if the player already has a high score, replace it if current one is greater
         boolean highScoreReplaced = false;
         for (int highScoresIndex = 0; highScoresIndex < highScores.size(); highScoresIndex++) {
             String[] scoreEntry = (String[])highScores.get(highScoresIndex);
             if(scoreEntry[NAME_INDEX].equals(Player.name)){
-                // player already has an entry - should we update it
+                // player already has an entry
+                playerAlreadyInTop10 = true;
+                // should we update it
                 oldScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
                 if(score > oldScore){
                     // replace old score with new high score
@@ -158,7 +161,7 @@ public class Stats {
         }
 
         // if player didn't already have an entry in the high score table then add one
-        if(highScoreReplaced == false){
+        if(highScoreReplaced == false && playerAlreadyInTop10 == false){
             String[] scoreRow = new String[2];
             scoreRow[NAME_INDEX] = Player.name;
             scoreRow[SCORE_INDEX] = Integer.toString(score);
@@ -206,7 +209,7 @@ public class Stats {
                 playerMsg = "Congratulations - you have beaten your previous high score of " + oldScore;
                 playerMsg += " and you are still in the top 10 of high scores";
             } else {
-                playerMsg = "Congratulations - you have been added to the top 10 high score list";
+                playerMsg = "Congratulations - you are still in the top 10 high score list";
             }
         } else {
             playerMsg = "Your score sucks - better luck next time";
