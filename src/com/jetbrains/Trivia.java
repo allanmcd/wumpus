@@ -37,6 +37,10 @@ public final class Trivia {
     static boolean answerAllCorrect = false;
     static boolean answerAllWrong = false;
 
+    // making the triviaPane static is probably not a good idea
+    // needs further investigation
+    static VBox triviaPane;
+
 
     ////////////////////////////
     // Trivia private variables
@@ -216,7 +220,7 @@ public final class Trivia {
     }
 
     static VBox pane(){
-        VBox triviaPanel = new VBox();
+        triviaPane = new VBox();
 
         HBox hboxTriviaLabel = new HBox();
         Label lblTrivia = new Label("Trivia");
@@ -232,9 +236,9 @@ public final class Trivia {
         txtTrivia.setMaxHeight(50);
         txtTrivia.setMinHeight(50);
 
-        triviaPanel.getChildren().addAll(hboxTriviaLabel, txtTrivia);
+        triviaPane.getChildren().addAll(hboxTriviaLabel, txtTrivia);
 
-        return triviaPanel;
+        return triviaPane;
     }
 
     static String randomStatement()

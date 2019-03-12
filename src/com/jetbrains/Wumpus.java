@@ -92,6 +92,7 @@ public final class Wumpus {
                 roomNumber = random.nextInt(29) + 1;
             }
         }
+        isDead = false;
         System.out.println("Wumpus assigned to " + roomNumber);
     }
 

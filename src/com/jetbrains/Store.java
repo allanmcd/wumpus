@@ -19,6 +19,10 @@ public final class Store {
     // Store Instance variables
     //
 
+    // making the pane static is probably not a good idea
+    // needs further investigation
+    static HBox pane;
+
     // can be used during testing to specify the type of secret you want
     // otherwise it's random
     static int preferedSecretIndex = -1;
@@ -94,8 +98,6 @@ public final class Store {
     }
 
     public static HBox purchasePane(){
-        HBox pane = new HBox();
-
         Button btnBuyArrows = new Button("Buy Arrows");
         btnBuyArrows.setOnAction(e -> buyArrows());
 
@@ -115,6 +117,7 @@ public final class Store {
         HBox.setHgrow(spacer3, Priority.ALWAYS);
         spacer3.setMinSize(10, 1);
 
+        pane = new HBox();
         pane.getChildren().addAll(spacer1, btnBuyArrows, spacer2, btnBuySecret, spacer3);
         pane.setPadding(new Insets(0,0,10,0));
         return pane;

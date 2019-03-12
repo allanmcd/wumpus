@@ -18,6 +18,8 @@ public final class Player {
     static int roomNumber;
     static boolean isDead;
     static String name;
+    // UNDONE need to save/load player object
+    static int currentHighScore = 0;
 
     // position[X, Y, width, height];
     static double[] position;
@@ -37,6 +39,15 @@ public final class Player {
         numberOfArrows.set(3);
         isDead = false;
     }
+
+    static void load(){
+        // UNDONE - need to implement
+    }
+
+    static void save(){
+        // UNDONE - need to implement
+    }
+
     //
     // Player constructor
     //

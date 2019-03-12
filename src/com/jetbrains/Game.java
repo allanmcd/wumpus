@@ -123,8 +123,18 @@ public final class Game {
         // hide the stats pane
         stats.vBox.setVisible(false);
 
+        // hide the purchase pane
+        Store.pane.setVisible(false);
+
+        // hide the trivia pane
+        Trivia.triviaPane.setVisible(false);
+
         // display the wumpus image as the splash screen
-        gio.addSplash(gio.bpGame, "src/wumpus.png");
+        if(Wumpus.isDead){
+            gio.addSplash(gio.bpGame, "src/wumpus.dead.png");
+        } else {
+            gio.addSplash(gio.bpGame, "src/wumpus.png");
+        }
     }
 
     static void init(String caveName, Stage gameStage){

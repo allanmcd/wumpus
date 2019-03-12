@@ -415,7 +415,7 @@ class GIO {
             Store.addMoreCoins();
         });
 
-        Menu setPreferedSecretMenu = new Menu("set Prefered Secret type");
+        Menu setPreferedSecretMenu = new Menu("set Prefered Type of Secret");
         CheckMenuItem cmiRandom = new CheckMenuItem("Random");
         CheckMenuItem cmiBatLocations = new CheckMenuItem("Bat Locations");
         CheckMenuItem cmiWumpusLocation = new CheckMenuItem("Wumpus Location");
@@ -439,7 +439,7 @@ class GIO {
             }
         });
 
-        MenuItem changeScoreMenuItem = new MenuItem("change score");
+        MenuItem changeScoreMenuItem = new MenuItem("Modify the Score");
         changeScoreMenuItem.setOnAction(e -> {
             Game.stats.modifyScore();
         });
@@ -450,13 +450,13 @@ class GIO {
             gio.gotoRoom(desiredRoomNumber, "You have been moved to ");
         });
 
-        MenuItem ignoreTriviaMenuItem = new MenuItem("ignore trivia questions");
+        MenuItem ignoreTriviaMenuItem = new MenuItem("Ignore Trivia Questions");
         ignoreTriviaMenuItem.setOnAction(e -> {
             Trivia.ignoreTrivia = !Trivia.ignoreTrivia;
         });
 
 
-        MenuItem showCaveMapMenuItem = new MenuItem("show cave map");
+        MenuItem showCaveMapMenuItem = new MenuItem("Show Cave Map");
         showCaveMapMenuItem.setOnAction(e -> {
            CaveMap.draw();
         });

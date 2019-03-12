@@ -52,8 +52,8 @@ public final class SplashScreen {
 
     public static void show(){
         if(skipSplashScreen){
-            init();
             Player.name = "me";
+            init();
             playGame(Cave.name);
         } else {
             if (firstTime) {

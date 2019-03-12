@@ -55,19 +55,19 @@ public class Stats {
     //
     // Stats member function(s)
     //
-    void addCoin(){
+    void addCoin() {
         numberOfCoins.set(numberOfCoins.get() + 1);
         update();
     }
 
-    void anotherTurn(){
+    void anotherTurn() {
         numberOfTurns++;
         txtTurns.setText(Integer.toString(numberOfTurns));
         update();
     }
 
-    void decrementArrows(){
-        numberOfArrows.set((numberOfArrows.get())-1);
+    void decrementArrows() {
+        numberOfArrows.set((numberOfArrows.get()) - 1);
         //txtArrows.setText(Integer.toString(numberOfArrows));
         update();
     }
@@ -91,11 +91,20 @@ public class Stats {
                 // process the next high score
 
                 // add the players name
-                highScore[NAME_INDEX] = args[0].trim();
+                String nextName = args[0].trim();
+                highScore[NAME_INDEX] = nextName;
 
                 // add the players high score
-                highScore[SCORE_INDEX] = args[1].trim();
+                String nextScore = args[1].trim();
+                highScore[SCORE_INDEX] = nextScore;
                 highScores.add(highScore);
+
+                // is the current playaer in the high score list
+                if(nextName.equals(Player.name)){
+                    // current player is in the high score list
+                    // update his/her previous high score
+                    Player.currentHighScore = Integer.parseInt(nextScore);
+                }
             }
         } catch (FileNotFoundException e) {
             Debug.error("Could not find the file named " + fileName);
@@ -107,7 +116,7 @@ public class Stats {
         return loadSuceeded;
     }
 
-    void modifyScore(){
+    void modifyScore() {
         scoreFudgeFactor = gio.getHowMany(-100, 100, "Add/Subtract how many points:");
         update();
     }
@@ -121,12 +130,12 @@ public class Stats {
             // process all the lines from the high scores file
             FileWriter highScoresFile = new FileWriter(fileName, false);
 
-            for(int scoreIndex = 0; scoreIndex < highScores.size(); scoreIndex++) {
+            for (int scoreIndex = 0; scoreIndex < highScores.size(); scoreIndex++) {
                 String[] nextScoreEntry = new String[2];
                 nextScoreEntry = (String[]) highScores.get(scoreIndex);
                 String name = nextScoreEntry[NAME_INDEX];
-                String score = nextScoreEntry[SCORE_INDEX];
-                String nextFileEntry = String.format("%s,%s%n", name, score);
+                String highScore = nextScoreEntry[SCORE_INDEX];
+                String nextFileEntry = String.format("%s,%s%n", name, highScore);
                 highScoresFile.write(nextFileEntry);
             }
 
@@ -136,20 +145,27 @@ public class Stats {
         }
     }
 
-    void setHighScore(){
+    void setHighScore() {
         boolean newScoreAdded = false;
-        int oldScore = 0;
+        int playersOldHighScore = Player.currentHighScore;
         boolean playerAlreadyInTop10 = false;
+        boolean playerInTopTen = false;
+
+        // Remember the current high score and player
+        String[] scoreEntry = (String[]) highScores.get(0);
+        int previousHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
+        String previousHighPlayer = scoreEntry[NAME_INDEX];
+
         // if the player already has a high score, replace it if current one is greater
         boolean highScoreReplaced = false;
         for (int highScoresIndex = 0; highScoresIndex < highScores.size(); highScoresIndex++) {
-            String[] scoreEntry = (String[])highScores.get(highScoresIndex);
-            if(scoreEntry[NAME_INDEX].equals(Player.name)){
+            scoreEntry = (String[]) highScores.get(highScoresIndex);
+            if (scoreEntry[NAME_INDEX].equals(Player.name)) {
                 // player already has an entry
                 playerAlreadyInTop10 = true;
                 // should we update it
-                oldScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
-                if(score > oldScore){
+                playersOldHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
+                if (score > playersOldHighScore) {
                     // replace old score with new high score
                     scoreEntry[SCORE_INDEX] = Integer.toString(score);
                     highScores.set(highScoresIndex, scoreEntry);
@@ -161,12 +177,14 @@ public class Stats {
         }
 
         // if player didn't already have an entry in the high score table then add one
-        if(highScoreReplaced == false && playerAlreadyInTop10 == false){
+        if (highScoreReplaced == false && playerAlreadyInTop10 == false) {
             String[] scoreRow = new String[2];
             scoreRow[NAME_INDEX] = Player.name;
             scoreRow[SCORE_INDEX] = Integer.toString(score);
             highScores.add(scoreRow);
             newScoreAdded = true;
+            // assume the player will be in top 10
+            playerInTopTen = true;
         }
 
         // sort the array score column in descending order
@@ -179,40 +197,103 @@ public class Stats {
         });
 
         // make sure the high score list never has more than 10 entries
-        while(highScores.size() > 9){
-            String[] scoreRow = new String[2];
-            scoreRow = (String[])highScores.get(10);
-            if(scoreRow[NAME_INDEX].equals(Player.name)){
+        String[] scoreRow = new String[2];
+        while (highScores.size() > 9) {
+            scoreRow = (String[]) highScores.get(10);
+            if (scoreRow[NAME_INDEX].equals(Player.name)) {
                 // players name will be chopped off the end so no need to re-write
                 newScoreAdded = false;
+                playerInTopTen = false;
             }
             // remove the last element - should never be more than 11
+
             highScores.remove(highScores.size());
         }
 
         // write the high scores out if it was modified
-        if(newScoreAdded){
+        if (newScoreAdded) {
             saveHighScores();
         }
 
         // give the player some feedback
-        String[] firstScoreRow = (String[])highScores.get(0);
+        // UNDONE - WTF - could this be more confusing
+        String[] firstScoreRow = (String[]) highScores.get(0);
         String playerMsg = "";
-        if(firstScoreRow[NAME_INDEX].equals(Player.name)){
-            // player just beat the previous high score
-            playerMsg = "Congratulations - You beat the previous high score";
-            if(score > oldScore) {
-                playerMsg += " and you have beaten your previous score of " + oldScore;
-            }
-        } else if(newScoreAdded){
-            if(score > oldScore){
-                playerMsg = "Congratulations - you have beaten your previous high score of " + oldScore;
-                playerMsg += " and you are still in the top 10 of high scores";
+        if (firstScoreRow[NAME_INDEX].equals(Player.name)) {
+            // player is the top high scorer
+            if (Player.name.equals(previousHighPlayer)) {
+                // player was already the top high scorer
+                if (score > playersOldHighScore) {
+                    playerMsg = "Congratulations - You beat your previous high score of " + previousHighScore;
+                    playerMsg += " and you are still the highest scoring player";
+                } else {
+                    playerMsg = "Congratulations - you are still the highest scoring player but your current score of " + score;
+                    playerMsg += " does not beat your former high score of " + playersOldHighScore;
+                }
             } else {
-                playerMsg = "Congratulations - you are still in the top 10 high score list";
+                // player was NOT already the top scorer
+                playerMsg = "Congratulations - You beat " + previousHighPlayer + "'s previous high score of " + previousHighScore;
+                playerMsg += " and now you are the highest scoring player";
+            }
+        } else if (playerAlreadyInTop10) {
+            if(newScoreAdded) {
+                // player is NOT top high scorer but is already in the top 10 and has a new high score
+                // does player have a previous high score
+                if (playersOldHighScore > 0) {
+                    // player has a previous high score
+                    if (score > playersOldHighScore) {
+                        playerMsg = "Congratulations - you have beaten your previous high score of " + playersOldHighScore;
+                        playerMsg += " and are still in the top 10 of high scores";
+                    } else if (score == playersOldHighScore) {
+                        playerMsg = "Congratulations - you have matched your previous high score of " + playersOldHighScore;
+                        playerMsg += " and are still in the top 10 of high scores";
+                    } else {
+                        playerMsg = "You did not beat your previous high score of " + playersOldHighScore;
+                        playerMsg += " but you are still in the top 10 of high scores";
+                    }
+                }
+            }else {
+                playerMsg = "You did not beat your previous high score of " + playersOldHighScore;
+                playerMsg += " but you are still in the top 10 of high scores";
+            }
+        } else if (playerInTopTen) {
+            if(newScoreAdded) {
+                // player is NOT top high scorer but has been added to the top 10
+                // does player have a previous high score
+                if (playersOldHighScore > 0) {
+                    // player has a previous high score
+                    if (score > playersOldHighScore) {
+                        playerMsg = "Congratulations - you have beaten your previous high score of " + playersOldHighScore;
+                        playerMsg += " and are still in the top 10 of high scores";
+                    } else if (score == playersOldHighScore) {
+                        playerMsg = "Congratulations - you have matched your previous high score of " + playersOldHighScore;
+                        playerMsg += " and are still in the top 10 of high scores";
+                    } else {
+                        playerMsg = "You did not beat your previous high score of " + playersOldHighScore;
+                        playerMsg += " but you are still in the top 10 of high scores";
+                    }
+                } else {
+                    // player does not have a previous high score
+                    playerMsg = "Congratulations - you have been added to the list of top 10 high scores";
+                }
+            }
+        } else if (playersOldHighScore > 0) {
+            // Player is NOT in the top 10 but has a previous high score
+            if (score == playersOldHighScore) {
+                playerMsg = "you matched your old high score of " + playersOldHighScore;
+
+            } else if (score > playersOldHighScore) {
+                playerMsg = "you beat your previous high score of " + playersOldHighScore;
+            } else {
+                playerMsg += "You did not beat your previous high score of " + playersOldHighScore;
             }
         } else {
             playerMsg = "Your score sucks - better luck next time";
+        }
+
+        if(score > Player.currentHighScore){
+            Player.currentHighScore = score;
+            Player.save();
         }
         Debug.message(playerMsg);
     }
