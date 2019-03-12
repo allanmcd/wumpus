@@ -4,7 +4,7 @@ import static com.jetbrains.Game.cave;
 import javafx.beans.property.SimpleIntegerProperty;
 
 //
-// NOTE there should only be one Player object
+// NOTE there is only be one Player object
 //
 public final class Player {
     //
@@ -17,6 +17,7 @@ public final class Player {
 
     static int roomNumber;
     static boolean isDead;
+    static String name;
 
     // position[X, Y, width, height];
     static double[] position;

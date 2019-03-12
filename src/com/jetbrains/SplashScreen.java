@@ -121,7 +121,7 @@ public final class SplashScreen {
         lblWumpus.setFont(Font.font("Verdana", BOLD, 36));
 
         // create cave welcome pane
-        Label lblCaveName = new Label("Welcome to " + caveName);
+        Label lblCaveName = new Label(Player.name + ", welcome to " + caveName);
         lblCaveName.setFont(Font.font("Verdana", BOLD, 24));
 
         // create a panel to put the title and welcome panes in

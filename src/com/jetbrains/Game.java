@@ -1,21 +1,23 @@
 package com.jetbrains;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.loadCave;
 import static com.jetbrains.Main.useDefaults;
+import static javafx.scene.input.KeyCode.ENTER;
 
 //
 // NOTE there should only be one Game object
@@ -31,7 +33,6 @@ public final class Game {
     static boolean  youLost;
     static boolean stillPlayiing;
     static int maxBats = 2;
-    static String playerName;
 
     // game component objects
     static Bow bow;
@@ -186,8 +187,12 @@ public final class Game {
         dialog.setTitle("Sign In");
         dialog.setHeaderText("Please sign in.");
         dialog.setResizable(false);
+
         Label userNameLabel = new Label("Name:");
         TextField userNameField = new TextField();
+        userNameField.setPromptText("me");
+        userNameField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background,-40%);");
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -195,14 +200,18 @@ public final class Game {
         grid.setPadding(new Insets(20, 35, 20, 35));
         grid.add(userNameLabel, 1, 1);
         grid.add(userNameField, 2, 1);
+
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-        okButton.addEventFilter(ActionEvent.ACTION, event -> {
-            event.consume();
-            dialog.close();
+        okButton.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if(keyCode == ENTER){
+                dialog.setResult(ButtonType.OK);
+            }
         });
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
         Platform.runLater(() -> {
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             Window window = dialog.getDialogPane().getScene().getWindow();
@@ -210,13 +219,20 @@ public final class Game {
             window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
             userNameField.requestFocus();
         });
-        dialog.showAndWait();
-        // can do the following if you want to ensure that the user clicked OK
-        // Optional<ButtonType> result = dialog.showAndWait();
-        // if (result.isPresent() && result.get() == ButtonType.OK) {
-        //     // input is valid
-        // }
-        playerName = userNameField.getText();
+
+        // wait for the user to sign in
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // input is valid
+            Player.name = userNameField.getText();
+            if(Player.name.equals("")){
+                // player did NOT enter a name - use default
+                Player.name = userNameField.getPromptText();
+            }
+        } else {
+            // no name so can't play
+            Game.quit();
+        }
     }
 }
 
