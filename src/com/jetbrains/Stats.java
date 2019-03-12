@@ -1,13 +1,10 @@
 package com.jetbrains;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -15,18 +12,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
-import javafx.stage.Window;
 
-import java.util.Optional;
+import java.io.*;
+import java.util.*;
 
+import static com.jetbrains.Cave.highScores;
 import static com.jetbrains.GIO.statusGridPane;
 import static com.jetbrains.Game.cave;
 import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
-import static javafx.scene.input.KeyCode.ENTER;
+import static com.jetbrains.SplashScreen.NAME_INDEX;
+import static com.jetbrains.SplashScreen.SCORE_INDEX;
 
 /**
  * The Stats class is used to contain game stats
@@ -34,9 +32,9 @@ import static javafx.scene.input.KeyCode.ENTER;
 
 
 public class Stats {
-    //
-    // Stats global variables
-    //
+    ////////////////////////////
+    // Stats global variables //
+    ////////////////////////////
     static Text txtInfo;
     static Text txtHint;
     static Text txtArrows;
@@ -44,7 +42,6 @@ public class Stats {
     static Text txtTurns;
     static Text txtScore;
 
-    static int gamePoints;
     static int numberOfTurns;
     static int score;
 
@@ -63,13 +60,9 @@ public class Stats {
         update();
     }
 
-    void modifyScore(){
-        scoreFudgeFactor = gio.getHowMany(-100, 100, "Add/Subtract how many points:");
-        update();
-    }
-
-    void subtractCoin(){
-        numberOfCoins.set(numberOfCoins.get() - 1);
+    void anotherTurn(){
+        numberOfTurns++;
+        txtTurns.setText(Integer.toString(numberOfTurns));
         update();
     }
 
@@ -79,19 +72,160 @@ public class Stats {
         update();
     }
 
-    void anotherTurn(){
-        numberOfTurns++;
-        txtTurns.setText(Integer.toString(numberOfTurns));
+    static boolean loadHighScores() {
+        // assume that the load will succeed
+        boolean loadSuceeded = true;
+        String fileName = "src/" + Cave.name + ".highScores.csv";
+        BufferedReader br;
+        try {
+            // highScores CSV format is:
+            // player name, player score
+            br = new BufferedReader(new FileReader(fileName));
+            String line;
+
+            // process all the lines from the high scores file
+            while ((line = br.readLine()) != null) {
+                String highScore[] = new String[2];
+                String[] args = line.split(",");
+
+                // process the next high score
+
+                // add the players name
+                highScore[NAME_INDEX] = args[0].trim();
+
+                // add the players high score
+                highScore[SCORE_INDEX] = args[1].trim();
+                highScores.add(highScore);
+            }
+        } catch (FileNotFoundException e) {
+            Debug.error("Could not find the file named " + fileName);
+            loadSuceeded = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            loadSuceeded = false;
+        }
+        return loadSuceeded;
+    }
+
+    void modifyScore(){
+        scoreFudgeFactor = gio.getHowMany(-100, 100, "Add/Subtract how many points:");
         update();
     }
 
+    void saveHighScores() {
+        String fileName = "src/" + Cave.name + ".highScores.csv";
+        try {
+            // highScores CSV format is:
+            // player name, player score
+
+            // process all the lines from the high scores file
+            FileWriter highScoresFile = new FileWriter(fileName, false);
+
+            for(int scoreIndex = 0; scoreIndex < highScores.size(); scoreIndex++) {
+                String[] nextScoreEntry = new String[2];
+                nextScoreEntry = (String[]) highScores.get(scoreIndex);
+                String name = nextScoreEntry[NAME_INDEX];
+                String score = nextScoreEntry[SCORE_INDEX];
+                String nextFileEntry = String.format("%s,%s%n", name, score);
+                highScoresFile.write(nextFileEntry);
+            }
+
+            highScoresFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setHighScore(){
+        boolean newScoreAdded = false;
+        int oldScore = 0;
+        // if the player already has a high score, replace it if current one is greater
+        boolean highScoreReplaced = false;
+        for (int highScoresIndex = 0; highScoresIndex < highScores.size(); highScoresIndex++) {
+            String[] scoreEntry = (String[])highScores.get(highScoresIndex);
+            if(scoreEntry[NAME_INDEX].equals(Player.name)){
+                // player already has an entry - should we update it
+                oldScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
+                if(score > oldScore){
+                    // replace old score with new high score
+                    scoreEntry[SCORE_INDEX] = Integer.toString(score);
+                    highScores.set(highScoresIndex, scoreEntry);
+                    highScoreReplaced = true;
+                    newScoreAdded = true;
+                    break;
+                }
+            }
+        }
+
+        // if player didn't already have an entry in the high score table then add one
+        if(highScoreReplaced == false){
+            String[] scoreRow = new String[2];
+            scoreRow[NAME_INDEX] = Player.name;
+            scoreRow[SCORE_INDEX] = Integer.toString(score);
+            highScores.add(scoreRow);
+            newScoreAdded = true;
+        }
+
+        // sort the array score column in descending order
+        // Custom `Comparator` to sort the list of String [] on the basis of second element.
+        Collections.sort(highScores, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] a1, String[] a2) {
+                return a2[1].compareTo(a1[1]);  // the reverse order is define here.
+            }
+        });
+
+        // make sure the high score list never has more than 10 entries
+        while(highScores.size() > 9){
+            String[] scoreRow = new String[2];
+            scoreRow = (String[])highScores.get(10);
+            if(scoreRow[NAME_INDEX].equals(Player.name)){
+                // players name will be chopped off the end so no need to re-write
+                newScoreAdded = false;
+            }
+            // remove the last element - should never be more than 11
+            highScores.remove(highScores.size());
+        }
+
+        // write the high scores out if it was modified
+        if(newScoreAdded){
+            saveHighScores();
+        }
+
+        // give the player some feedback
+        String[] firstScoreRow = (String[])highScores.get(0);
+        String playerMsg = "";
+        if(firstScoreRow[NAME_INDEX].equals(Player.name)){
+            // player just beat the previous high score
+            playerMsg = "Congratulations - You beat the previous high score";
+            if(score > oldScore) {
+                playerMsg += " and you have beaten your previous score of " + oldScore;
+            }
+        } else if(newScoreAdded){
+            if(score > oldScore){
+                playerMsg = "Congratulations - you have beaten your previous high score of " + oldScore;
+                playerMsg += " and you are still in the top 10 of high scores";
+            } else {
+                playerMsg = "Congratulations - you have been added to the top 10 high score list";
+            }
+        } else {
+            playerMsg = "Your score sucks - better luck next time";
+        }
+        Debug.message(playerMsg);
+    }
+
     void setInitialValues(){
-        gamePoints = 0;
+        score = 0;
         numberOfCoins.set(-1);
         if(useDefaults){
             numberOfCoins.set(1);
         }
         numberOfTurns = -1;
+    }
+
+    void subtractCoin(){
+        numberOfCoins.set(numberOfCoins.get() - 1);
+        update();
     }
 
     void update(){
@@ -142,7 +276,7 @@ public class Stats {
         txtTurns = new Text(Integer.toString(numberOfTurns));
 
         Label lblPoints = new Label("Score: ");
-        txtScore = new Text(Integer.toString(gamePoints));
+        txtScore = new Text(Integer.toString(score));
 
         setLabelStyles(lblArrows, lblCoins, lblTurns, lblPoints);
         setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtTurns, txtScore);
@@ -188,16 +322,16 @@ public class Stats {
         return vBox;
     }
 
-    //
-    // Stats constructor
-    //
+    ///////////////////////
+    // Stats constructor //
+    //////////////////////
     Stats(){
         vBox = pane();
     }
 
-    //
-    // Stats helper functions
-    //
+    ////////////////////////////
+    // Stats helper functions //
+    ///////////////////////////
 
     private void setTextStyles(Text... texts) {
         for (Text text : texts) {

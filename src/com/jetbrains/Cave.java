@@ -23,6 +23,7 @@ class Cave {
     static int numberOfRooms = 30;
     static Room rooms[] = new Room[numberOfRooms];
     static boolean valid;
+    static ArrayList highScores = new ArrayList();
 
     //
     // Cave constructor

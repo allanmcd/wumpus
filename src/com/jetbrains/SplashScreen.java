@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import javafx.geometry.*;
 
+import static com.jetbrains.Cave.highScores;
 import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Trivia.init;
@@ -40,8 +41,6 @@ public final class SplashScreen {
 
     // private statics
     private static boolean firstTime = true;
-    private static ArrayList highScores = new ArrayList();
-    private static String caveName;
     protected static final int NAME_COL = 0;
     protected static final int SCORE_COL = 1;
     protected static final int NAME_INDEX = 0;
@@ -54,7 +53,8 @@ public final class SplashScreen {
     public static void show(){
         if(skipSplashScreen){
             init();
-            playGame(caveName);
+            Player.name = "me";
+            playGame(Cave.name);
         } else {
             if (firstTime) {
                 Game.signIn();
@@ -69,13 +69,14 @@ public final class SplashScreen {
     public static void newGame() {
         // which cave should we load
         if (useDefaults) {
-            caveName = "cave1";
+            Cave.name = "cave1";
+            Player.name = "me";
         } else {
             // let the user pick the game to play
-            caveName = gio.cavePicker();
+            Cave.name = gio.cavePicker();
         }
 
-        playGame(caveName);
+        playGame(Cave.name);
     }
 
     private static void playGame(String caveName) {
@@ -90,7 +91,7 @@ public final class SplashScreen {
 
     public static void replayGame()
     {
-        playGame(caveName);
+        playGame(Cave.name);
     }
 
     //
@@ -101,10 +102,10 @@ public final class SplashScreen {
     }
 
     private static void init() {
-        caveName = gio.cavePicker();
+        Cave.name = gio.cavePicker();
 
-        while(caveName.length() == 0 || loadHighScores(highScores) == false){
-            caveName = gio.cavePicker();
+        while(Cave.name.length() == 0 || Stats. loadHighScores() == false){
+            Cave.name = gio.cavePicker();
         };
 
         BorderPane splashBorderPane = new BorderPane();
@@ -121,7 +122,7 @@ public final class SplashScreen {
         lblWumpus.setFont(Font.font("Verdana", BOLD, 36));
 
         // create cave welcome pane
-        Label lblCaveName = new Label(Player.name + ", welcome to " + caveName);
+        Label lblCaveName = new Label(Player.name + ", welcome to " + Cave.name);
         lblCaveName.setFont(Font.font("Verdana", BOLD, 24));
 
         // create a panel to put the title and welcome panes in
@@ -143,7 +144,7 @@ public final class SplashScreen {
         splashScene.setOnKeyPressed(e -> {
             KeyCode keyCode = e.getCode();
             if(keyCode == ENTER){
-                playGame(caveName);
+                playGame(Cave.name);
             } else if(keyCode == ESCAPE){
                 Game.quit();
             }
@@ -157,43 +158,6 @@ public final class SplashScreen {
 
         stage.setScene(splashScene);
         valid = true;
-    }
-
-    private static boolean loadHighScores(ArrayList highScores) {
-        // assume that the load will succeed
-        boolean loadSuceeded = true;
-        String fileName = "src/" + caveName + ".highScores.csv";
-        BufferedReader br;
-        try {
-            // highScores CSV format is:
-            // player name, player score
-            br = new BufferedReader(new FileReader(fileName));
-            String line;
-
-            // process all the lines from the high scores file
-            while ((line = br.readLine()) != null) {
-                String highScore[] = new String[2];
-                String[] args = line.split(",");
-
-                // process the next high score
-
-                // add the players name
-                highScore[NAME_INDEX] = args[0].trim();
-
-                // add the players high score
-                highScore[SCORE_INDEX] = args[1].trim();
-                highScores.add(highScore);
-            }
-        } catch (FileNotFoundException e) {
-            Debug.error("Could not find the file named " + fileName);
-            loadSuceeded = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            loadSuceeded = false;
-        }
-        valid &= loadSuceeded;
-        return loadSuceeded;
-
     }
 
     private static void addPlayerPane(StackPane pane) {

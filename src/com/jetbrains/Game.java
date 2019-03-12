@@ -49,12 +49,12 @@ public final class Game {
     static void start(){
 
         // a blank cave name will force the user to pick one
-        String caveName = "";
+        String Cave.name = "";
         if(useDefaults){
             initialRoom = 1;
-            if(caveName.equals("")) {
+            if(Cave.name.equals("")) {
                 if (gio == null || gio.newCaveName == null || gio.newCaveName.equals(null)) {
-                    caveName = "cave1";
+                    Cave.name = "cave1";
                 }
             }
         }
@@ -69,7 +69,7 @@ public final class Game {
             initialRoom = random.nextInt(29) + 1;
         }
 
-        newGame(caveName);
+        newGame(Cave.name);
 
     }
     */
@@ -99,6 +99,7 @@ public final class Game {
         youWon = true;
         Game.stats.update();
         gio.showDialog(  "YOU WIN","You shot the wumpus");
+        Game.stats.setHighScore();
         ended();
     }
 
@@ -149,12 +150,12 @@ public final class Game {
         // which cave should we load
         if(caveName.equals("")) {
             // must be from initial launch
-            caveName = gio.cavePicker();
+            Cave.name = gio.cavePicker();
         }
 
-        gio = new GIO(caveName);
+        gio = new GIO(Cave.name);
 
-        if(caveName.equals("") || caveName.equals(null) ){
+        if(Cave.name.equals("") || Cave.name.equals(null) ){
             // could not load a cave so bail - should display splash screen
             return;
         }
@@ -164,7 +165,7 @@ public final class Game {
         Wumpus.init(initialRoom);
 
         cave = new Cave(caveName, initialRoom);
-        loadCave(caveName);
+        loadCave(Cave.name);
 
         bow = new Bow(3);
 
