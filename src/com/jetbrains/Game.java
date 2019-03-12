@@ -79,6 +79,9 @@ public final class Game {
     }
 
     static void play(){
+        if(useDefaults){
+            CaveMap.draw();
+        }
         stage.setTitle("Find The Wumpus");
 
         Player.init();

@@ -14,18 +14,25 @@ import static com.jetbrains.WumpusEquates.*;
 
 class Room {
 
-    //
-    // Room instance variables
-    //
+    /////////////////////////////
+    // Room instance variables //
+    /////////////////////////////
+
     protected Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
     int roomNumber;
     boolean hasPit;
     boolean hasBeenVisited;
+    int distaceFromWumpus = -1;
+
+    ////////////////////////////
+    // Room private variables //
+    ////////////////////////////
+
     private final double OPAQUE = 1.0;
 
-    //
-    // Room methods
-    //
+    //////////////////
+    // Room methods //
+    //////////////////
 
     void draw(RoomView roomView) {
         roomView.initWallPoints(roomView);
@@ -72,9 +79,11 @@ class Room {
     boolean hasBat(){
         return cave.bats.isInRoom(roomNumber);
     }
-    //
-    // Room constructor
-    //
+
+    //////////////////////
+    // Room constructor //
+    /////////////////////
+
     Room (int newRoomNumber,
                  int adjacentRoom1,
                  int adjacentRoom2,
@@ -94,9 +103,9 @@ class Room {
 
     }
 
-    //
-    // Room helper functions
-    //
+    ///////////////////////////
+    // Room helper functions //
+    ///////////////////////////
     private void initRoomTunnels(RoomView roomView){
         // compute the four points that define the tunnel polygon
         for(int wallNumber = 0; wallNumber < 6; wallNumber++)

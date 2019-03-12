@@ -7,8 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventTarget;
-import javafx.event.EventType;
 import javafx.geometry.*;
 
 import java.io.File;
@@ -176,7 +174,7 @@ class GIO {
             boolean success = Trivia.ask(5,3, "You have found the Wumpus");
             if(success){
                 message("You have angered the Wumpus and it has fled");
-                Wumpus.moveToRandomRoom();
+                Wumpus.flee();
                 Cave.rooms[currentRoom].draw(gio.singleRoomView);
             } else {
                 Game.youLost("The Wumpus ate you");
