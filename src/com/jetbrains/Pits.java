@@ -4,6 +4,7 @@ import java.util.Random;
 
 import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.rooms;
+import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 
 public final class Pits {
@@ -26,6 +27,15 @@ public final class Pits {
         return room.hasPit;
     }
 
+    static void fellIn(){
+            // FEATURE would be nice if the player spun and vanished
+            String askMsgPrefix = "You have fallen into a pit.  To get out";
+            if(Trivia.ask(3,2, askMsgPrefix)){
+                gio.gotoRoom(initialRoom, "You have been returned to");
+            } else {
+                Game.youLost("You fell into a bottomless pit");
+            }
+    }
     static boolean inAdjacentRoom(){
         boolean inAdjacentRoom = false;
         Room playerRoom = rooms[Player.roomNumber];

@@ -46,61 +46,58 @@ public final class Wumpus {
     }
 
     static void flee() {
-        /*
-        // generate a different random room from 1 to 30
-        int newWumpusRoomNumber = random.nextInt(29) + 1;
-
-        boolean generateAnotherWumpusRoomNumber;
-        do {
-            // assume the current bat room number is OK
-            generateAnotherWumpusRoomNumber = false;
-
-            if (newWumpusRoomNumber == Player.roomNumber) {
-                // don't put the wumpus in the same room as the player
-                generateAnotherWumpusRoomNumber = true;
-            }
-
-            if (Cave.rooms[newWumpusRoomNumber].hasPit) {
-                // don't put the Wumpus in a room with a pit
-                generateAnotherWumpusRoomNumber = true;
-            }
-
-            if (newWumpusRoomNumber == Wumpus.roomNumber) {
-                // don't put the Wumpus back in the same room
-                generateAnotherWumpusRoomNumber = true;
-            }
-
-            if(generateAnotherWumpusRoomNumber) {
-                // generate another bat room number to test
-                newWumpusRoomNumber = random.nextInt(29) + 1;
-            }
-        }while(generateAnotherWumpusRoomNumber);
-*/
         // build an list of rooms to try at incrementing distances from the Wumpus
-        Stack[] roomStacks = new Stack[4];
+        Stack[] roomNumberStacks = new Stack[4];
 
         // distance to move needs to be 2 to 4 rooms
-        Random rnd = new Random();
         int howFarOut = 0;
-        while (howFarOut < 2){
-            howFarOut = rnd.nextInt(3) + 1;
+        if(useDefaults){
+            howFarOut = 3;
+        } else {
+            Random rnd = new Random();
+            while (howFarOut < 2) {
+                howFarOut = rnd.nextInt(3) + 1;
+            }
         }
         System.out.println("need to move Wumpus " + howFarOut + " rooms away");
         int distanceFromWumpus = 0;
-        addAdjacentRooms(roomStacks, distanceFromWumpus, howFarOut);
+        addAdjacentRooms(roomNumberStacks, distanceFromWumpus, howFarOut);
 
         // find an unoccupied room the appropriate distance from the current Wumpus location
-        boolean acceptableRoomFound = false;
-        while(acceptableRoomFound == false){
 
+        Stack potentialRoomNumbersStack = new Stack();
+        potentialRoomNumbersStack = roomNumberStacks[howFarOut-1];
+        boolean generateAnotherWumpusRoomNumber = true;
+        int potentialRoomNumber = 0;
+        while(potentialRoomNumbersStack.size() > 0 && generateAnotherWumpusRoomNumber) {
+            potentialRoomNumber = (int)potentialRoomNumbersStack.pop();
+            do {
+                // assume the current room number is OK
+                generateAnotherWumpusRoomNumber = false;
+
+                if (Cave.rooms[potentialRoomNumber].hasBat()) {
+                    // don't put the Wumpus in a room with a bat
+                    generateAnotherWumpusRoomNumber = true;
+                }
+
+                if (generateAnotherWumpusRoomNumber) {
+                    // generate another bat room number to test
+                    potentialRoomNumber = (int)potentialRoomNumbersStack.pop();
+                }
+            } while (generateAnotherWumpusRoomNumber);
         }
-
-//        System.out.println("Wumpus moved to room " + roomNumber );
+        if(generateAnotherWumpusRoomNumber) {
+            //Holy batshit - how could this happen
+            Debug.error("Wumpus.flee couldn't find a room " + howFarOut + " rooms away");
+        } else{
+            Wumpus.roomNumber = potentialRoomNumber;
+            System.out.println("Wumpus moved to room " + potentialRoomNumber);
+        }
     }
 
-    static void addAdjacentRooms(Stack[] roomStacks, int distanceFromWumpus, int howFarOut) {
+    static void addAdjacentRooms(Stack[] roomNumberStacks, int distanceFromWumpus, int howFarOut) {
         System.out.println(" addAdjacentRooms called");
-        Stack nextRoomStack = new Stack();
+        Stack nextRoomNumberStack = new Stack();
         if(distanceFromWumpus == 0) {
             Room wumpusRoom = Cave.rooms[Wumpus.roomNumber];
             wumpusRoom.distaceFromWumpus = 0;
@@ -109,18 +106,18 @@ public final class Wumpus {
                 Wall nextWall = Cave.rooms[Wumpus.roomNumber].walls[wallIndex];
                 if (nextWall.hasTunne1) {
                     // this wall has a tunnel - need to add it to the initial list of rooms to check
-                    nextRoomStack.add(nextWall.adjacentRoom);
+                    nextRoomNumberStack.add(nextWall.adjacentRoom);
                 }
             }
-            roomStacks[0] = nextRoomStack;
+            roomNumberStacks[0] = nextRoomNumberStack;
         } else {
-            nextRoomStack = roomStacks[distanceFromWumpus];
+            nextRoomNumberStack = roomNumberStacks[distanceFromWumpus];
         }
         // process all the rooms at this stack level, building a stack one room further from Wumpus
         distanceFromWumpus += 1;
-        roomStacks[distanceFromWumpus] = new Stack();
-        for(int stackIndex = 0; stackIndex < nextRoomStack.size(); stackIndex++) {
-            int roomNumber = (int) nextRoomStack.get(stackIndex);
+        roomNumberStacks[distanceFromWumpus] = new Stack();
+        for(int stackIndex = 0; stackIndex < nextRoomNumberStack.size(); stackIndex++) {
+            int roomNumber = (int) nextRoomNumberStack.get(stackIndex);
             Room currentRoom = Cave.rooms[roomNumber];
             currentRoom.distaceFromWumpus = distanceFromWumpus;
             // look for a tunnel in all 6 walls of the current room
@@ -134,15 +131,15 @@ public final class Wumpus {
                         if (nextAdjacentRoom.distaceFromWumpus == -1) {
                             // hasn't been "checked" so it's free to use
                             //leads away from Wumpus - need to add it to the list of rooms to check
-                            roomStacks[distanceFromWumpus].add(nextWall.adjacentRoom);
+                            roomNumberStacks[distanceFromWumpus].add(nextWall.adjacentRoom);
                         }
                     }
                 }
             }
         }
 
-        if(distanceFromWumpus < howFarOut){
-            addAdjacentRooms(roomStacks, distanceFromWumpus, howFarOut);
+        if(distanceFromWumpus < howFarOut -1){
+            addAdjacentRooms(roomNumberStacks, distanceFromWumpus, howFarOut);
         }
         System.out.println("addAdjacentRooms exiting");
     }

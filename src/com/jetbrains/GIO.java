@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import static com.jetbrains.Cave.*;
+import static com.jetbrains.CaveMap.isOpen;
 import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
@@ -48,7 +49,7 @@ class GIO {
     //
     // GIO  constants
     //
-    final int BP_TOP_HEIGHT =  20;
+    final int BP_TOP_HEIGHT = 20;
 
     //
     // GIO static variables
@@ -59,11 +60,12 @@ class GIO {
     static String newCaveName;
     static boolean cavePickerDblClicked;
     static RoomView singleRoomView;
+
     //
     // GIO methods
     //
-    int getDesiredRoomNumber(){
-        int desiredRoom = getHowMany(1, 30,"Which room would you like to go to?");
+    int getDesiredRoomNumber() {
+        int desiredRoom = getHowMany(1, 30, "Which room would you like to go to?");
         return desiredRoom;
     }
 
@@ -87,7 +89,7 @@ class GIO {
 
         okButton.setOnKeyPressed(e -> {
             KeyCode keyCode = e.getCode();
-            if(keyCode == ENTER){
+            if (keyCode == ENTER) {
                 dialog.setResult(ButtonType.OK);
             }
         });
@@ -110,7 +112,7 @@ class GIO {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
                     howMany = Integer.parseInt(howManyField.getText());
-                    if(howMany < minAmt|| howMany > maxAmt) {
+                    if (howMany < minAmt || howMany > maxAmt) {
                         message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
                     } else {
                         invalidNumber = false;
@@ -118,7 +120,7 @@ class GIO {
                 } catch (Exception e) {
                     message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
                 }
-            } else if(result.get() == ButtonType.CANCEL) {
+            } else if (result.get() == ButtonType.CANCEL) {
                 howMany = 0;
                 invalidNumber = false;
             }
@@ -152,7 +154,7 @@ class GIO {
         spacer2.setMinSize(150, 1);
 
         numberPane.getChildren().addAll(spacer1, lblRoomNumber, spacer2);
-        numberPane.setPadding(new Insets(0,0,10,0));
+        numberPane.setPadding(new Insets(0, 0, 10, 0));
 
         Player.roomNumber = roomNumber;
 
@@ -171,36 +173,39 @@ class GIO {
         Game.stage.show();
 
         if (roomNumber == Wumpus.roomNumber) {
-            boolean success = Trivia.ask(5,3, "You have found the Wumpus");
-            if(success){
+            boolean success = Trivia.ask(5, 3, "You have found the Wumpus");
+            if (success) {
                 message("You have angered the Wumpus and it has fled");
                 Wumpus.flee();
                 Cave.rooms[currentRoom].draw(gio.singleRoomView);
+                if (CaveMap.isOpen) {
+                    // update the cave map
+                    CaveMap.draw();
+                }
+                // you bested the Wumpus now check to see if the room has a pit
+                if (Cave.rooms[roomNumber].hasPit) {
+                    Pits.fellIn();
+                }
             } else {
                 Game.youLost("The Wumpus ate you");
                 Player.isDead = true;
                 Cave.rooms[currentRoom].draw(gio.singleRoomView);
             }
-        //} else if (Cave.rooms[roomNumber].hasBat()) {
-        } else if (Cave.bats.isInRoom(roomNumber)) {
+
+        } else if(Cave.bats.isInRoom(roomNumber)){
             relocatePlayer();
             Cave.bats.bats[0].relocateBatFrom(currentRoom);
-        } else if (Cave.rooms[roomNumber].hasPit) {
-            // FEATURE would be nice if the player spun and vanished
-            String askMsgPrefix = "You have fallen into a pit.  To get out";
-            if(Trivia.ask(3,2, askMsgPrefix)){
-                gotoRoom(initialRoom, "You have been returned to");
-            } else {
-                Game.youLost("You fell into a bottomless pit");
-            }
+        } else if(Cave.rooms[roomNumber].hasPit){
+            Pits.fellIn();
         }
+        
         // any interesting objects nearby
         updateHint();
 
         Cave.currentRoom = roomNumber;
 
         // refresh the cave map if it is open
-        if(CaveMap.isOpen){
+        if(isOpen){
             CaveMap.refresh();
         }
     }
@@ -211,6 +216,8 @@ class GIO {
             updateHintText("Wings flapping nearby with foul odor in the air and cool breeze");
         } else if (Wumpus.inAdjacentRoom() && bats.inAdjacentRoom()) {
             updateHintText("Wings flapping nearby and there is a foul odor in the air");
+        } else if (Wumpus.inAdjacentRoom() && pits.inAdjacentRoom()) {
+            updateHintText("I feel a draft and there is a foul odor in the air");
         } else if (pits.inAdjacentRoom()) {
             updateHintText("Pit - I feel a draft");
         } else if (Wumpus.inAdjacentRoom()) {
