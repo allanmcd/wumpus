@@ -129,10 +129,11 @@ class GIO {
     }
 
     void gotoRoom(int roomNumber, String msgPrefix) {
+        Cave.currentRoom = roomNumber;
+        Player.roomNumber = roomNumber;
         // you get a coin every time you enter a room - for any reason
         stats.addCoin();
         gioGroup.getChildren().removeAll(gioGroup.getChildren());
-        Cave.currentRoom = 0;
         stats.txtInfo.setText(msgPrefix + " room " + roomNumber);
         stats.txtHint.setText("");
         Trivia.txtTrivia.setText(Trivia.randomStatement());
@@ -156,12 +157,9 @@ class GIO {
         numberPane.getChildren().addAll(spacer1, lblRoomNumber, spacer2);
         numberPane.setPadding(new Insets(0, 0, 10, 0));
 
-        Player.roomNumber = roomNumber;
-
-        cave.currentRoom = roomNumber;
-
         gioGroup.getChildren().add(numberPane);
 
+        singleRoomView.currentRoom = roomNumber;
         Game.cave.rooms[roomNumber].draw(singleRoomView);
 
         BorderPane.setAlignment(gioGroup, Pos.CENTER);
@@ -175,13 +173,13 @@ class GIO {
         if (roomNumber == Wumpus.roomNumber) {
             boolean success = Trivia.ask(5, 3, "You have found the Wumpus");
             if (success) {
-                message("You have angered the Wumpus and it has fled");
                 Wumpus.flee();
-                Cave.rooms[currentRoom].draw(gio.singleRoomView);
                 if (CaveMap.isOpen) {
                     // update the cave map
                     CaveMap.draw();
                 }
+                message("You have angered the Wumpus and it has fled");
+
                 // you bested the Wumpus now check to see if the room has a pit
                 if (Cave.rooms[roomNumber].hasPit) {
                     Pits.fellIn();
@@ -189,16 +187,15 @@ class GIO {
             } else {
                 Game.youLost("The Wumpus ate you");
                 Player.isDead = true;
-                Cave.rooms[currentRoom].draw(gio.singleRoomView);
             }
-
+            Cave.rooms[currentRoom].draw(gio.singleRoomView);
         } else if(Cave.bats.isInRoom(roomNumber)){
             relocatePlayer();
             Cave.bats.bats[0].relocateBatFrom(currentRoom);
         } else if(Cave.rooms[roomNumber].hasPit){
             Pits.fellIn();
         }
-        
+
         // any interesting objects nearby
         updateHint();
 

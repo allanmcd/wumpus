@@ -104,9 +104,6 @@ public final class CaveMap {
         caveMapStage.setY(Main.primaryStage.getY() - 50);
         caveMapStage.show();
         isOpen = true;
-
-        // WEIRD - for some reason the bow dissapears from current room so need to redraw it
-        Cave.rooms[Cave.currentRoom].draw(gio.singleRoomView);
     }
 
     static void refresh(){
@@ -150,6 +147,7 @@ public final class CaveMap {
         //initRoomHexagon(roomView, OUTER_WALL,walls);
         //initRoomHexagon(roomView, INNER_WALL,walls);
 
+        roomView.currentRoom = roomNumber;
         room.draw(roomView);
         int roomLeft = (int) roomView.topLefts[OUTER_WALL].x;
         int roomTop = (int) roomView.topLefts[OUTER_WALL].y;

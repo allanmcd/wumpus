@@ -302,7 +302,7 @@ public class Stats {
         score = 0;
         numberOfCoins.set(-1);
         if(useDefaults){
-            numberOfCoins.set(1);
+            numberOfCoins.set(10);
         }
         numberOfTurns = -1;
     }

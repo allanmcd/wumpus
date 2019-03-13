@@ -29,6 +29,9 @@ public final class Pits {
 
     static void fellIn(){
             // FEATURE would be nice if the player spun and vanished
+            if(CaveMap.isOpen){
+                CaveMap.refresh();
+            }
             String askMsgPrefix = "You have fallen into a pit.  To get out";
             if(Trivia.ask(3,2, askMsgPrefix)){
                 gio.gotoRoom(initialRoom, "You have been returned to");

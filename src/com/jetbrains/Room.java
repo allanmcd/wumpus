@@ -35,6 +35,8 @@ class Room {
     //////////////////
 
     void draw(RoomView roomView) {
+        roomView.currentRoom = roomNumber;
+
         roomView.initWallPoints(roomView);
         initRoomTunnels(roomView);
 

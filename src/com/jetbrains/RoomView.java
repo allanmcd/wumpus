@@ -13,13 +13,14 @@ public class RoomView {
     /////////////////////////////////
 
     Group group;
-    double  scaleFactor;
+    int currentRoom;
     Color floorColor;
-    Point topLefts[] = new Point[2];
+    double pitImageOpacity;
+    double  scaleFactor;
     boolean showRoomNumber;
     boolean showPlayer;
+    Point topLefts[] = new Point[2];
     int wallDeltas[][] = new int[2][3];
-    double pitImageOpacity;
 
     // hexagon[inner/outer][points][x/y];
     double[][][]hexagon = new double[2][7][2];
