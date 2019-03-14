@@ -46,11 +46,8 @@ public final class Wumpus {
                     Room nextAdjacentOuterRoom = Cave.rooms[nextWall.adjacentRoom];
                     if(nextAdjacentOuterRoom.distaceFromWumpus != 0) {
                         // does not go back to Wumpus room
-                        if (nextAdjacentOuterRoom.distaceFromWumpus == -1) {
-                            // hasn't been "checked" so it's free to use
-                            //leads away from Wumpus - need to add it to the list of rooms to check
-                            outerRoomNumbersStack.add(nextWall.adjacentRoom);
-                        }
+                        //leads away from Wumpus - need to add it to the list of rooms to check
+                        outerRoomNumbersStack.add(nextWall.adjacentRoom);
                     }
                 }
             }
@@ -105,42 +102,62 @@ public final class Wumpus {
             return;
         }
 
-        Room room = Cave.rooms[roomView.currentRoomNumber];
-        if(room.wallWithTunnelClosestToWumpus != null);{
-            // this room lies on the shortest path to the Wumpus
-
-            Point topLeft[] = roomView.topLefts;
-            double roomTopX = topLeft[0].x;
-            double roomTopY = topLeft[0].y;
-
-            double deltaX1 = roomView.wallDeltas[OUTER_WALL][X1];
-            double deltaX2 = roomView.wallDeltas[OUTER_WALL][X2];
-            double lineStartX = roomTopX + deltaX1 + deltaX2/2;
-
-            double deltaY = roomView.wallDeltas[OUTER_WALL][Y1];
-            double lineStartY = roomTopY + deltaY;
-
-            Wall closestToWumpusWall = room.wallWithTunnelClosestToWumpus;
-            Object tunnelPoints[] = closestToWumpusWall.tunnel;
-
-            double tunnelOuterX1 = ((Point)tunnelPoints[0]).x;
-            double tunnelOuterX2 = ((Point)tunnelPoints[1]).x;
-            double lineEndX = tunnelOuterX1 + (tunnelOuterX2 - tunnelOuterX1)/2;
-
-            double tunnelOuterY1 = ((Point)tunnelPoints[0]).y;
-            double tunnelOuterY2 = ((Point)tunnelPoints[1]).y;
-            double lineEndY = tunnelOuterY1 + (tunnelOuterY2 - tunnelOuterY1)/2;
-
-            Line line = new Line();
-            line.setStartX(lineStartX);
-            line.setStartY(lineStartY);
-            line.setEndX(lineEndX);
-            line.setEndY(lineEndY);
-            line.setStroke(Color.GREEN);
-            line.setStrokeWidth(3);
-            roomView.group.getChildren().add(line);
-
+        if(roomView.isBorderRoom){
+            return;
         }
+
+        Room room = Cave.rooms[roomView.currentRoomNumber];
+        // is this room on the shortest path to the Wumpus
+        if(room.wallWithTunnelClosestToWumpus != null)
+        {
+            drawLineFromCenterTowardWumpus(roomView);
+        }
+
+        if(room.wallWithTunnelClosestToPlayer != null)
+        {
+            drawLineFromCenterTowardPlayer(roomView);
+        }
+    }
+
+    static void drawLineFromCenterTowardWumpus(RoomView roomView){
+        Room room = Cave.rooms[roomView.currentRoomNumber];
+
+        Point centerPoint = getShortestPathCenterPoint(roomView);
+
+        Wall closestToWumpusWall = room.wallWithTunnelClosestToWumpus;
+        Object tunnelPoints[] = closestToWumpusWall.tunnel;
+
+        drawShortestPathSegment(roomView, centerPoint, tunnelPoints);
+    }
+
+    static void drawLineFromCenterTowardPlayer(RoomView roomView){
+        Room room = Cave.rooms[roomView.currentRoomNumber];
+
+        Point centerPoint = getShortestPathCenterPoint(roomView);
+
+        Wall closestToPlayerWall = room.wallWithTunnelClosestToPlayer;
+        Object tunnelPoints[] = closestToPlayerWall.tunnel;
+
+        drawShortestPathSegment(roomView, centerPoint, tunnelPoints);
+    }
+
+    static void drawShortestPathSegment(RoomView roomView, Point centerPoint, Object[] tunnelPoints){
+        double tunnelOuterX1 = ((Point)tunnelPoints[0]).x;
+        double tunnelOuterX2 = ((Point)tunnelPoints[1]).x;
+        double lineEndX = tunnelOuterX1 + (tunnelOuterX2 - tunnelOuterX1)/2;
+
+        double tunnelOuterY1 = ((Point)tunnelPoints[0]).y;
+        double tunnelOuterY2 = ((Point)tunnelPoints[1]).y;
+        double lineEndY = tunnelOuterY1 + (tunnelOuterY2 - tunnelOuterY1)/2;
+
+        Line line = new Line();
+        line.setStartX(centerPoint.x);
+        line.setStartY(centerPoint.y);
+        line.setEndX(lineEndX);
+        line.setEndY(lineEndY);
+        line.setStroke(Color.GREEN);
+        line.setStrokeWidth(3);
+        roomView.group.getChildren().add(line);
     }
 
     static void flee() {
@@ -188,7 +205,7 @@ public final class Wumpus {
         if(potentialWumpusRoomNumber == 0) {
             //Holy batshit - how could this happen
             // must have encountered a dead end room in the search path
-            System.out.println("Wumpus.flee couldnot find a room " + howFarOut + " rooms away");
+            System.out.println("Wumpus.flee could not find a room " + howFarOut + " rooms away");
             Wumpus.moveToRandomRoom();
             System.out.println("Moved Wumpus to random room " + Wumpus.roomNumber);
         } else{
@@ -196,6 +213,22 @@ public final class Wumpus {
             System.out.println("Wumpus moved to room " + potentialWumpusRoomNumber);
         }
         updateDistanceFrom();
+    }
+
+    static Point getShortestPathCenterPoint(RoomView roomView){
+        Point topLeft[] = roomView.topLefts;
+        double roomTopX = topLeft[0].x;
+        double roomTopY = topLeft[0].y;
+
+        double deltaX1 = roomView.wallDeltas[OUTER_WALL][X1];
+        double deltaX2 = roomView.wallDeltas[OUTER_WALL][X2];
+        double lineStartX = roomTopX + deltaX1 + deltaX2/2;
+
+        double deltaY = roomView.wallDeltas[OUTER_WALL][Y1];
+        double lineStartY = roomTopY + deltaY;
+
+        Point centerPoint = new Point(lineStartX, lineStartY);
+        return centerPoint;
     }
 
     static void init(int initialRoom){

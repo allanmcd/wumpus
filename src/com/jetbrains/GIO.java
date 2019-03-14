@@ -357,6 +357,7 @@ class GIO {
         double scaleFactor = 1.0;
         boolean showRoomNumber = false;
         singleRoomView = new RoomView(gioGroup, showRoomNumber, scaleFactor, floorColor, topLeft);
+        singleRoomView.isBorderRoom = false;
 
         tfRoomNumber.setAlignment(Pos.CENTER);
         // set up the sceeen display area
@@ -460,9 +461,9 @@ class GIO {
             gio.gotoRoom(desiredRoomNumber, "You have been moved to ");
         });
 
-        MenuItem ignoreTriviaMenuItem = new MenuItem("Ignore Trivia Questions");
+        MenuItem ignoreTriviaMenuItem = new MenuItem("Bypass Trivia Questions");
         ignoreTriviaMenuItem.setOnAction(e -> {
-            Trivia.ignoreTrivia = !Trivia.ignoreTrivia;
+            Trivia.bypassTrivia = true;
         });
 
 

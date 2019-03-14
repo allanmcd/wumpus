@@ -66,7 +66,7 @@ class Room {
 
         drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
 
-        if (wallWithTunnelClosestToWumpus != null) {
+        if (wallWithTunnelClosestToWumpus != null || wallWithTunnelClosestToPlayer != null) {
             Wumpus.drawShortestPathInRoom(roomView);
         }
     }

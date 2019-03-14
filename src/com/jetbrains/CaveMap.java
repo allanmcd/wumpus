@@ -56,6 +56,7 @@ public final class CaveMap {
 
         RoomView smallView = new RoomView(caveMapGroup,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
         smallView.pitImageOpacity = .4;
+        smallView.isBorderRoom = true;
 
         // draw a ring of 'shadow' rooms around the actual array of cave rooms
         smallView.showPlayer = false;
@@ -82,6 +83,7 @@ public final class CaveMap {
 
         // now draw the small version of the cave rooms
         smallView.showPlayer = true;
+        smallView.isBorderRoom = false;
 
         smallView.floorColor = Color.LIGHTGOLDENRODYELLOW;
         int rowLeft = mapLeft + smallDeltaX1 + smallDeltaX2 + 3;

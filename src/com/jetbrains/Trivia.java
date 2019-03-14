@@ -33,7 +33,7 @@ public final class Trivia {
     // Trivia Instance variables
     ////////////////////////////
     static TextArea txtTrivia;
-    static boolean ignoreTrivia;
+    static boolean bypassTrivia;
     static boolean answerAllCorrect = false;
     static boolean answerAllWrong = false;
 
@@ -128,7 +128,7 @@ public final class Trivia {
         VBox.setMargin(btnOK,new Insets(0,0,10,0));
         pane.getChildren().addAll(lbl, btnOK);
 
-        if(useDefaults) {
+        if(bypassTrivia) {
             pane.getChildren().add(answerAllCorrectHbox);
             pane.getChildren().add(answerAllWrongHbox);
         }
@@ -168,7 +168,7 @@ public final class Trivia {
 
     static boolean init(){
         if(useDefaults){
-            ignoreTrivia = true;
+            bypassTrivia = true;
         }
         // assume that the initialization will succeed
         boolean initSuceeded = true;

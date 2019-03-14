@@ -15,6 +15,7 @@ public class RoomView {
     Group group;
     int currentRoomNumber;
     Color floorColor;
+    Boolean isBorderRoom;
     double pitImageOpacity;
     double  scaleFactor;
     boolean showRoomNumber;
