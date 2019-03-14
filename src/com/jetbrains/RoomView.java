@@ -13,7 +13,7 @@ public class RoomView {
     /////////////////////////////////
 
     Group group;
-    int currentRoom;
+    int currentRoomNumber;
     Color floorColor;
     double pitImageOpacity;
     double  scaleFactor;

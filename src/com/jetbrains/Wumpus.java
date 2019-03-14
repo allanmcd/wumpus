@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+
 import static com.jetbrains.Cave.rooms;
 import static com.jetbrains.Game.cave;
 import static com.jetbrains.Game.stats;
 import static com.jetbrains.Main.useDefaults;
+import static com.jetbrains.WumpusEquates.*;
 
 //
 // NOTE there is only one Wumpus object
@@ -52,6 +56,91 @@ public final class Wumpus {
             }
         }
         roomNumberStacks.add(outerRoomNumbersStack);
+    }
+
+    static void computeShortestPath(){
+        Stack shortestPathRoomStack = new Stack();
+        Room currentRoom = rooms[Player.roomNumber];
+        shortestPathRoomStack.push(currentRoom);
+        Room closestRoom = currentRoom;
+        int shortestDistance = currentRoom.distaceFromWumpus;
+        int nextRoomNumber = currentRoom.roomNumber;
+        // create a stack with all the rooms on the shortest path in it
+        while(nextRoomNumber != Wumpus.roomNumber){
+            currentRoom = rooms[nextRoomNumber];
+            Wall[] walls = currentRoom.walls;
+            // look for walls with tunnels
+            for(int wallNumber = 0; wallNumber < 6; wallNumber++){
+                Wall wall = walls[wallNumber];
+                if(wall.hasTunne1){
+                    // check out the adjacent room
+                    Room adjacentRoom = rooms[wall.adjacentRoom];
+                    if(adjacentRoom.distaceFromWumpus < shortestDistance){
+                        shortestDistance = adjacentRoom.distaceFromWumpus;
+                        closestRoom = adjacentRoom;
+                        currentRoom.wallWithTunnelClosestToWumpus = new Wall();
+                        currentRoom.wallWithTunnelClosestToWumpus = wall;
+                        for(int adjacentRoomWallNumber = 0; adjacentRoomWallNumber < 6; adjacentRoomWallNumber++){
+                            Wall nextWall = adjacentRoom.walls[adjacentRoomWallNumber];
+                            if(nextWall.hasTunne1){
+                                int tunnelToRoomNumber = nextWall.adjacentRoom;
+                                if(tunnelToRoomNumber == currentRoom.roomNumber){
+                                    // we found the tunnel pointing back from adjecent room back to current room
+                                    adjacentRoom.wallWithTunnelClosestToPlayer = new Wall();
+                                    adjacentRoom.wallWithTunnelClosestToPlayer = nextWall;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            nextRoomNumber = closestRoom.roomNumber;
+            shortestPathRoomStack.push(closestRoom);
+        }
+    }
+
+    static void drawShortestPathInRoom(RoomView roomView){
+        if(roomView.scaleFactor == 1.0){
+            // don't draw shortest path in full size rooom
+            return;
+        }
+
+        Room room = Cave.rooms[roomView.currentRoomNumber];
+        if(room.wallWithTunnelClosestToWumpus != null);{
+            // this room lies on the shortest path to the Wumpus
+
+            Point topLeft[] = roomView.topLefts;
+            double roomTopX = topLeft[0].x;
+            double roomTopY = topLeft[0].y;
+
+            double deltaX1 = roomView.wallDeltas[OUTER_WALL][X1];
+            double deltaX2 = roomView.wallDeltas[OUTER_WALL][X2];
+            double lineStartX = roomTopX + deltaX1 + deltaX2/2;
+
+            double deltaY = roomView.wallDeltas[OUTER_WALL][Y1];
+            double lineStartY = roomTopY + deltaY;
+
+            Wall closestToWumpusWall = room.wallWithTunnelClosestToWumpus;
+            Object tunnelPoints[] = closestToWumpusWall.tunnel;
+
+            double tunnelOuterX1 = ((Point)tunnelPoints[0]).x;
+            double tunnelOuterX2 = ((Point)tunnelPoints[1]).x;
+            double lineEndX = tunnelOuterX1 + (tunnelOuterX2 - tunnelOuterX1)/2;
+
+            double tunnelOuterY1 = ((Point)tunnelPoints[0]).y;
+            double tunnelOuterY2 = ((Point)tunnelPoints[1]).y;
+            double lineEndY = tunnelOuterY1 + (tunnelOuterY2 - tunnelOuterY1)/2;
+
+            Line line = new Line();
+            line.setStartX(lineStartX);
+            line.setStartY(lineStartY);
+            line.setEndX(lineEndX);
+            line.setEndY(lineEndY);
+            line.setStroke(Color.GREEN);
+            line.setStrokeWidth(3);
+            roomView.group.getChildren().add(line);
+
+        }
     }
 
     static void flee() {
@@ -230,6 +319,8 @@ public final class Wumpus {
         for(int roomNumber = 0; roomNumber < 31; roomNumber++)
         {
             Cave.rooms[roomNumber].distaceFromWumpus = -1;
+            rooms[roomNumber].wallWithTunnelClosestToWumpus = null;
+            rooms[roomNumber].wallWithTunnelClosestToPlayer = null;
         }
         Cave.rooms[Wumpus.roomNumber].distaceFromWumpus = 0;
 

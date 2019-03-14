@@ -161,7 +161,7 @@ class GIO {
 
         gioGroup.getChildren().add(numberPane);
 
-        singleRoomView.currentRoom = roomNumber;
+        singleRoomView.currentRoomNumber = roomNumber;
         Game.cave.rooms[roomNumber].draw(singleRoomView);
 
         BorderPane.setAlignment(gioGroup, Pos.CENTER);

@@ -15,25 +15,30 @@ import static com.jetbrains.WumpusEquates.*;
 
 public final class CaveMap {
 
-    //
-    // CaveMap "equates"
+    ///////////////////////
+    // CaveMap "equates" //
+    ///////////////////////
+
     private static final int smallDeltaY = 32;
     private static final int smallDeltaX1 = 20;
     private static final int smallDeltaX2 = 36;
 
-    //
-    // Cavemap Instance variables
-    //
+    ////////////////////////////////
+    // Cavemap Instance variables //
+    ////////////////////////////////
+
     static boolean isOpen = false;
-    //
-    // Cavemap private Instance variables
-    //
+
+    ////////////////////////////////////////
+    // Cavemap private Instance variables //
+    ////////////////////////////////////////
+
     private static boolean initialized;
     private static Stage caveMapStage;
 
-    //
-    // CaveMap methods
-    //
+    /////////////////////
+    // CaveMap methods //
+    /////////////////////
 
     static void draw(){
         Group caveMapGroup = new Group();
@@ -44,6 +49,10 @@ public final class CaveMap {
         Point topLeft = new Point(mapLeft,mapTop);
         boolean showRoomNumber = true;
         boolean showPlayer = false;
+
+        // update the distance from Wumpus for each room
+        Wumpus.updateDistanceFrom();
+        Wumpus.computeShortestPath();
 
         RoomView smallView = new RoomView(caveMapGroup,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
         smallView.pitImageOpacity = .4;
@@ -98,6 +107,7 @@ public final class CaveMap {
             caveMapStage.setHeight(520);
         }
 
+        // create and show the cave map stage
         caveMapStage.setScene(caveMapScene);
         caveMapStage.setX(Main.primaryStage.getX() + Main.primaryStage.getWidth() + 50);
         caveMapStage.setY(Main.primaryStage.getY() - 50);
@@ -117,18 +127,6 @@ public final class CaveMap {
     // CaveMap helper functions //
     //////////////////////////////
 
-    private static void drawSmallRow(Group group, double walls[][][], int firstRoomNumber, int numberOfRooms, RoomView roomView){
-        RoomView rowRoomView = new RoomView(roomView);
-        int firstTop = (int)rowRoomView.topLefts[OUTER_WALL].y;
-        int lastRoomNumber = firstRoomNumber + numberOfRooms - 1;
-        for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber++){
-            boolean even = roomNumber % 2 == 0;
-            rowRoomView.topLefts[OUTER_WALL].y = (roomNumber % 2 == 0)? firstTop + smallDeltaY:firstTop;
-            drawSmallRoom(group, walls, roomNumber, roomView);
-            rowRoomView.topLefts[OUTER_WALL].x += smallDeltaX1 + smallDeltaX2;
-        }
-    }
-
     private static void drawSmallColumn(Group group, double walls[][][], int firstRoomNumber, int numberOfRooms, RoomView roomView){
         RoomView columnRoomView = new RoomView(roomView);
         int roomTop = (int)roomView.topLefts[OUTER_WALL].y;
@@ -142,7 +140,7 @@ public final class CaveMap {
     private static void drawSmallRoom(Group group, double walls[][][], int roomNumber, RoomView roomView){
         Room room = rooms[roomNumber];
 
-        roomView.currentRoom = roomNumber;
+        roomView.currentRoomNumber = roomNumber;
         room.draw(roomView);
         int roomLeft = (int) roomView.topLefts[OUTER_WALL].x;
         int roomTop = (int) roomView.topLefts[OUTER_WALL].y;
@@ -172,9 +170,22 @@ public final class CaveMap {
         group.getChildren().addAll(distancePane, roomNumberPane);
     }
 
-    //
-    // CaveMap constructor
-    //
+    private static void drawSmallRow(Group group, double walls[][][], int firstRoomNumber, int numberOfRooms, RoomView roomView){
+        RoomView rowRoomView = new RoomView(roomView);
+        int firstTop = (int)rowRoomView.topLefts[OUTER_WALL].y;
+        int lastRoomNumber = firstRoomNumber + numberOfRooms - 1;
+        for(int roomNumber = firstRoomNumber; roomNumber <= lastRoomNumber; roomNumber++){
+            boolean even = roomNumber % 2 == 0;
+            rowRoomView.topLefts[OUTER_WALL].y = (roomNumber % 2 == 0)? firstTop + smallDeltaY:firstTop;
+            drawSmallRoom(group, walls, roomNumber, roomView);
+            rowRoomView.topLefts[OUTER_WALL].x += smallDeltaX1 + smallDeltaX2;
+        }
+    }
+
+    /////////////////////////
+    // CaveMap constructor //
+    /////////////////////////
+
     private CaveMap(){
         // make RoomViews a singleton - simulate a static top level class
     }

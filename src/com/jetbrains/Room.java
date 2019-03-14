@@ -18,11 +18,13 @@ class Room {
     // Room instance variables //
     /////////////////////////////
 
-    protected Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
-    int roomNumber;
-    boolean hasPit;
-    boolean hasBeenVisited;
     int distaceFromWumpus = -1;
+    boolean hasBeenVisited;
+    boolean hasPit;
+    int roomNumber;
+    Wall wallWithTunnelClosestToWumpus;
+    Wall wallWithTunnelClosestToPlayer;
+    protected Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
 
     ////////////////////////////
     // Room private variables //
@@ -35,7 +37,7 @@ class Room {
     //////////////////
 
     void draw(RoomView roomView) {
-        roomView.currentRoom = roomNumber;
+        roomView.currentRoomNumber = roomNumber;
 
         roomView.initWallPoints(roomView);
         initRoomTunnels(roomView);
@@ -63,6 +65,10 @@ class Room {
         }
 
         drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
+
+        if (wallWithTunnelClosestToWumpus != null) {
+            Wumpus.drawShortestPathInRoom(roomView);
+        }
     }
 
     void addTunnel(int roomToTunnelTo) {
