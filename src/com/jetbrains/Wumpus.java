@@ -128,9 +128,13 @@ public final class Wumpus {
 */
     static void flee() {
 
-        // UNDONE need to reset all room.distanceFromWumpus to -1;
-        // build an list of rooms at incrementing distances from the Wumpus
+        //need to reset all room.distanceFromWumpus to -1;
+        for(int roomNumber = 0; roomNumber < 31; roomNumber++)
+        {
+            Cave.rooms[roomNumber].distaceFromWumpus = -1;
+        }
 
+        // build an list of rooms at incrementing distances from the Wumpus
         // distance to move needs to be 2 to 4 rooms
         int howFarOut = 0;
         if(useDefaults){
@@ -173,7 +177,7 @@ public final class Wumpus {
         if(potentialWumpusRoomNumber == 0) {
             //Holy batshit - how could this happen
             // must have encountered a dead end room in the search path
-            System.out.println("Wumpus.flee couldn't find a room " + howFarOut + " rooms away");
+            System.out.println("Wumpus.flee couldnot find a room " + howFarOut + " rooms away");
             Wumpus.moveToRandomRoom();
             System.out.println("Moved Wumpus to random room " + Wumpus.roomNumber);
         } else{

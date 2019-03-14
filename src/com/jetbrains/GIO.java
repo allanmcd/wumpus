@@ -171,13 +171,13 @@ class GIO {
         Game.stage.show();
 
         if (roomNumber == Wumpus.roomNumber) {
+                // update the cave map if it is open
+                CaveMap.refresh();
             boolean success = Trivia.ask(5, 3, "You have found the Wumpus");
             if (success) {
                 Wumpus.flee();
-                if (CaveMap.isOpen) {
-                    // update the cave map
-                    CaveMap.draw();
-                }
+                    // update the cave map if it is open
+                    CaveMap.refresh();
                 message("You have angered the Wumpus and it has fled");
 
                 // you bested the Wumpus now check to see if the room has a pit
