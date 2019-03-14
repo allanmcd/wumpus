@@ -402,7 +402,6 @@ class GIO {
 
         gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
 
-        //-- create the Store menu and it's menu items --//
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
             buyArrows();
@@ -416,6 +415,17 @@ class GIO {
         //--- create the Debug menu and its menu items ---//
         Menu storeMenu = new Menu("Store");
         storeMenu.getItems().addAll(buySecretMenuItem);
+
+        //-- create the Store menu and it's menu items --//
+        MenuItem winTheGameMenuItem = new MenuItem("Win the game");
+        winTheGameMenuItem.setOnAction(e -> {
+            Game.youWon();
+        });
+
+        MenuItem loseTheGameMenuItem = new MenuItem("Lose the game");
+        loseTheGameMenuItem.setOnAction(e -> {
+            Game.youLost("better luck next time");
+        });
 
         MenuItem moreCoinsMenuItem = new MenuItem("add coins");
         moreCoinsMenuItem.setOnAction(e -> {
@@ -473,7 +483,8 @@ class GIO {
         });
 
         Menu debugMenu = new Menu("Testing");
-        debugMenu.getItems().addAll(moreCoinsMenuItem, setPreferedSecretMenu, gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
+        debugMenu.getItems().addAll(winTheGameMenuItem, loseTheGameMenuItem,  moreCoinsMenuItem,  setPreferedSecretMenu,
+                                    gotoRoomMenuItem,   changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);

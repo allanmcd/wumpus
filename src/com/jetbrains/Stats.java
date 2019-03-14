@@ -77,42 +77,48 @@ public class Stats {
         // assume that the load will succeed
         boolean loadSuceeded = true;
         String fileName = "src/" + Cave.name + ".highScores.csv";
-        BufferedReader br;
-        try {
-            // highScores CSV format is:
-            // player name, player score
-            br = new BufferedReader(new FileReader(fileName));
-            String line;
 
-            // process all the lines from the high scores file
-            while ((line = br.readLine()) != null) {
-                String highScore[] = new String[2];
-                String[] args = line.split(",");
+        // does a high scores file exist
+        File f = new File(fileName);
+        if(f.exists() && !f.isDirectory()) {
+            // File exists - load it
+            BufferedReader br;
+            try {
+                // highScores CSV format is:
+                // player name, player score
+                br = new BufferedReader(new FileReader(fileName));
+                String line;
 
-                // process the next high score
+                // process all the lines from the high scores file
+                while ((line = br.readLine()) != null) {
+                    String highScore[] = new String[2];
+                    String[] args = line.split(",");
 
-                // add the players name
-                String nextName = args[0].trim();
-                highScore[NAME_INDEX] = nextName;
+                    // process the next high score
 
-                // add the players high score
-                String nextScore = args[1].trim();
-                highScore[SCORE_INDEX] = nextScore;
-                highScores.add(highScore);
+                    // add the players name
+                    String nextName = args[0].trim();
+                    highScore[NAME_INDEX] = nextName;
 
-                // is the current playaer in the high score list
-                if(nextName.equals(Player.name)){
-                    // current player is in the high score list
-                    // update his/her previous high score
-                    Player.currentHighScore = Integer.parseInt(nextScore);
+                    // add the players high score
+                    String nextScore = args[1].trim();
+                    highScore[SCORE_INDEX] = nextScore;
+                    highScores.add(highScore);
+
+                    // is the current playaer in the high score list
+                    if (nextName.equals(Player.name)) {
+                        // current player is in the high score list
+                        // update his/her previous high score
+                        Player.currentHighScore = Integer.parseInt(nextScore);
+                    }
                 }
+            } catch (FileNotFoundException e) {
+                Debug.error("Could not find the file named " + fileName);
+                loadSuceeded = false;
+            } catch (Exception e) {
+                e.printStackTrace();
+                loadSuceeded = false;
             }
-        } catch (FileNotFoundException e) {
-            Debug.error("Could not find the file named " + fileName);
-            loadSuceeded = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            loadSuceeded = false;
         }
         return loadSuceeded;
     }
@@ -151,28 +157,35 @@ public class Stats {
         int playersOldHighScore = Player.currentHighScore;
         boolean playerAlreadyInTop10 = false;
         boolean playerInTopTen = false;
-
-        // Remember the current high score and player
-        String[] scoreEntry = (String[]) highScores.get(0);
-        int previousHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
-        String previousHighPlayer = scoreEntry[NAME_INDEX];
-
-        // if the player already has a high score, replace it if current one is greater
         boolean highScoreReplaced = false;
-        for (int highScoresIndex = 0; highScoresIndex < highScores.size(); highScoresIndex++) {
-            scoreEntry = (String[]) highScores.get(highScoresIndex);
-            if (scoreEntry[NAME_INDEX].equals(Player.name)) {
-                // player already has an entry
-                playerAlreadyInTop10 = true;
-                // should we update it
-                playersOldHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
-                if (score > playersOldHighScore) {
-                    // replace old score with new high score
-                    scoreEntry[SCORE_INDEX] = Integer.toString(score);
-                    highScores.set(highScoresIndex, scoreEntry);
-                    highScoreReplaced = true;
-                    newScoreAdded = true;
-                    break;
+        String previousHighPlayer = "";
+        int previousHighScore = 0;
+        // Remember the current high score and player
+        String[] scoreEntry = new String[2];
+
+        // do we have any previous high scores?
+        if (highScores.size() > 0) {
+            // previous high scores exist
+            scoreEntry = (String[]) highScores.get(0);
+            previousHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
+            previousHighPlayer = scoreEntry[NAME_INDEX];
+
+            // if the player already has a high score, replace it if current one is greater
+            for (int highScoresIndex = 0; highScoresIndex < highScores.size(); highScoresIndex++) {
+                scoreEntry = (String[]) highScores.get(highScoresIndex);
+                if (scoreEntry[NAME_INDEX].equals(Player.name)) {
+                    // player already has an entry
+                    playerAlreadyInTop10 = true;
+                    // should we update it
+                    playersOldHighScore = Integer.parseInt(scoreEntry[SCORE_INDEX]);
+                    if (score > playersOldHighScore) {
+                        // replace old score with new high score
+                        scoreEntry[SCORE_INDEX] = Integer.toString(score);
+                        highScores.set(highScoresIndex, scoreEntry);
+                        highScoreReplaced = true;
+                        newScoreAdded = true;
+                        break;
+                    }
                 }
             }
         }
