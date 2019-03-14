@@ -56,7 +56,6 @@ public final class Store {
         if(answeredMaxCorrect){
             //UNDONE - add more types of secrets
             Random rnd = new Random();
-            boolean anotherSecret = true;
             int numberOfTypesOfSecrets = 4;
             int secretIndex;
             if(preferedSecretIndex == -1) {
@@ -77,17 +76,31 @@ public final class Store {
                 case 1:
                     // tell the player where the Wumpus is
                     message("The Wumpus is in room " + Wumpus.roomNumber);
-                    anotherSecret = false;
                     break;
                 case 2:
                     // tell the player where a pit is
                     message("There is a pit in room " + Cave.pits.roomWithPitInIt());
-                    anotherSecret = false;
                     break;
                 case 3:
                     // tell the player which room they are in
                     message("You are in room " + Cave.currentRoom);
-                    anotherSecret = false;
+                    break;
+                case 4:
+                    // tell the player which room leads to the shortest path to the Wumpus
+                    int shortestPath = Cave.rooms[Player.roomNumber].distaceFromWumpus;
+                    int shortestPathRoomNumber = 0;
+                    Wall[] roomWalls = Cave.rooms[Player.roomNumber].walls;
+                    for(int wallNumber = 0; wallNumber < 6; wallNumber ++){
+                        Wall wall = roomWalls[wallNumber];
+                        if(wall.hasTunne1){
+                            Room adjacentRoom = Cave.rooms[wall.adjacentRoom];
+                            if(adjacentRoom.distaceFromWumpus < shortestPath){
+                                shortestPath = adjacentRoom.distaceFromWumpus;
+                                shortestPathRoomNumber = adjacentRoom.roomNumber;
+                            }
+                        }
+                    }
+                    message("The quickest way to get to the Wumpus is to go to Room " + shortestPathRoomNumber);
                     break;
 
                     default:Debug.error("invalid secretIndex = " + secretIndex);

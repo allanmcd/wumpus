@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import static com.jetbrains.Cave.rooms;
-import static com.jetbrains.Game.gio;
 import static com.jetbrains.WumpusEquates.OUTER_WALL;
 import static com.jetbrains.WumpusEquates.*;
 
@@ -141,29 +140,36 @@ public final class CaveMap {
     }
 
     private static void drawSmallRoom(Group group, double walls[][][], int roomNumber, RoomView roomView){
-        //initWallPoints(roomView);
         Room room = rooms[roomNumber];
-
-        //initRoomHexagon(roomView, OUTER_WALL,walls);
-        //initRoomHexagon(roomView, INNER_WALL,walls);
 
         roomView.currentRoom = roomNumber;
         room.draw(roomView);
         int roomLeft = (int) roomView.topLefts[OUTER_WALL].x;
         int roomTop = (int) roomView.topLefts[OUTER_WALL].y;
+
         Label lblRoomNumber = new Label(Integer.toString(roomNumber));
-        //lblRoomNumber.setFont(Font.font("Verdana", EXTRA_LIGHT, 36));
         lblRoomNumber.setStyle("-fx-text-fill: rgba(50, 100, 100, 0.5); -fx-font-size: 36px;");
         lblRoomNumber.setAlignment(Pos.CENTER);
         VBox roomNumberPane = new VBox();
         roomNumberPane.setPrefSize(50, 50);
-        roomNumberPane.getChildren().add(lblRoomNumber);
         roomNumberPane.setLayoutX(roomLeft + smallDeltaX1 - 8);
         roomNumberPane.setLayoutY(roomTop - 8 + smallDeltaY / 2);
         roomNumberPane.setAlignment(Pos.CENTER);
         //roomNumberPane.setStyle("-fx-border-color: black");
+        roomNumberPane.getChildren().add(lblRoomNumber);
 
-        group.getChildren().add(roomNumberPane);
+        Label lblDistanceFromWumpus = new Label(Integer.toString(rooms[roomNumber].distaceFromWumpus));
+        lblDistanceFromWumpus.setStyle("-fx-text-fill: rgba(50, 100, 100, 1.0); -fx-font-size: 12px;");
+        lblDistanceFromWumpus.setAlignment(Pos.CENTER);
+        VBox distancePane = new VBox();
+        distancePane.setPrefSize(20, 50);
+        distancePane.setLayoutX(roomLeft );
+        distancePane.setLayoutY(roomTop - 8 + smallDeltaY / 2);
+        distancePane.setAlignment(Pos.CENTER);
+        //distancePane.setStyle("-fx-border-color: black");
+        distancePane.getChildren().add(lblDistanceFromWumpus);
+
+        group.getChildren().addAll(distancePane, roomNumberPane);
     }
 
     //

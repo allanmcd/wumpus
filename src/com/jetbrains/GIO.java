@@ -138,6 +138,8 @@ class GIO {
         stats.txtHint.setText("");
         Trivia.txtTrivia.setText(Trivia.randomStatement());
 
+        Wumpus.updateDistanceFrom();
+
         stats.anotherTurn();
 
         HBox numberPane = new HBox();
@@ -176,8 +178,10 @@ class GIO {
             boolean success = Trivia.ask(5, 3, "You have found the Wumpus");
             if (success) {
                 Wumpus.flee();
-                    // update the cave map if it is open
-                    CaveMap.refresh();
+                // update the cave map if it is open
+                CaveMap.refresh();
+                Wumpus.updateDistanceFromText();
+
                 message("You have angered the Wumpus and it has fled");
 
                 // you bested the Wumpus now check to see if the room has a pit
@@ -423,7 +427,9 @@ class GIO {
         CheckMenuItem cmiWumpusLocation = new CheckMenuItem("Wumpus Location");
         CheckMenuItem cmiPitLocations = new CheckMenuItem("Pit Locations");
         CheckMenuItem cmiYourLocation = new CheckMenuItem("Your Current Location");
-        setPreferedSecretMenu.getItems().addAll(cmiRandom, cmiBatLocations, cmiWumpusLocation, cmiPitLocations, cmiYourLocation);
+        CheckMenuItem cmiShortestPath = new CheckMenuItem("Shortest Path To Wumpus");
+        setPreferedSecretMenu.getItems().addAll(cmiRandom, cmiBatLocations, cmiWumpusLocation,
+                                                cmiPitLocations, cmiShortestPath);
 
         setPreferedSecretMenu.setOnAction(e -> {
             if(e.getTarget().equals(cmiRandom)){
@@ -436,6 +442,8 @@ class GIO {
                 preferedSecretIndex = 2;
             }else if(e.getTarget().equals(cmiYourLocation)){
                 preferedSecretIndex = 3;
+            }else if(e.getTarget().equals(cmiShortestPath)){
+                preferedSecretIndex = 4;
             } else{
                 Debug.error("Invallid Set Secret Preference target returned");
             }

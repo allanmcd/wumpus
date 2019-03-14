@@ -37,6 +37,7 @@ public class Stats {
     ////////////////////////////
     static Text txtInfo;
     static Text txtHint;
+    static Text txtWumpus;
     static Text txtArrows;
     static Text txtCoins;
     static Text txtTurns;
@@ -346,6 +347,7 @@ public class Stats {
 
         // create the info, hint and trivia controls for the bottom pane of the BorderPane
         txtInfo = new Text();
+        txtWumpus = new Text();
         txtHint = new Text();
 
         Label lblArrows = new Label("Arrows: ");
@@ -363,20 +365,21 @@ public class Stats {
         txtScore = new Text(Integer.toString(score));
 
         setLabelStyles(lblArrows, lblCoins, lblTurns, lblPoints);
-        setTextStyles(txtInfo, txtHint, txtArrows, txtCoins, txtTurns, txtScore);
+        setTextStyles(txtInfo, txtWumpus, txtHint, txtArrows, txtCoins, txtTurns, txtScore);
 
         // add the info, hint and stat labels and text boxes to the gridpane
 
         statusGridPane.add(txtInfo, 0, 0);
-        statusGridPane.add(txtHint, 0, 1);
-        statusGridPane.add(lblArrows, 0, 2);
-        statusGridPane.add(txtArrows, 1, 2);
-        statusGridPane.add(lblCoins, 2, 2);
-        statusGridPane.add(txtCoins, 3, 2);
-        statusGridPane.add(lblTurns, 4, 2);
-        statusGridPane.add(txtTurns, 5, 2);
-        statusGridPane.add(lblPoints, 6, 2);
-        statusGridPane.add(txtScore, 7, 2);
+        statusGridPane.add(txtWumpus, 0, 1);
+        statusGridPane.add(txtHint, 0, 2);
+        statusGridPane.add(lblArrows, 0, 3);
+        statusGridPane.add(txtArrows, 1, 3);
+        statusGridPane.add(lblCoins, 2, 3);
+        statusGridPane.add(txtCoins, 3, 3);
+        statusGridPane.add(lblTurns, 4, 3);
+        statusGridPane.add(txtTurns, 5, 3);
+        statusGridPane.add(lblPoints, 6, 3);
+        statusGridPane.add(txtScore, 7, 3);
 
         // aligh the status labels and values
         statusGridPane.setHalignment(lblArrows, HPos.RIGHT);
@@ -400,7 +403,7 @@ public class Stats {
         // so that they will be on top of each other
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(txtInfo, txtHint, statusGridPane);
+        vBox.getChildren().addAll(txtInfo, txtWumpus, txtHint, statusGridPane);
         vBox.setPadding(new Insets(0,0,20,0));
 
         return vBox;

@@ -117,6 +117,9 @@ public final class Game {
         // clear out the info text
         stats.txtInfo.setText("");
 
+        // clear out the Wumpus text
+        stats.txtWumpus.setText("");
+
         // clear out the hint text
         stats.txtHint.setText("");
 
