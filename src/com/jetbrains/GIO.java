@@ -351,7 +351,7 @@ class GIO {
 
         // set up the room views
         Color floorColor = Color.LIGHTGRAY;
-        double roomTop = 40;
+        double roomTop = 50;
         double roomLeft = 0;
         Point topLeft = new Point(roomLeft, roomTop);
         double scaleFactor = 1.0;

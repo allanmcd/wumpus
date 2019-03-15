@@ -107,6 +107,7 @@ public final class Wumpus {
         }
 
         Room room = Cave.rooms[roomView.currentRoomNumber];
+
         // is this room on the shortest path to the Wumpus
         if(room.wallWithTunnelClosestToWumpus != null)
         {

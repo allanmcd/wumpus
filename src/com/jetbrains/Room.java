@@ -3,14 +3,20 @@ package com.jetbrains;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javafx.event.Event;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 
 import static com.jetbrains.Game.*;
 import static com.jetbrains.WumpusEquates.*;
+import static javafx.scene.text.FontWeight.BOLD;
 
 class Room {
 
@@ -64,7 +70,7 @@ class Room {
             drawWumpus(roomView);
         }
 
-        drawTunnels(roomView.group, walls, Color.LIGHTGRAY);
+        drawTunnels(roomView, walls, Color.LIGHTGRAY);
 
         if (wallWithTunnelClosestToWumpus != null || wallWithTunnelClosestToPlayer != null) {
             Wumpus.drawShortestPathInRoom(roomView);
@@ -78,13 +84,13 @@ class Room {
             if (caveRoomWall.adjacentRoom == roomToTunnelTo) {
                 // we found the wall to assign the tunnel to
                 caveRoomWall.hasTunne1 = true;
-                Debug.log("added tunnel from room " + roomNumber + " to room " + roomToTunnelTo );
+                Debug.log("added tunnel from room " + roomNumber + " to room " + roomToTunnelTo);
                 break;
             }
         }
     }
 
-    boolean hasBat(){
+    boolean hasBat() {
         return cave.bats.isInRoom(roomNumber);
     }
 
@@ -92,16 +98,15 @@ class Room {
     // Room constructor //
     /////////////////////
 
-    Room (int newRoomNumber,
-                 int adjacentRoom1,
-                 int adjacentRoom2,
-                 int adjacentRoom3,
-                 int adjacentRoom4,
-                 int adjacentRoom5,
-                 int adjacentRoom6
-                 )
-    {
-        roomNumber  = newRoomNumber;
+    Room(int newRoomNumber,
+         int adjacentRoom1,
+         int adjacentRoom2,
+         int adjacentRoom3,
+         int adjacentRoom4,
+         int adjacentRoom5,
+         int adjacentRoom6
+    ) {
+        roomNumber = newRoomNumber;
         walls[0].adjacentRoom = adjacentRoom1;
         walls[1].adjacentRoom = adjacentRoom2;
         walls[2].adjacentRoom = adjacentRoom3;
@@ -114,11 +119,10 @@ class Room {
     ///////////////////////////
     // Room helper functions //
     ///////////////////////////
-    private void initRoomTunnels(RoomView roomView){
+    private void initRoomTunnels(RoomView roomView) {
         // compute the four points that define the tunnel polygon
-        for(int wallNumber = 0; wallNumber < 6; wallNumber++)
-        {
-            if(walls[wallNumber].hasTunne1) {
+        for (int wallNumber = 0; wallNumber < 6; wallNumber++) {
+            if (walls[wallNumber].hasTunne1) {
                 Point point1 = new Point(roomView.hexagon[INNER_WALL][wallNumber][X], roomView.hexagon[INNER_WALL][wallNumber][Y]);
                 Point point2 = new Point(roomView.hexagon[INNER_WALL][wallNumber + 1][X], roomView.hexagon[INNER_WALL][wallNumber + 1][Y]);
                 initWallTunnel(INNER_WALL, wallNumber, point1, point2);
@@ -130,28 +134,28 @@ class Room {
         }
     }
 
-    private void initWallTunnel(int innerOuter, int wallNumber, Point point1, Point point2){
+    private void initWallTunnel(int innerOuter, int wallNumber, Point point1, Point point2) {
         Wall wall = walls[wallNumber];
 
-        if(wall.hasTunne1){
+        if (wall.hasTunne1) {
             // assumes point2 further right than point1
             double wallWidth = point2.x - point1.x;
-            double tunnelMidX = point1.x + wallWidth/2;
+            double tunnelMidX = point1.x + wallWidth / 2;
             double tunnelWidth = .2 * wallWidth;
-            double tunnelLeft = tunnelMidX - tunnelWidth/2;
+            double tunnelLeft = tunnelMidX - tunnelWidth / 2;
             double tunnelRight = tunnelLeft + tunnelWidth;
 
             // assumes point2 lower than point1
             double wallHeight = point2.y - point1.y;
-            double tunnelMidY = point2.y - wallHeight/2;
+            double tunnelMidY = point2.y - wallHeight / 2;
             double tunnelHeight = .2 * wallHeight;
-            double tunnelTop = tunnelMidY - tunnelHeight/2;
+            double tunnelTop = tunnelMidY - tunnelHeight / 2;
             double tunnelBottom = tunnelTop + tunnelHeight;
 
-            if(innerOuter == INNER_WALL) {
+            if (innerOuter == INNER_WALL) {
                 wall.tunnel[POINT_0] = new Point(tunnelLeft, tunnelTop);
                 wall.tunnel[POINT_1] = new Point(tunnelRight, tunnelBottom);
-            }else {
+            } else {
                 wall.tunnel[POINT_2] = new Point(tunnelRight, tunnelBottom);
                 wall.tunnel[POINT_3] = new Point(tunnelLeft, tunnelTop);
             }
@@ -162,14 +166,14 @@ class Room {
         // display the bat image centered in the room
 
         String verticalPosition = "Centered";
-        if(Player.isInRoom(roomNumber)){
+        if (Player.isInRoom(roomNumber)) {
             verticalPosition = "Top";
         }
 
         drawImage(roomView, OPAQUE, verticalPosition, "bat.png");
     }
 
-    private void drawHexagonWalls(RoomView roomView, int whichWall, Color fillColor){
+    private void drawHexagonWalls(RoomView roomView, int whichWall, Color fillColor) {
         double[][] hexPoints = roomView.hexagon[whichWall];
         Polygon hexagon = new Polygon();
         hexagon.getPoints().addAll(new Double[]{
@@ -206,7 +210,7 @@ class Room {
             double[] hexagonPoint1XY = roomView.hexagon[INNER_WALL][POINT_1];
             double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
 
-            double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth/2 - imageWidth/2;
+            double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth / 2 - imageWidth / 2;
             imageView.setX(imageLeft);
 
             //double imageHeight = image.getHeight();
@@ -215,32 +219,30 @@ class Room {
 
             // determine vertical positioning
             double imageY = 0;
-            switch (verticalPosition){
-                case "Top":{
+            switch (verticalPosition) {
+                case "Top": {
                     // UNDONE - modified to better position bat & wumpus - isn't really TOP
                     //          but this hack will do for now
                     imageY = hexagonPoint0XY[Y] + 45;
                     break;
                 }
                 case "Bottom": {
-                    imageY = hexagonBottomXY[Y] - imageHeight -10;
+                    imageY = hexagonBottomXY[Y] - imageHeight - 10;
                     break;
                 }
                 case "Centered": {
-                    imageY = hexagonPoint0XY[Y] + hexagonHeight/2 - imageHeight/2;
+                    imageY = hexagonPoint0XY[Y] + hexagonHeight / 2 - imageHeight / 2;
                     break;
                 }
-                default:{
+                default: {
                     Debug.error("invalid drawImage verticalPosition parameter: " + verticalPosition);
                 }
             }
 
             imageView.setY(imageY);
             group.getChildren().add(imageView);
-            retVal =  new double[]{imageLeft, imageY, imageWidth, imageHeight};
-        }
-        catch (FileNotFoundException e)
-        {
+            retVal = new double[]{imageLeft, imageY, imageWidth, imageHeight};
+        } catch (FileNotFoundException e) {
             // UNDONE should probably add code to display "e"
             Debug.error(("could not load " + imageFileName));
         }
@@ -250,22 +252,82 @@ class Room {
     private void drawPlayer(RoomView roomView) {
         // display the player image centered in the room
         String verticalPosition = "Centered";
-        if(cave.bats.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
-        if(Wumpus.isInRoom(roomNumber)){ verticalPosition = "Bottom";}
+        if (cave.bats.isInRoom(roomNumber)) {
+            verticalPosition = "Bottom";
+        }
+        if (Wumpus.isInRoom(roomNumber)) {
+            verticalPosition = "Bottom";
+        }
 
-        Player.position = drawImage(roomView, OPAQUE, verticalPosition,"player.png");
+        Player.position = drawImage(roomView, OPAQUE, verticalPosition, "player.png");
     }
 
-    private void drawTunnels(Group group, Wall[] walls, Color fillColor) {
-        for(int wallNumber = 0; wallNumber < 6; wallNumber++){
+    private void drawTunnels(RoomView roomView, Wall[] walls, Color fillColor) {
+        Group group = roomView.group;
+        for (int wallNumber = 0; wallNumber < 6; wallNumber++) {
             Wall wall = walls[wallNumber];
-            if(wall.hasTunne1) {
-                drawTunnel(group, wall, fillColor);
+            if (wall.hasTunne1) {
+                drawTunnel(roomView, wall, fillColor);
             }
         }
     }
 
-    private void drawTunnel(Group group, Wall wall, Color fillColor){
+    private void drawTunnelRoomNumber(RoomView roomView, Wall wall) {
+        // draw the room number that this tunnel leads to
+        // inside of a circle
+        Group group = roomView.group;
+
+        Point point0 = (Point) wall.tunnel[0];
+        Point point1 = (Point) wall.tunnel[1];
+
+
+        double tunnelLengthX = (point1.x - point0.x) / 2;
+        double tunnelCenterX = point0.x + tunnelLengthX;
+
+        double tunnelLengthY = (point1.y - point0.y) / 2;
+        double tunnelCenterY = point0.y + tunnelLengthY;
+
+        Circle tunnelOuterCircle = new Circle();
+        tunnelOuterCircle.setCenterX(tunnelCenterX);
+        tunnelOuterCircle.setCenterY(tunnelCenterY);
+        tunnelOuterCircle.setRadius(30.0);
+        tunnelOuterCircle.setFill(Color.BLACK);
+
+        Circle tunnelInnerCircle = new Circle();
+        tunnelInnerCircle.setCenterX(tunnelCenterX);
+        tunnelInnerCircle.setCenterY(tunnelCenterY);
+        tunnelInnerCircle.setRadius(25);
+        tunnelInnerCircle.setFill(Color.DARKGRAY);
+
+        tunnelInnerCircle.setOnMouseClicked((event) -> {
+            tunnelWallClick(event, wall);
+        });
+
+
+        group.getChildren().addAll(tunnelOuterCircle, tunnelInnerCircle);
+
+        Label lblRoomNumber = new Label(Integer.toString(wall.adjacentRoom));
+        lblRoomNumber.setTextFill(Color.WHITE);
+        lblRoomNumber.setFont(Font.font("Verdana", BOLD, 32));
+        lblRoomNumber.setAlignment(Pos.CENTER);
+        VBox roomNumberPane = new VBox();
+        final int labelPaneWidth = 50;
+        final int labelPaneHeight = 40;
+        roomNumberPane.setPrefSize(labelPaneWidth, labelPaneHeight);
+        roomNumberPane.setLayoutX(tunnelCenterX - labelPaneWidth / 2);
+        roomNumberPane.setLayoutY(tunnelCenterY - labelPaneHeight / 2 - 2);
+        roomNumberPane.setAlignment(Pos.CENTER);
+        roomNumberPane.getChildren().add(lblRoomNumber);
+
+        group.getChildren().add(roomNumberPane);
+
+        roomNumberPane.setOnMouseClicked((event) -> {
+            tunnelWallClick(event, wall);
+        });
+    }
+
+    private void drawTunnel(RoomView roomView, Wall wall, Color fillColor){
+        Group group = roomView.group;
         Polygon tunnelPoly = new Polygon();
         Point point0 = (Point)wall.tunnel[0];
         Point point1 = (Point)wall.tunnel[1];
@@ -281,21 +343,18 @@ class Room {
         tunnelPoly.setFill(fillColor);
         group.getChildren().addAll(tunnelPoly);
 
-        // is the game still in play
-        if(stillPlayiing) {
-            // define code to be executed when a click occurs on the tunnel
-            tunnelPoly.setOnMouseClicked((event) -> {
-                if(stillPlayiing) {
-                    if (bow.drawn) {
-                        event.consume();
-                        int targetRoom = wall.adjacentRoom;
-                        bow.shoot(targetRoom);
-                    } else {
-                        event.consume();
-                        gio.gotoRoom(wall.adjacentRoom, "You crawled through a tunnel into");
-                    }
-                }
-            });
+        // is this tunnel being displayedf on the Cave Map
+        if(roomView.scaleFactor == 1.0) {
+            // NOT being drawn on Cave Map which doesn't need circle & room number
+            drawTunnelRoomNumber(roomView, wall);
+
+            // is the game still in play
+            if (stillPlayiing) {
+                // define code to be executed when a click occurs on the tunnel
+                tunnelPoly.setOnMouseClicked((event) -> {
+                    tunnelWallClick(event, wall);
+                });
+            }
         }
     }
 
@@ -306,4 +365,19 @@ class Room {
 
         drawImage(roomView, OPAQUE, verticalPosition, "wumpus.png");
     }
+
+    private void tunnelWallClick(Event event, Wall wall) {
+        if(stillPlayiing) {
+            if (bow.drawn) {
+                event.consume();
+                int targetRoom = wall.adjacentRoom;
+                bow.shoot(targetRoom);
+            } else {
+                event.consume();
+                gio.gotoRoom(wall.adjacentRoom, "You crawled through a tunnel into");
+            }
+        }
+    }
+
+
 }
