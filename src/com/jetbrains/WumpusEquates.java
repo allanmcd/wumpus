@@ -28,5 +28,5 @@ public class WumpusEquates {
     static final int POINT_5 = 5;
     static final int POINT_6 = 6;
 
-
+    static final double OPAQUE = 1.0;
 }

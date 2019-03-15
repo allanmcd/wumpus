@@ -373,6 +373,7 @@ class GIO {
         singleRoomView = new RoomView(gioGroup, showRoomNumber, scaleFactor, floorColor, topLeft);
         singleRoomView.isBorderRoom = false;
         singleRoomView.isForCaveMap = false;
+        singleRoomView.bowImageView = new ImageView();
 
         tfRoomNumber.setAlignment(Pos.CENTER);
         // set up the sceeen display area
@@ -543,10 +544,12 @@ class GIO {
         double mouseY = evt.getY();
 
         // need the bow Image to get the width and height
-        Image bowImage = bow.imageView.getImage();
+        Image bowImage = singleRoomView.bowImageView.getImage();
 
         // convert the bow image Top and Left coordinates to bpGame relative
-        Point2D bowTopLeft = Game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
+        //Point2D bowTopLeft = Game.bow.imageView.localToScene(bow.imageView.getX(), bow.imageView.getY());
+        ImageView bowImageView = singleRoomView.bowImageView;
+        Point2D bowTopLeft = bowImageView.localToScene(bowImageView.getX(), bowImageView.getY());
 
         // calculate the BorderPane relative values for the bow Top, Left, Bottom & Right
         // UNDONE try to figure out a way to GET the ImageView margin

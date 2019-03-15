@@ -11,35 +11,35 @@ import static com.jetbrains.Game.*;
 import static com.jetbrains.Player.numberOfArrows;
 
 //
-// NOTE there should only be one Player object
+// NOTE there should only be one Bow object
 //
 public class Bow {
-    //
-    // Bow  constants
-    //
+
+    ////////////////////
+    // Bow  constants //
+    ////////////////////
+
         private final int TOP = 0;
         private final int LEFT = 1;
         private final int BOTTOM = 2;
         private final int RIGHT = 3;
 
-    //
-    // Bow instance variables
-    //
+    ////////////////////////////
+    // Bow instance variables //
+    ////////////////////////////
+
     int arrowsRemaining;
     boolean fired;
-    ImageView imageView;
     boolean drawn;
-    RoomView roomView;
-    //
-    // Bow methods
-    //
-    void shoot(int targetRoomNumber){
+
+    /////////////////
+    // Bow methods //
+    /////////////////
+
+    void shoot(RoomView roomView, int targetRoomNumber){
         drawn = false;
         fired = true;
         stats.decrementArrows();
-
-        // update the bow image
-        draw(roomView);
 
         if(numberOfArrows.get() == 0){
             Game.youLost("You ran out of arrrows");
@@ -53,8 +53,9 @@ public class Bow {
             System.out.println("bat killed");
             CaveMap.refresh();
             gio.updateHint();
-        }
-        else{
+        } else if( Game.cave.pits.isInRoom(targetRoomNumber)){
+            gio.updateInfo("The arrow fell into a pit and can not be recovered");
+        } else{
             gio.updateInfo("Nothing in that room.  The arrow can not be recovered");
         }
         fired = false;
@@ -62,44 +63,49 @@ public class Bow {
     }
 
     void draw(RoomView roomView){
-        this.roomView = roomView;
-        try {
+        ImageView playerImageView = Player.imageView(roomView);
+
+        String imageFileName = "";
+        Image bowImage;
             // remove any existing bow image
-            if(imageView != null){
-                gioGroup.getChildren().remove(imageView);
+            if(roomView.bowImageView != null){
+                gioGroup.getChildren().remove(roomView.bowImageView);
             }
 
             // create the appropriate bow image to implement some crude animation
-            Image bowImage;
             if(fired){
                 // draw the empty bow image - no arrow
-                bowImage = new Image(new FileInputStream("src/bow.empty.png"));
+                imageFileName = "src/bow.empty.png";
             } else if(drawn){
                 // draw the bow is drawn image
-                bowImage = new Image(new FileInputStream("src/bow.drawn.png"));
+                imageFileName = "src/bow.drawn.png";
             } else{
                 // draw the bow not drawn image
-                bowImage = new Image(new FileInputStream("src/bow.png"));
+                imageFileName = "src/bow.png";
             }
 
-            imageView = new ImageView(bowImage);
+        try {
+            bowImage = new Image(new FileInputStream(imageFileName));
+            roomView.bowImageView = new ImageView(bowImage);
             double imageWidth = roomView.scaleFactor * bowImage.getWidth();
             double imageHeight = roomView.scaleFactor * bowImage.getHeight();
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(imageWidth);
-            imageView.setFitHeight(imageHeight);
+            roomView.bowImageView.setPreserveRatio(true);
+            roomView.bowImageView.setFitWidth(imageWidth);
+            roomView.bowImageView.setFitHeight(imageHeight);
 
-            //UNDONE - add tool tips to bow
-            //Tooltip bowToolTip = new Tooltip("click on to shoot");
-            //Tooltip.install(imageView,bowToolTip);
+            // determine vertical positioning
+            double imageX = 0;
+            double imageY = 0;
+            imageX = playerImageView.getX() + playerImageView.getFitWidth()/2;
 
-            // position the bow near the players left arm
-            double imageViewLeft = Player.position[0]+30;
-            Double bowLeft = Player.position[0] + Player.position[2] - bowImage.getWidth();
-            imageView.setX(bowLeft);
+            if(roomView.isForCaveMap){
+                imageY = playerImageView.getY() + 5;
+            } else {
+                imageY = playerImageView.getY() + 45;
+            }
 
-            Double bowTop = Player.position[1] + Player.position[3]/2 - 10;
-            imageView.setY(bowTop);
+            roomView.bowImageView.setX(imageX);
+            roomView.bowImageView.setY(imageY);
 
             //UNDONE
             // draw a border aroung the bow if the user moves the mouse over it
@@ -107,18 +113,21 @@ public class Bow {
             //imageView.setStyle("-fx-border-color:red; -fx-background-radius:15.0" );
             //imageView.setStyle("-fx-border-width:24px solid;");
 
-            gioGroup.getChildren().add(imageView);
-        }
-        catch (FileNotFoundException e)
-        {
+            roomView.bowImageView.setStyle("-fx-border-color: red;\n" +
+                    "-fx-border-style: solid;\n" +
+                    "-fx-border-width: 5;");
+            roomView.group.getChildren().add(roomView.bowImageView);
+        } catch (FileNotFoundException e) {
             // UNDONE should probably add code to display "e"
-            Debug.error(("could not load bow.png"));
+            Debug.error(("could not load " + imageFileName));
         }
+
     }
 
-    //
-    // Bow constructor
-    //
+    /////////////////////
+    // Bow constructor //
+    /////////////////////
+
     Bow(int initialArrows){
         arrowsRemaining = initialArrows;
     }

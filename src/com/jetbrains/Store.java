@@ -100,7 +100,12 @@ public final class Store {
                             }
                         }
                     }
-                    message("The quickest way to get to the Wumpus is to go to Room " + shortestPathRoomNumber);
+                    if(Cave.rooms[Cave.currentRoom].distaceFromWumpus == 1){
+                        // the Wumpus is in the next room
+                        message("The Wumpus is in room " + shortestPathRoomNumber);
+                    } else {
+                        message("Going to Room " + shortestPathRoomNumber + " will put you closer to the Wumpus");
+                    }
                     break;
 
                     default:Debug.error("invalid secretIndex = " + secretIndex);

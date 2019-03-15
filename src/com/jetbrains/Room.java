@@ -32,12 +32,6 @@ class Room {
     Wall wallWithTunnelClosestToPlayer;
     protected Wall walls[] = {new Wall(), new Wall(), new Wall(), new Wall(), new Wall(), new Wall()};
 
-    ////////////////////////////
-    // Room private variables //
-    ////////////////////////////
-
-    private final double OPAQUE = 1.0;
-
     //////////////////
     // Room methods //
     //////////////////
@@ -57,7 +51,7 @@ class Room {
 
         if (roomView.showPlayer && !Player.isDead) {
             if (Player.roomNumber == roomNumber) {
-                drawPlayer(roomView);
+                Player.draw(roomView);
                 bow.draw(roomView);
             }
         }
@@ -76,6 +70,67 @@ class Room {
             Wumpus.drawShortestPathInRoom(roomView);
         }
     }
+
+    static double[] drawImage(RoomView roomView, double opacity, String verticalPosition, String imageFileName) {
+        // display an image centered in the current room
+        double[] retVal = new double[4];
+        Group group = roomView.group;
+        double scaleFactor = roomView.scaleFactor;
+        try
+        {
+            Image image = new Image(new FileInputStream("src/" + imageFileName));
+            ImageView imageView = new ImageView(image);
+            imageView.setOpacity(opacity);
+            double imageWidth = scaleFactor * image.getWidth();
+            double imageHeight = scaleFactor * image.getHeight();
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(imageWidth);
+            imageView.setFitHeight(imageHeight);
+
+            //double imageWidth = image.getWidth();
+            double[] hexagonPoint0XY = roomView.hexagon[INNER_WALL][POINT_0];
+            double[] hexagonPoint1XY = roomView.hexagon[INNER_WALL][POINT_1];
+            double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
+
+            double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth / 2 - imageWidth / 2;
+            imageView.setX(imageLeft);
+
+            //double imageHeight = image.getHeight();
+            double[] hexagonBottomXY = roomView.hexagon[INNER_WALL][POINT_3];
+            double hexagonHeight = hexagonBottomXY[Y] - hexagonPoint0XY[Y];
+
+            // determine vertical positioning
+            double imageY = 0;
+            switch (verticalPosition) {
+                case "Top": {
+                    // UNDONE - modified to better position bat & wumpus - isn't really TOP
+                    //          but this hack will do for now
+                    imageY = hexagonPoint0XY[Y] + 45;
+                    break;
+                }
+                case "Bottom": {
+                    imageY = hexagonBottomXY[Y] - imageHeight - 10;
+                    break;
+                }
+                case "Centered": {
+                    imageY = hexagonPoint0XY[Y] + hexagonHeight / 2 - imageHeight / 2;
+                    break;
+                }
+                default: {
+                    Debug.error("invalid drawImage verticalPosition parameter: " + verticalPosition);
+                }
+            }
+
+            imageView.setY(imageY);
+            group.getChildren().add(imageView);
+            retVal = new double[]{imageLeft, imageY, imageWidth, imageHeight};
+        } catch (FileNotFoundException e) {
+            // UNDONE should probably add code to display "e"
+            Debug.error(("could not load " + imageFileName));
+        }
+        return retVal;
+    }
+
 
     void addTunnel(int roomToTunnelTo) {
         // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
@@ -169,7 +224,6 @@ class Room {
         if (Player.isInRoom(roomNumber)) {
             verticalPosition = "Top";
         }
-
         drawImage(roomView, OPAQUE, verticalPosition, "bat.png");
     }
 
@@ -187,79 +241,6 @@ class Room {
         });
         hexagon.setFill(fillColor);
         roomView.group.getChildren().addAll(hexagon);
-    }
-
-    private double[] drawImage(RoomView roomView, double opacity, String verticalPosition, String imageFileName) {
-        // display an image centered in the current room
-        double[] retVal = new double[4];
-        Group group = roomView.group;
-        double scaleFactor = roomView.scaleFactor;
-        try
-        {
-            Image image = new Image(new FileInputStream("src/" + imageFileName));
-            ImageView imageView = new ImageView(image);
-            imageView.setOpacity(opacity);
-            double imageWidth = scaleFactor * image.getWidth();
-            double imageHeight = scaleFactor * image.getHeight();
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(imageWidth);
-            imageView.setFitHeight(imageHeight);
-
-            //double imageWidth = image.getWidth();
-            double[] hexagonPoint0XY = roomView.hexagon[INNER_WALL][POINT_0];
-            double[] hexagonPoint1XY = roomView.hexagon[INNER_WALL][POINT_1];
-            double hexagonHorizLineWidth = hexagonPoint1XY[X] - hexagonPoint0XY[X];
-
-            double imageLeft = hexagonPoint0XY[X] + hexagonHorizLineWidth / 2 - imageWidth / 2;
-            imageView.setX(imageLeft);
-
-            //double imageHeight = image.getHeight();
-            double[] hexagonBottomXY = roomView.hexagon[INNER_WALL][POINT_3];
-            double hexagonHeight = hexagonBottomXY[Y] - hexagonPoint0XY[Y];
-
-            // determine vertical positioning
-            double imageY = 0;
-            switch (verticalPosition) {
-                case "Top": {
-                    // UNDONE - modified to better position bat & wumpus - isn't really TOP
-                    //          but this hack will do for now
-                    imageY = hexagonPoint0XY[Y] + 45;
-                    break;
-                }
-                case "Bottom": {
-                    imageY = hexagonBottomXY[Y] - imageHeight - 10;
-                    break;
-                }
-                case "Centered": {
-                    imageY = hexagonPoint0XY[Y] + hexagonHeight / 2 - imageHeight / 2;
-                    break;
-                }
-                default: {
-                    Debug.error("invalid drawImage verticalPosition parameter: " + verticalPosition);
-                }
-            }
-
-            imageView.setY(imageY);
-            group.getChildren().add(imageView);
-            retVal = new double[]{imageLeft, imageY, imageWidth, imageHeight};
-        } catch (FileNotFoundException e) {
-            // UNDONE should probably add code to display "e"
-            Debug.error(("could not load " + imageFileName));
-        }
-        return retVal;
-    }
-
-    private void drawPlayer(RoomView roomView) {
-        // display the player image centered in the room
-        String verticalPosition = "Centered";
-        if (cave.bats.isInRoom(roomNumber)) {
-            verticalPosition = "Bottom";
-        }
-        if (Wumpus.isInRoom(roomNumber)) {
-            verticalPosition = "Bottom";
-        }
-
-        Player.position = drawImage(roomView, OPAQUE, verticalPosition, "player.png");
     }
 
     private void drawTunnels(RoomView roomView, Wall[] walls, Color fillColor) {
@@ -300,7 +281,7 @@ class Room {
         tunnelInnerCircle.setFill(Color.DARKGRAY);
 
         tunnelInnerCircle.setOnMouseClicked((event) -> {
-            tunnelWallClick(event, wall);
+            tunnelWallClick(event, wall, roomView);
         });
 
 
@@ -322,7 +303,7 @@ class Room {
         group.getChildren().add(roomNumberPane);
 
         roomNumberPane.setOnMouseClicked((event) -> {
-            tunnelWallClick(event, wall);
+            tunnelWallClick(event, wall, roomView);
         });
     }
 
@@ -349,7 +330,7 @@ class Room {
             if (stillPlayiing) {
                 // define code to be executed when a click occurs on the tunnel
                 tunnelPoly.setOnMouseClicked((event) -> {
-                    tunnelWallClick(event, wall);
+                    tunnelWallClick(event, wall, roomView);
                 });
             }
         } else{
@@ -367,12 +348,12 @@ class Room {
         drawImage(roomView, OPAQUE, verticalPosition, "wumpus.png");
     }
 
-    private void tunnelWallClick(Event event, Wall wall) {
+    private void tunnelWallClick(Event event, Wall wall, RoomView roomView) {
         if(stillPlayiing) {
             if (bow.drawn) {
                 event.consume();
                 int targetRoom = wall.adjacentRoom;
-                bow.shoot(targetRoom);
+                bow.shoot(roomView, targetRoom);
             } else {
                 event.consume();
                 gio.gotoRoom(wall.adjacentRoom, "You crawled through a tunnel into");

@@ -1,6 +1,7 @@
 package com.jetbrains;
 
 import javafx.scene.Group;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 import static com.jetbrains.WumpusEquates.*;
@@ -13,6 +14,8 @@ public class RoomView {
     /////////////////////////////////
 
     Group group;
+    // UNDONE - would like to get rid of bowImageView
+    ImageView bowImageView;
     int currentRoomNumber;
     Color floorColor;
     Boolean isBorderRoom;

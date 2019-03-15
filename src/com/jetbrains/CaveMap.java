@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -58,6 +59,7 @@ public final class CaveMap {
         smallView.pitImageOpacity = .4;
         smallView.isBorderRoom = true;
         smallView.isForCaveMap = true;
+        smallView.bowImageView = new ImageView();
 
         // draw a ring of 'shadow' rooms around the actual array of cave rooms
         smallView.showPlayer = false;
