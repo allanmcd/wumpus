@@ -207,8 +207,6 @@ public final class Game {
 
         Label userNameLabel = new Label("Name:");
         TextField userNameField = new TextField();
-        userNameField.setPromptText("me");
-        userNameField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background,-40%);");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

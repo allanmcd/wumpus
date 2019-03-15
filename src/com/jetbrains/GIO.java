@@ -76,6 +76,10 @@ class GIO {
 
         Label howManyLabel = new Label(text);
         TextField howManyField = new TextField();
+        if(true){
+            howManyField.setPromptText("10");
+            howManyField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background,-40%);");
+        }
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -110,15 +114,25 @@ class GIO {
             Optional<ButtonType> result = dialog.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    howMany = Integer.parseInt(howManyField.getText());
-                    if (howMany < minAmt || howMany > maxAmt) {
+                String howManyText = new String();
+                howManyText = howManyField.getText();
+                if(howManyText.length() > 0) {
+                    // looks like Player typed in some text
+                    try {
+                        howMany = Integer.parseInt(howManyField.getText());
+                        if (howMany < minAmt || howMany > maxAmt) {
+                            message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
+                        } else {
+                            invalidNumber = false;
+                        }
+                    } catch (Exception e) {
                         message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
-                    } else {
-                        invalidNumber = false;
                     }
-                } catch (Exception e) {
-                    message("Please pick a number betweeen " + minAmt + " and " + maxAmt);
+                } else{
+                    // Player didn't enter a value but clicked OK
+                    // use the prompt value as the default
+                    howMany = Integer.parseInt(howManyField.getPromptText());
+                    invalidNumber = false;
                 }
             } else if (result.get() == ButtonType.CANCEL) {
                 howMany = 0;
