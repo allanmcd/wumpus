@@ -16,6 +16,7 @@ public class RoomView {
     int currentRoomNumber;
     Color floorColor;
     Boolean isBorderRoom;
+    Boolean isForCaveMap;
     double pitImageOpacity;
     double  scaleFactor;
     boolean showRoomNumber;
@@ -56,6 +57,7 @@ public class RoomView {
         // use these default values
         this.showPlayer = true;
         this.pitImageOpacity = 1.0;
+        this.isForCaveMap = false;
     }
 
     // make a copy of an existing RoomView

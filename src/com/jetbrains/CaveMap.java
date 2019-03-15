@@ -57,6 +57,7 @@ public final class CaveMap {
         RoomView smallView = new RoomView(caveMapGroup,showRoomNumber,scaleFactor, Color.ALICEBLUE, topLeft);
         smallView.pitImageOpacity = .4;
         smallView.isBorderRoom = true;
+        smallView.isForCaveMap = true;
 
         // draw a ring of 'shadow' rooms around the actual array of cave rooms
         smallView.showPlayer = false;

@@ -343,11 +343,8 @@ class Room {
         tunnelPoly.setFill(fillColor);
         group.getChildren().addAll(tunnelPoly);
 
-        // is this tunnel being displayedf on the Cave Map
-        if(roomView.scaleFactor == 1.0) {
-            // NOT being drawn on Cave Map which doesn't need circle & room number
-            drawTunnelRoomNumber(roomView, wall);
-
+        // is this tunnel being displayed on the Cave Map
+        if(roomView.isForCaveMap) {
             // is the game still in play
             if (stillPlayiing) {
                 // define code to be executed when a click occurs on the tunnel
@@ -355,6 +352,10 @@ class Room {
                     tunnelWallClick(event, wall);
                 });
             }
+        } else{
+            // NOT being drawn on Cave Map
+            // so add a circle with the adjacent room number in it
+            drawTunnelRoomNumber(roomView, wall);
         }
     }
 

@@ -358,6 +358,7 @@ class GIO {
         boolean showRoomNumber = false;
         singleRoomView = new RoomView(gioGroup, showRoomNumber, scaleFactor, floorColor, topLeft);
         singleRoomView.isBorderRoom = false;
+        singleRoomView.isForCaveMap = false;
 
         tfRoomNumber.setAlignment(Pos.CENTER);
         // set up the sceeen display area

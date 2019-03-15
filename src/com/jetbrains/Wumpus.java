@@ -97,8 +97,8 @@ public final class Wumpus {
     }
 
     static void drawShortestPathInRoom(RoomView roomView){
-        if(roomView.scaleFactor == 1.0){
-            // don't draw shortest path in full size rooom
+        if(roomView.isForCaveMap == false){
+            // don't draw shortest path in non-CaveMap rooom
             return;
         }
 
