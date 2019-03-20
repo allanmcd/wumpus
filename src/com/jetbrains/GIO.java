@@ -406,7 +406,7 @@ class GIO {
 
         // set up the room views
         Color floorColor = Color.LIGHTGRAY;
-        double roomTop = 50;
+        double roomTop = 60;
         double roomLeft = 0;
         Point topLeft = new Point(roomLeft, roomTop);
         double scaleFactor = 1.0;
@@ -415,6 +415,8 @@ class GIO {
         singleRoomView.isBorderRoom = false;
         singleRoomView.isForCaveMap = false;
         singleRoomView.bowImageView = new ImageView();
+        singleRoomView.tunnelColor = Color.DARKGRAY;
+
 
         tfRoomNumber.setAlignment(Pos.CENTER);
         // set up the sceeen display area

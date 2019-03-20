@@ -64,7 +64,7 @@ class Room {
             drawWumpus(roomView);
         }
 
-        drawTunnels(roomView, walls, Color.LIGHTGRAY);
+        drawTunnels(roomView, walls);
 
         if (wallWithTunnelClosestToWumpus != null || wallWithTunnelClosestToPlayer != null) {
             Wumpus.drawShortestPathInRoom(roomView);
@@ -196,14 +196,14 @@ class Room {
             // assumes point2 further right than point1
             double wallWidth = point2.x - point1.x;
             double tunnelMidX = point1.x + wallWidth / 2;
-            double tunnelWidth = .2 * wallWidth;
+            double tunnelWidth = .3 * wallWidth;
             double tunnelLeft = tunnelMidX - tunnelWidth / 2;
             double tunnelRight = tunnelLeft + tunnelWidth;
 
             // assumes point2 lower than point1
             double wallHeight = point2.y - point1.y;
             double tunnelMidY = point2.y - wallHeight / 2;
-            double tunnelHeight = .2 * wallHeight;
+            double tunnelHeight = .3 * wallHeight;
             double tunnelTop = tunnelMidY - tunnelHeight / 2;
             double tunnelBottom = tunnelTop + tunnelHeight;
 
@@ -243,12 +243,12 @@ class Room {
         roomView.group.getChildren().addAll(hexagon);
     }
 
-    private void drawTunnels(RoomView roomView, Wall[] walls, Color fillColor) {
+    private void drawTunnels(RoomView roomView, Wall[] walls) {
         Group group = roomView.group;
         for (int wallNumber = 0; wallNumber < 6; wallNumber++) {
             Wall wall = walls[wallNumber];
             if (wall.hasTunne1) {
-                drawTunnel(roomView, wall, fillColor);
+                drawTunnel(roomView, wall);
             }
         }
     }
@@ -271,13 +271,13 @@ class Room {
         Circle tunnelOuterCircle = new Circle();
         tunnelOuterCircle.setCenterX(tunnelCenterX);
         tunnelOuterCircle.setCenterY(tunnelCenterY);
-        tunnelOuterCircle.setRadius(30.0);
+        tunnelOuterCircle.setRadius(40.0);
         tunnelOuterCircle.setFill(Color.BLACK);
 
         Circle tunnelInnerCircle = new Circle();
         tunnelInnerCircle.setCenterX(tunnelCenterX);
         tunnelInnerCircle.setCenterY(tunnelCenterY);
-        tunnelInnerCircle.setRadius(25);
+        tunnelInnerCircle.setRadius(35);
         tunnelInnerCircle.setFill(Color.DARKGRAY);
 
         tunnelInnerCircle.setOnMouseClicked((event) -> {
@@ -307,7 +307,7 @@ class Room {
         });
     }
 
-    private void drawTunnel(RoomView roomView, Wall wall, Color fillColor){
+    private void drawTunnel(RoomView roomView, Wall wall){
         Group group = roomView.group;
         Polygon tunnelPoly = new Polygon();
         Point point0 = (Point)wall.tunnel[0];
@@ -321,7 +321,7 @@ class Room {
                 point3.x, point3.y,
                 point0.x, point0.y
         });
-        tunnelPoly.setFill(fillColor);
+        tunnelPoly.setFill(roomView.tunnelColor);
         group.getChildren().addAll(tunnelPoly);
 
         // is this tunnel being displayed on the Cave Map

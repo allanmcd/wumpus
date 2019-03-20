@@ -66,6 +66,7 @@ public final class CaveMap {
         smallView.isBorderRoom = true;
         smallView.isForCaveMap = true;
         smallView.bowImageView = new ImageView();
+        smallView.tunnelColor = Color.WHITE;
 
         // draw a ring of 'shadow' rooms around the actual array of cave rooms
         smallView.showPlayer = false;
@@ -93,6 +94,7 @@ public final class CaveMap {
         // now draw the small version of the cave rooms
         smallView.showPlayer = true;
         smallView.isBorderRoom = false;
+        smallView.tunnelColor = Color.rgb(255,128, 128);
 
         smallView.floorColor = Color.LIGHTGOLDENRODYELLOW;
         int rowLeft = mapLeft + smallDeltaX1 + smallDeltaX2 + 3;

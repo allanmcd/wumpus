@@ -18,6 +18,7 @@ public class RoomView {
     ImageView bowImageView;
     int currentRoomNumber;
     Color floorColor;
+    Color tunnelColor;
     Boolean isBorderRoom;
     Boolean isForCaveMap;
     double pitImageOpacity;

@@ -411,8 +411,8 @@ public final class Trivia {
 
         questionPane.setCenter(answerPaneCentered);
 
-        Label lblStillNeed = new Label("You still need to answer " + stillNeed + " questions correctly");
-        Label lblRemaining = new Label("You have " + remaining + " questions remaining");
+        Label lblStillNeed = new Label("You still need to answer " + stillNeed + " more questions correctly");
+        Label lblRemaining = new Label("You have " + remaining + " more questions after this one");
         VBox vbStillNeed = new VBox();
         vbStillNeed.getChildren().addAll(lblStillNeed, lblRemaining);
         questionPane.setBottom(vbStillNeed);
