@@ -9,7 +9,7 @@ import javafx.scene.layout.Priority;
 
 import java.util.Random;
 
-import static com.jetbrains.Debug.message;
+import static com.jetbrains.GIO.message;
 import static com.jetbrains.Game.gio;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
@@ -32,7 +32,7 @@ public final class Store {
     ////////////////
 
     public static void addMoreCoins(){
-        int coinDelta = gio.getHowMany(-10,10,"Add/Subtract how many coins:");
+        int coinDelta = gio.getHowMany(true, 10, -10,10,"Add/Subtract how many coins:");
         numberOfCoins.set(numberOfCoins.get() + coinDelta);
         Game.stats.update();
     }

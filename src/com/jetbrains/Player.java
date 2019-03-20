@@ -24,8 +24,6 @@ public final class Player {
     static SimpleIntegerProperty numberOfArrows = new SimpleIntegerProperty();
     static SimpleIntegerProperty numberOfCoins = new SimpleIntegerProperty();
 
-    public static int nextTriviaIndex;
-
     static int roomNumber;
     static boolean isDead;
     static String name;
@@ -130,16 +128,6 @@ public final class Player {
             imageView.setY(imageY);
             retVal = new double[]{imageLeft, imageY, imageWidth, imageHeight};
 
-            System.out.println("");
-            System.out.println("Player.position() called");
-            System.out.println("imageLeft  " + imageLeft);
-            System.out.println("imageY  " + imageY);
-            System.out.println("imageWidth  " + imageWidth);
-            System.out.println("imageHeight  " + imageHeight);
-            System.out.println("imageView.getFitWidth " + imageView.getFitWidth());
-            System.out.println("imageView.getFitHeight " + imageView.getFitHeight());
-            System.out.println("imageView.getX " + imageView.getX());
-            System.out.println("imageView.getY " + imageView.getY());
             return imageView;
         } catch (FileNotFoundException e) {
             // UNDONE should probably add code to display "e"

@@ -35,12 +35,12 @@ import java.util.*;
 
 import static com.jetbrains.Cave.*;
 import static com.jetbrains.CaveMap.isOpen;
-import static com.jetbrains.Debug.message;
 import static com.jetbrains.Game.*;
 import static com.jetbrains.Main.*;
 import static com.jetbrains.Player.numberOfCoins;
 import static com.jetbrains.Store.*;
 import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.scene.text.FontWeight.BOLD;
 
 //
 // NOTE there should only be one GIO object
@@ -65,19 +65,19 @@ class GIO {
     // GIO methods
     //
     int getDesiredRoomNumber() {
-        int desiredRoom = getHowMany(1, 30, "Which room would you like to go to?");
+        int desiredRoom = getHowMany(false,0,1, 30, "Which room would you like to go to?");
         return desiredRoom;
     }
 
-    int getHowMany(int minAmt, int maxAmt, String text) {
+    int getHowMany(boolean showDefault, int defaultAmt, int minAmt, int maxAmt, String text) {
         int howMany = 0;
         Dialog dialog = new Dialog<>();
         dialog.setResizable(false);
 
         Label howManyLabel = new Label(text);
         TextField howManyField = new TextField();
-        if(true){
-            howManyField.setPromptText("10");
+        if(showDefault){
+            howManyField.setPromptText(Integer.toString(defaultAmt));
             howManyField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background,-40%);");
         }
         GridPane grid = new GridPane();
@@ -185,6 +185,7 @@ class GIO {
         Game.stage.setScene(gioScene);
 
         Game.stage.show();
+        currentStage = Game.stage;
 
         if (roomNumber == Wumpus.roomNumber) {
                 // update the cave map if it is open
@@ -225,6 +226,27 @@ class GIO {
         }
     }
 
+    static void message(String alertMsg){
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.NONE,alertMsg, ButtonType.OK);
+        alert.showAndWait();
+    }
+
+    static void message(String alertMsg, String titleMsg){
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.NONE,alertMsg, ButtonType.OK);
+        alert.setTitle(titleMsg);
+        alert.setHeaderText("");
+        //alert.setGraphic(null);
+        alert.showAndWait();
+    }
+
+    static void message(String alertMsg, String titleMsg, String headerMsg){
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.NONE,alertMsg, ButtonType.OK);
+        alert.setHeaderText(headerMsg);
+        alert.setTitle(titleMsg);
+        alert.setGraphic(null);
+        alert.showAndWait();
+    }
+
     void updateHint() {
         // any interesting objects nearby
         if (Wumpus.inAdjacentRoom() && bats.inAdjacentRoom() && pits.inAdjacentRoom()) {
@@ -243,6 +265,7 @@ class GIO {
             updateHintText("");
         }
     }
+
     void updateInfo(String infoText) {
         stats.txtInfo.setText(infoText);
     }
@@ -278,9 +301,27 @@ class GIO {
         dialog.showAndWait();
     }
 
+    static void addEnterHint(BorderPane bp) {
+        addEnterHint(bp, "Press the ENTER key to play");
+    }
+
+    static void addEnterHint(BorderPane bp, String enterText){
+        Label lblEnterToPlay = new Label(enterText);
+        lblEnterToPlay.setFont(Font.font("Verdana", BOLD, 18));
+
+        Label lblEscToQuit = new Label("Press the ESC key to quit");
+        lblEscToQuit.setFont(Font.font("Verdana", BOLD, 18));
+
+        VBox splashBottomPanel = new VBox();
+        splashBottomPanel.setAlignment(Pos.CENTER);
+        splashBottomPanel.getChildren().addAll(lblEnterToPlay,lblEscToQuit);
+
+        bp.setBottom(splashBottomPanel);
+    }
+
     static String cavePicker() {
         // ADVANCED - need to implement scroll bars
-        if(useDefaults){return "cave1";}
+        if(useDefaults){return "cave3";}
         Dialog dialog = new Dialog<>();
         dialog.setHeaderText("Pick a cave");
         dialog.setResizable(false);
@@ -288,7 +329,7 @@ class GIO {
 
         List<String> caveNames = new ArrayList<String>();
 
-        File directory = new File("src/");
+        File directory = new File("Caves/");
 
         // get all the files from the "src" directory
         File[] fList = directory.listFiles();
@@ -386,11 +427,21 @@ class GIO {
         addSplash(bpGame, "src/wumpus.png");
         Game.stage.setScene(gioScene);
         Game.stage.show();
+        currentStage = stage;
 
         // build the menu bar
 
         //-- Build the Game menu and its menu items --//
         Menu gameMenu = new Menu("Game");
+
+        MenuItem newPlayerMenuItem = new MenuItem("New Player");
+        newPlayerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                Game.signIn();
+                Stats.loadHighScores();
+                SplashScreen.playGame(name);
+            }
+        });
 
         MenuItem newGameMenuItem = new MenuItem("New Game");
         newGameMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -409,6 +460,13 @@ class GIO {
             }
         });
 
+        MenuItem showHighScores = new MenuItem("Show High Scores");
+        showHighScores.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                Stats.showHighScores();
+            }
+        });
+
         MenuItem quitMenuItem = new MenuItem("Quit");
         quitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
@@ -416,7 +474,7 @@ class GIO {
             }
         });
 
-        gameMenu.getItems().addAll(newGameMenuItem, replayMenuItem, quitMenuItem);
+        gameMenu.getItems().addAll(newPlayerMenuItem, newGameMenuItem, replayMenuItem, showHighScores, quitMenuItem);
 
         MenuItem moreArrrowsMenuItem = new MenuItem("2 More Arrows");
         moreArrrowsMenuItem.setOnAction(e -> {
@@ -433,6 +491,12 @@ class GIO {
         storeMenu.getItems().addAll(buySecretMenuItem);
 
         //-- create the Store menu and it's menu items --//
+        CheckMenuItem useDefaultsMenuItem = new CheckMenuItem("Use default values");
+        useDefaultsMenuItem.setSelected(useDefaults);
+        useDefaultsMenuItem.setOnAction(e -> {
+            useDefaults = ! useDefaults;
+        });
+
         MenuItem winTheGameMenuItem = new MenuItem("Win the game");
         winTheGameMenuItem.setOnAction(e -> {
             Game.youWon();
@@ -441,6 +505,11 @@ class GIO {
         MenuItem loseTheGameMenuItem = new MenuItem("Lose the game");
         loseTheGameMenuItem.setOnAction(e -> {
             Game.youLost("better luck next time");
+        });
+
+        MenuItem answerTriviaMenuItem = new MenuItem("answer trivia questions");
+        answerTriviaMenuItem.setOnAction(e -> {
+            Trivia.ask(5,3,"");
         });
 
         MenuItem moreCoinsMenuItem = new MenuItem("add coins");
@@ -499,8 +568,10 @@ class GIO {
         });
 
         Menu debugMenu = new Menu("Testing");
-        debugMenu.getItems().addAll(winTheGameMenuItem, loseTheGameMenuItem,  moreCoinsMenuItem,  setPreferedSecretMenu,
-                                    gotoRoomMenuItem,   changeScoreMenuItem, ignoreTriviaMenuItem, showCaveMapMenuItem);
+        debugMenu.getItems().addAll(useDefaultsMenuItem, winTheGameMenuItem, loseTheGameMenuItem,
+                                    answerTriviaMenuItem, moreCoinsMenuItem,  setPreferedSecretMenu,
+                                    gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem,
+                                    showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
         gameMenuBar.getMenus().addAll(gameMenu, storeMenu, debugMenu);

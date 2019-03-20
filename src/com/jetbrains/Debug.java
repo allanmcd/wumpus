@@ -21,13 +21,9 @@ class Debug {
     //
     // Debug methods
     //
+
     static void error(String alertMsg){
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.ERROR,alertMsg, ButtonType.OK);
-        alert.showAndWait();
-    }
-
-    static void message(String alertMsg){
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.INFORMATION,alertMsg, ButtonType.OK);
         alert.showAndWait();
     }
 

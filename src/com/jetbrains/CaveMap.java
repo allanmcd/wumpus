@@ -41,6 +41,12 @@ public final class CaveMap {
     // CaveMap methods //
     /////////////////////
 
+    static void close(){
+        if(caveMapStage.isShowing()) {
+            caveMapStage.close();
+        }
+    }
+
     static void draw(){
         Group caveMapGroup = new Group();
         double walls[][][] = new double [2][7][2];

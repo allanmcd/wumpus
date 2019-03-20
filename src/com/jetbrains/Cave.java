@@ -1,6 +1,7 @@
 package com.jetbrains;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -46,12 +47,14 @@ class Cave {
     //
     static boolean loadCave(String caveName) {
         BufferedReader br;
+        String fileName = "Caves/" + caveName + ".cave";
         try {
             // cave CSV format in BNF notation is:
             //      <roomNumber> <1>#<3>{<comma><tunnelRoom>}
             // multiple lines are used to define the rooms
             // we currently don't test for duplicate room definitions
-            br = new BufferedReader(new FileReader("src/" + caveName + ".cave"));
+            FileReader fr = new FileReader(fileName);
+            br = new BufferedReader(fr);
             String line;
 
             // process all the lines from the cave file
@@ -92,9 +95,14 @@ class Cave {
 
             Debug.log("");
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Game.fatalError("file \"" + fileName + "\" not found");
         } catch (IOException e) {
             e.printStackTrace();
+            Game.fatalError(e.getMessage());
         }
+
         valid = verifyCave(caveName);
 
         if (valid) {

@@ -4,8 +4,10 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -18,6 +20,7 @@ import static com.jetbrains.Cave.initialRoom;
 import static com.jetbrains.Cave.loadCave;
 import static com.jetbrains.Main.useDefaults;
 import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.scene.input.KeyCode.ESCAPE;
 
 //
 // NOTE there should only be one Game object
@@ -27,6 +30,7 @@ public final class Game {
     // game static variables
     // most are accessed before game object is created
     //
+    static Stage currentStage;
     static Stage stage;
     static boolean loaded;
     static boolean youWon;
@@ -45,34 +49,15 @@ public final class Game {
     //
     // Game methods
     //
-    /*
-    static void start(){
 
-        // a blank cave name will force the user to pick one
-        String Cave.name = "";
-        if(useDefaults){
-            initialRoom = 1;
-            if(Cave.name.equals("")) {
-                if (gio == null || gio.newCaveName == null || gio.newCaveName.equals(null)) {
-                    Cave.name = "cave1";
-                }
-            }
-        }
-        else {
-            // ask the user to sign in the first time a game is created
-            if(Main.userName == null) {
-                Main.userName = signIn();
-            }
-
-            // start in a random room
-            Random random = new Random();
-            initialRoom = random.nextInt(29) + 1;
-        }
-
-        newGame(Cave.name);
-
+    static void fatalError(String alertMsg){
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.ERROR,alertMsg, ButtonType.OK);
+        alert.setTitle("Fatal Error");
+        alert.setHeaderText("A fatal error has occured");
+        alert.setGraphic(null);
+        alert.showAndWait();
+        System.exit(-1);
     }
-    */
 
     static void quit(){
         System.exit(0);
@@ -101,7 +86,7 @@ public final class Game {
         Wumpus.isDead = true;
         youWon = true;
         Game.stats.update();
-        gio.showDialog(  "YOU WIN","You shot the wumpus");
+        GIO.message("You shot the Wumpus","You Win");
         Game.stats.setHighScore();
         ended();
     }
@@ -109,11 +94,12 @@ public final class Game {
     static void youLost(String msg){
         youLost = true;
         stillPlayiing = false;
-        gio.showDialog("YOU LOSE :-(",msg );
+        GIO.message("You Lose :-(");
         ended();
     }
 
     static void ended(){
+        // undone primaryStage shoudl clean all this up
         // clear out the info text
         stats.txtInfo.setText("");
 
@@ -135,12 +121,38 @@ public final class Game {
         // hide the trivia pane
         Trivia.triviaPane.setVisible(false);
 
-        // display the wumpus image as the splash screen
-        if(Wumpus.isDead){
-            gio.addSplash(gio.bpGame, "src/wumpus.dead.png");
+        BorderPane endGameBP = new BorderPane();
+        Scene endGameScene = new Scene(endGameBP, 500,450);
+
+        // display the wumpus image as the end game screen
+        if (Wumpus.isDead) {
+            gio.addSplash(endGameBP, "src/wumpus.dead.png");
         } else {
-            gio.addSplash(gio.bpGame, "src/wumpus.png");
+            gio.addSplash(endGameBP, "src/wumpus.png");
         }
+
+        Stage endGameStage = new Stage();
+        endGameStage.setScene(endGameScene);
+        endGameScene.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if (keyCode == ENTER) {
+                Game.stage.close();
+                //SplashScreen.show(false);
+                SplashScreen.playGame(Cave.name);
+                //SplashScreen.init();
+            } else if (keyCode == ESCAPE) {
+                Game.quit();
+            }
+        });
+
+        // display the "press ENTER"  hint
+        gio.addEnterHint(endGameBP, "Press the ENTER key to play again");
+
+        if(Game.stage.isShowing()){
+            Game.stage.hide();
+        }
+
+        endGameStage.show();
     }
 
     static void init(String caveName, Stage gameStage){
@@ -207,6 +219,8 @@ public final class Game {
 
         Label userNameLabel = new Label("Name:");
         TextField userNameField = new TextField();
+        userNameField.setPromptText("me");
+        userNameField.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background,-40%);");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

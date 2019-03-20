@@ -35,12 +35,15 @@ public final class SplashScreen {
     //
     // splashScreen instance variables
     //
+    public static BorderPane bpSplash;
     public static Stage stage;
-    private static Scene scene;
+    public static Scene splashScene;
     public static boolean valid = false;
 
-    // private statics
     private static boolean firstTime = true;
+
+    // private statics
+    //private static boolean firstTime = true;
     protected static final int NAME_COL = 0;
     protected static final int SCORE_COL = 1;
     protected static final int NAME_INDEX = 0;
@@ -50,18 +53,25 @@ public final class SplashScreen {
     // SplashScreen methods
     //
 
-    public static void show(){
+    public static void show(boolean skipSplashScreen){
         if(skipSplashScreen){
+            firstTime = false;
             Player.name = "me";
+            getCaveName();
             init();
             playGame(Cave.name);
         } else {
             if (firstTime) {
+                firstTime = false;
                 Game.signIn();
-                init();
+                getCaveName();
             }
+
+            init();
+
             if (valid) {
                 stage.show();
+                Game.currentStage = stage;
             }
         }
     }
@@ -69,7 +79,7 @@ public final class SplashScreen {
     public static void newGame() {
         // which cave should we load
         if (useDefaults) {
-            Cave.name = "cave1";
+            Cave.name = "cave3";
             Player.name = "me";
         } else {
             // let the user pick the game to play
@@ -79,10 +89,10 @@ public final class SplashScreen {
         playGame(Cave.name);
     }
 
-    private static void playGame(String caveName) {
+    public static void playGame(String caveName) {
         Game.init(caveName, primaryStage);
 
-        if(Game.loaded) {
+        if (Game.loaded) {
             Game.play();
         } else {
             newGame();
@@ -101,20 +111,24 @@ public final class SplashScreen {
         // make SplashScreen a singleton - simulate a static top level class
     }
 
-    private static void init() {
+    public static void getCaveName(){
         Cave.name = gio.cavePicker();
 
-        while(Cave.name.length() == 0 || Stats. loadHighScores() == false){
+        while (Cave.name.length() == 0 || Stats.loadHighScores() == false) {
             Cave.name = gio.cavePicker();
-        };
+        }
+    }
 
-        BorderPane splashBorderPane = new BorderPane();
+    public static void init() {
+
+        bpSplash = new BorderPane();
 
         StackPane splashStackPane = new StackPane();
-        splashStackPane.setPrefSize(400,250);
+        splashStackPane.setPrefSize(400, 250);
         addWumpusImage(splashStackPane);
         addPlayerPane(splashStackPane);
-        splashBorderPane.setCenter(splashStackPane);;
+        bpSplash.setCenter(splashStackPane);
+        ;
 
         // create Wumpus title pane
         Label lblBlank = new Label("");
@@ -128,19 +142,14 @@ public final class SplashScreen {
         // create a panel to put the title and welcome panes in
         VBox splashHeaderPanel = new VBox();
         splashHeaderPanel.setAlignment(Pos.CENTER);
-        splashHeaderPanel.getChildren().addAll(lblBlank,lblWumpus, lblCaveName);
-        splashBorderPane.setTop(splashHeaderPanel);
+        splashHeaderPanel.getChildren().addAll(lblBlank, lblWumpus, lblCaveName);
+        bpSplash.setTop(splashHeaderPanel);
 
         // create the "press ENTER"  hint
-        Label lblEnterToPlay = new Label("Press the ENTER key to play");
-        lblEnterToPlay.setFont(Font.font("Verdana", BOLD, 18));
-        VBox splashBottomPanel = new VBox();
-        splashBottomPanel.setAlignment(Pos.CENTER);
-        splashBottomPanel.getChildren().add(lblEnterToPlay);
-        splashBorderPane.setBottom(splashBottomPanel);
+        gio.addEnterHint(bpSplash);
 
         // create the Splash Page scene
-        Scene splashScene = new Scene(splashBorderPane, 400, 250);
+        splashScene = new Scene(bpSplash, 400, 250);
         splashScene.setOnKeyPressed(e -> {
             KeyCode keyCode = e.getCode();
             if(keyCode == ENTER){
@@ -160,7 +169,7 @@ public final class SplashScreen {
         valid = true;
     }
 
-    private static void addPlayerPane(StackPane pane) {
+    protected static void addPlayerPane(StackPane pane) {
         int row = 0;
         GridPane playerPane = new GridPane();
         playerPane.setGridLinesVisible(true);
@@ -238,7 +247,6 @@ public final class SplashScreen {
         vbox.setPadding(new Insets(top, right, bottom, left));
         return vbox;
     }
-
 
     private static void addWumpusImage(StackPane pane) {
         try

@@ -1,17 +1,19 @@
 package com.jetbrains;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
+import javafx.stage.Window;
 
 import java.io.*;
 import java.util.*;
@@ -23,8 +25,8 @@ import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
-import static com.jetbrains.SplashScreen.NAME_INDEX;
-import static com.jetbrains.SplashScreen.SCORE_INDEX;
+import static com.jetbrains.SplashScreen.*;
+import static javafx.scene.input.KeyCode.ENTER;
 
 /**
  * The Stats class is used to contain game stats
@@ -76,7 +78,7 @@ public class Stats {
     static boolean loadHighScores() {
         // assume that the load will succeed
         boolean loadSuceeded = true;
-        String fileName = "src/" + Cave.name + ".highScores.csv";
+        String fileName = "Caves/" + Cave.name + ".highScores.csv";
 
         // does a high scores file exist
         File f = new File(fileName);
@@ -124,12 +126,12 @@ public class Stats {
     }
 
     void modifyScore() {
-        scoreFudgeFactor = gio.getHowMany(-100, 100, "Add/Subtract how many points:");
+        scoreFudgeFactor = gio.getHowMany(true, 20, -100, 100, "Add/Subtract how many points:");
         update();
     }
 
     void saveHighScores() {
-        String fileName = "src/" + Cave.name + ".highScores.csv";
+        String fileName = "Caves/" + Cave.name + ".highScores.csv";
         try {
             // highScores CSV format is:
             // player name, player score
@@ -246,8 +248,12 @@ public class Stats {
                 }
             } else {
                 // player was NOT already the top scorer
-                playerMsg = "Congratulations - You beat " + previousHighPlayer + "'s previous high score of " + previousHighScore;
-                playerMsg += " and now you are the highest scoring player";
+                if(previousHighPlayer.equals("")){
+                    playerMsg = "Congratulations - Your score is now the top score";
+                } else {
+                    playerMsg = "Congratulations - You beat " + previousHighPlayer + "'s previous high score of " + previousHighScore;
+                    playerMsg += " and now you are the highest scoring player";
+                }
             }
         } else if (playerAlreadyInTop10) {
             if(newScoreAdded) {
@@ -309,7 +315,11 @@ public class Stats {
             Player.currentHighScore = score;
             Player.save();
         }
-        Debug.message(playerMsg);
+        if(playerInTopTen || playerAlreadyInTop10){
+            GIO.message(playerMsg,"Contgratulations");
+        } else {
+            GIO.message(playerMsg);
+        }
     }
 
     void setInitialValues(){
@@ -321,6 +331,39 @@ public class Stats {
         numberOfTurns = -1;
     }
 
+    static void showHighScores(){
+        StackPane highScoreStackPane = new StackPane();
+        highScoreStackPane.setPrefSize(400, 250);
+        addPlayerPane(highScoreStackPane);
+
+        Dialog dialog = new Dialog<>();
+        dialog.setTitle("High Scores for " + Cave.name);
+        dialog.setHeaderText("");
+        dialog.setGraphic(null);
+        dialog.setResizable(false);
+
+        dialog.getDialogPane().setContent(highScoreStackPane);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setOnKeyPressed(e -> {
+            KeyCode keyCode = e.getCode();
+            if(keyCode == ENTER){
+                dialog.close();
+            }
+        });
+
+        Platform.runLater(() -> {
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Window window = dialog.getDialogPane().getScene().getWindow();
+            window.setX((screenBounds.getWidth() - window.getWidth()) / 2);
+            window.setY((screenBounds.getHeight() - window.getHeight()) / 2);
+        });
+
+        // wait for the user to click OK button
+        dialog.showAndWait();
+    }
+
     void subtractCoin(){
         numberOfCoins.set(numberOfCoins.get() - 1);
         update();
@@ -328,7 +371,7 @@ public class Stats {
 
     void update(){
         // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows.get() + 15* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns + scoreFudgeFactor;
+        score = 10 * numberOfArrows.get() + 25* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns + scoreFudgeFactor;
         if(Wumpus.isDead){
             score += 100;
         }
