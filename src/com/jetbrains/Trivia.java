@@ -29,36 +29,42 @@ import static javafx.scene.text.FontWeight.NORMAL;
 
 public final class Trivia {
 
-    ////////////////////////////
-    // Trivia Instance variables
-    ////////////////////////////
-    static TextArea txtTrivia;
-    static boolean bypassTrivia;
+    //////////////////////
+    // Trivia CONSTANTS //
+    //////////////////////
+
+    static final int ALREADY_ASKED = 0;
+    static final int QUESTION = 1;
+    static final int CORRECT_ANSWER = 2;
+
+    ///////////////////////////////
+    // Trivia Instance variables //
+    ///////////////////////////////
+
     static boolean answerAllCorrect = false;
     static boolean answerAllWrong = false;
+    static boolean bypassTrivia;
     static Random triviaRnd = new Random();
+    static TextArea txtTrivia;
 
 
     // making the triviaPane static is probably not a good idea
     // needs further investigation
     static VBox triviaPane;
 
-    static final int ALREADY_ASKED = 0;
-    static final int QUESTION = 1;
-    static final int CORRECT_ANSWER = 2;
+    //////////////////////////////
+    // Trivia private variables //
+    //////////////////////////////
 
-    ////////////////////////////
-    // Trivia private variables
-    ////////////////////////////
     private static int maxTriviaAnswers = 4;
     private static Stage questionStage;
     private static int rightAnswers;
     private static ArrayList<String[]> triviaQuestions = new ArrayList<String[]>();
     private static int wrongAnswers;
 
-    /////////////////
-    // Trivia methods
-    /////////////////
+    ////////////////////
+    // Trivia methods //
+    ////////////////////
 
     static boolean ask (int maxQuestions, int minCorrect, String msgPreText)
     {
@@ -288,16 +294,17 @@ public final class Trivia {
        return triviaStatement;
     }
 
-    //////////////////////
-    // Trivia constructor
-    /////////////////////
+    ////////////////////////
+    // Trivia constructor //
+    ////////////////////////
+    
     private Trivia(){
         // make sure Trivia is a singleton
     }
 
-    //////////////////////////
-    // Trivia helper functions
-    //////////////////////////
+    /////////////////////////////
+    // Trivia helper functions //
+    /////////////////////////////
 
     private static boolean askQuestions(int maxQuestions, int minCorrect){
         while(wrongAnswers <= maxQuestions - minCorrect && rightAnswers < minCorrect){
