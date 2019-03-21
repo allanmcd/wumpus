@@ -138,7 +138,7 @@ public final class Game {
         if (Wumpus.isDead) {
             gio.addSplash(endGameBP, "src/wumpus.dead.png");
         } else {
-            gio.addSplash(endGameBP, "src/wumpus.png");
+            gio.addSplash(endGameBP, "src/wumpus.victorious.png");
         }
 
         Stage endGameStage = new Stage();
