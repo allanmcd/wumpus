@@ -1,19 +1,25 @@
-// format:  question,correct answer, one to three wrong answers
+// format:  R/W/N, question, correct answer, one to three wrong answers
+//
+//   R: question has been asked and answered correctly (Right)
+//   W: question has been asked and answered incorrectly (Wrong)
+//   N: question has Not been asked
+//
 // to produce a question, the following will occur
 //   the curly brackets will be removed
 //   < and > and the text within them will be removed
 //   left and right brackets [] will be removed
+//
 // to produce a statement, the following will occur
 //   The text within {} will be replaced with the correct answer
 //   text within <> will be included
-//   characters between [] will be deleted
-{Who} is buried in Grants tomb,Grant,Lincoln,Washington,nobody
-{What city} is the capital of Washington State,Olympia,Seattle,Portland
-{What} is the largest planet in our solar system,Jupiter,earth,Pluto,Saturn,Uranus
-{Who} invented the first AC induction motor,Nikola Tesla,Thomas Edison,Elon Musk,Benjamin Franklin
-{What} is the only national flag that is not square or rectangular,The flag of Nepal, The flag of Burma, The flag of Indonesia
-<">{What three-word parting catchphrase}<"> is engraved on voice actor Mel Blanc's gravestone,thats all folks,I'll be back,to eternity and beyond,thanks for all the fish
-{Which German Philosopher} wrote 'Thus Spoke Zarathustra',Friedrich Nietzsche,Immanuel Kant,Gottfried Leibniz,Friedrich Paulsen
-[What film did ]Randolph Hearst's media empire conspire<d> to stop the release of{},Citizen Kane,War of the Worlds,Laura,Rear Window
-[What part of ]the {human body} contains five metacarpal bones,hand,foot,ear,spine
-In 1952 Albert Einstein was offered the presidency of {which country},Isreal,United States,France,Germany
+//   characters between [] will be deleted//
+N, {Who} is buried in Grants tomb, Grant, Lincoln, Washington, nobody
+N, {What city} is the capital of Washington State, Olympia, Seattle, Portland
+N, {What} is the largest planet in our solar system, Jupiter, earth, Pluto, Saturn
+N, {Who} invented the first AC induction motor, Nikola Tesla, Thomas Edison, Elon Musk, Benjamin Franklin
+N, {What} is the only national flag that is not square or rectangular, The flag of Nepal, The flag of Burma, The flag of Indonesia
+N, <">{What three-word parting catchphrase}<"> is engraved on voice actor Mel Blanc's gravestone, thats all folks, I'll be back, to eternity and beyond, thanks for all the fish
+N, {Which German Philosopher} wrote 'Thus Spoke Zarathustra', Friedrich Nietzsche, Immanuel Kant, Gottfried Leibniz, Friedrich Paulsen
+N, [What film did ]Randolph Hearst's media empire conspire<d> to stop the release of{}, Citizen Kane, War of the Worlds, Laura, Rear Window
+N, [What part of ]the {human body} contains five metacarpal bones, hand, foot, ear, spine
+N, In 1952 Albert Einstein was offered the presidency of {which country}, Isreal, United States, France, Germany

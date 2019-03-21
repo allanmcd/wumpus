@@ -155,7 +155,7 @@ public final class SplashScreen {
             if(keyCode == ENTER){
                 playGame(Cave.name);
             } else if(keyCode == ESCAPE){
-                Game.quit();
+                Game.exit();
             }
         });
 

@@ -46,14 +46,16 @@ import static javafx.scene.text.FontWeight.BOLD;
 // NOTE there should only be one GIO object
 //
 class GIO {
-    //
-    // GIO  constants
-    //
+    ////////////////////
+    // GIO  constants //
+    ////////////////////
+
     final int BP_TOP_HEIGHT = 20;
 
-    //
-    // GIO static variables
-    //
+    //////////////////////////
+    // GIO static variables //
+    //////////////////////////
+
     static Group gioGroup = new Group();
     static GridPane statusGridPane;
     static Scene gioScene;
@@ -61,9 +63,32 @@ class GIO {
     static boolean cavePickerDblClicked;
     static RoomView singleRoomView;
 
-    //
-    // GIO methods
-    //
+    /////////////////
+    // GIO methods //
+    /////////////////
+
+    static HBox centerLabelInHBox(Label label, Insets insets){
+        HBox hbox = centerLabelInHBox(label);
+        //hbox.setPadding(new Insets(20,0,10,0));
+        hbox.setPadding(insets);
+        return hbox;
+    }
+
+    static HBox centerLabelInHBox(Label label){
+        final Pane spacerLeft = new Pane();
+        HBox.setHgrow(spacerLeft, Priority.ALWAYS);
+        spacerLeft.setMinSize(10, 1);
+
+        final Pane spacerRight = new Pane();
+        HBox.setHgrow(spacerRight, Priority.ALWAYS);
+        spacerRight.setMinSize(10, 1);
+
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(spacerLeft, label, spacerRight);
+
+        return hbox;
+    }
+
     int getDesiredRoomNumber() {
         int desiredRoom = getHowMany(false,0,1, 30, "Which room would you like to go to?");
         return desiredRoom;
@@ -394,13 +419,14 @@ class GIO {
         return newCaveName;
     }
 
-    //
-    // GIO constructor
-    //
+    /////////////////////
+    // GIO constructor //
+    /////////////////////
+
     GIO(String caveName) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                Game.quit();
+                Game.exit();
             }
         });
 
@@ -643,18 +669,19 @@ class GIO {
         }
     }
 
-    //
-    // javafx controls
-    //
+    /////////////////////
+    // javafx controls //
+    /////////////////////
+
     TextField tfRoomNumber = new TextField();
 
     BorderPane bpGame = new BorderPane();
 
     Label lblCaveName;
 
-    //
-    // GIO helper functions
-    //
+    //////////////////////////
+    // GIO helper functions //
+    //////////////////////////
 
     static private String fileExtension(File file){
         String extension = "";

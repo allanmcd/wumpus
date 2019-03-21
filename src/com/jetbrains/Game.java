@@ -59,7 +59,7 @@ public final class Game {
         System.exit(-1);
     }
 
-    static void quit(){
+    static void exit(){
         System.exit(0);
     }
 
@@ -98,7 +98,17 @@ public final class Game {
         ended();
     }
 
+    static void quit(){
+        // remember the questions that were used
+        Trivia.saveTriviaQuestions();
+
+        exit();
+    }
+
     static void ended(){
+        // remember the questions that were used
+        Trivia.saveTriviaQuestions();
+
         // undone primaryStage shoudl clean all this up
         // clear out the info text
         stats.txtInfo.setText("");
@@ -141,7 +151,7 @@ public final class Game {
                 SplashScreen.playGame(Cave.name);
                 //SplashScreen.init();
             } else if (keyCode == ESCAPE) {
-                Game.quit();
+                exit();
             }
         });
 
@@ -260,7 +270,7 @@ public final class Game {
             }
         } else {
             // no name so can't play
-            Game.quit();
+            Game.exit();
         }
     }
 }
