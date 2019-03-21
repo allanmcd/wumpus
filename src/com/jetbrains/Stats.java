@@ -55,9 +55,10 @@ public class Stats {
     ////////////////////////////////////
     private int scoreFudgeFactor = 0;
 
-    //
-    // Stats member function(s)
-    //
+    //////////////////////////////
+    // Stats member function(s) //
+    //////////////////////////////
+
     void addCoin() {
         numberOfCoins.set(numberOfCoins.get() + 1);
         update();
@@ -364,21 +365,6 @@ public class Stats {
         dialog.showAndWait();
     }
 
-    void subtractCoin(){
-        numberOfCoins.set(numberOfCoins.get() - 1);
-        update();
-    }
-
-    void update(){
-        // i took artistic liberties to add 15 points for each bat killed
-        score = 10 * numberOfArrows.get() + 25* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns + scoreFudgeFactor;
-        if(Wumpus.isDead){
-            score += 100;
-        }
-        txtScore.setText(Integer.toString(score));
-        txtTurns.setText(Integer.toString(numberOfTurns));
-    }
-
     VBox pane() {
         // define the sizes of the columns of the status grid
         statusGridPane = new GridPane();
@@ -465,9 +451,25 @@ public class Stats {
         return vBox;
     }
 
+    void subtractCoin(){
+        numberOfCoins.set(numberOfCoins.get() - 1);
+        update();
+    }
+
+    void update(){
+        // i took artistic liberties to add 15 points for each bat killed
+        score = 10 * numberOfArrows.get() + 25* cave.bats.numberOfBatsKilled+ numberOfCoins.get() - numberOfTurns + scoreFudgeFactor;
+        if(Wumpus.isDead){
+            score += 100;
+        }
+        txtScore.setText(Integer.toString(score));
+        txtTurns.setText(Integer.toString(numberOfTurns));
+    }
+
     ///////////////////////
     // Stats constructor //
     //////////////////////
+
     Stats(){
         vBox = pane();
     }
@@ -476,15 +478,16 @@ public class Stats {
     // Stats helper functions //
     ///////////////////////////
 
+    private void setLabelStyles(Label... labels) {
+        for (Label label : labels) {
+            label.setFont(Font.font("Verdana", FontWeight.BOLD, 16));
+        }
+    }
+
     private void setTextStyles(Text... texts) {
         for (Text text : texts) {
             text.setFont(Font.font("Verdana", 18));
         }
     }
 
-    private void setLabelStyles(Label... labels) {
-        for (Label label : labels) {
-            label.setFont(Font.font("Verdana", FontWeight.BOLD, 16));
-        }
-    }
 }

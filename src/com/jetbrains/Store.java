@@ -15,9 +15,9 @@ import static com.jetbrains.Player.numberOfArrows;
 import static com.jetbrains.Player.numberOfCoins;
 
 public final class Store {
-    //
-    // Store Instance variables
-    //
+    //////////////////////////////
+    // Store Instance variables //
+    //////////////////////////////
 
     // making the pane static is probably not a good idea
     // needs further investigation
@@ -27,9 +27,9 @@ public final class Store {
     // otherwise it's random
     static int preferedSecretIndex = -1;
 
-    ////////////////
-    // Store methods
-    ////////////////
+    ///////////////////
+    // Store methods //
+    ///////////////////
 
     public static void addMoreCoins(){
         int coinDelta = gio.getHowMany(true, 10, -10,10,"Add/Subtract how many coins:");
@@ -141,9 +141,9 @@ public final class Store {
         return pane;
     }
 
-    ///////////////////////////
-    // Store class constructor
-    //////////////////////////
+    /////////////////////////////
+    // Store class constructor //
+    /////////////////////////////
     private Store(){
         // ensure that Store is a public singleton
     };

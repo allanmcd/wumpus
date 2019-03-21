@@ -316,7 +316,6 @@ public final class Trivia {
         }
     }
 
-
     ////////////////////////
     // Trivia constructor //
     ////////////////////////

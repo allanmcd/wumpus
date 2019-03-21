@@ -1,9 +1,10 @@
 package com.jetbrains;
 
 class Wall {
-    //
-    // Wall instance variables
-    //
+    /////////////////////////////
+    // Wall instance variables //
+    /////////////////////////////
+
     int adjacentRoom;
     boolean hasTunne1;
 
