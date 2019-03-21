@@ -36,6 +36,19 @@ class Room {
     // Room methods //
     //////////////////
 
+    void addTunnel(int roomToTunnelTo) {
+        // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
+        for (int wallNumberIndex = 0; wallNumberIndex < 6; wallNumberIndex++) {
+            Wall caveRoomWall = walls[wallNumberIndex];
+            if (caveRoomWall.adjacentRoom == roomToTunnelTo) {
+                // we found the wall to assign the tunnel to
+                caveRoomWall.hasTunne1 = true;
+                Debug.log("added tunnel from room " + roomNumber + " to room " + roomToTunnelTo);
+                break;
+            }
+        }
+    }
+
     void draw(RoomView roomView) {
         roomView.currentRoomNumber = roomNumber;
 
@@ -131,20 +144,6 @@ class Room {
         return retVal;
     }
 
-
-    void addTunnel(int roomToTunnelTo) {
-        // scan all the walls looking for the one that is adjacent to the roomToTunnelTo
-        for (int wallNumberIndex = 0; wallNumberIndex < 6; wallNumberIndex++) {
-            Wall caveRoomWall = walls[wallNumberIndex];
-            if (caveRoomWall.adjacentRoom == roomToTunnelTo) {
-                // we found the wall to assign the tunnel to
-                caveRoomWall.hasTunne1 = true;
-                Debug.log("added tunnel from room " + roomNumber + " to room " + roomToTunnelTo);
-                break;
-            }
-        }
-    }
-
     boolean hasBat() {
         return cave.bats.isInRoom(roomNumber);
     }
@@ -174,48 +173,6 @@ class Room {
     ///////////////////////////
     // Room helper functions //
     ///////////////////////////
-    private void initRoomTunnels(RoomView roomView) {
-        // compute the four points that define the tunnel polygon
-        for (int wallNumber = 0; wallNumber < 6; wallNumber++) {
-            if (walls[wallNumber].hasTunne1) {
-                Point point1 = new Point(roomView.hexagon[INNER_WALL][wallNumber][X], roomView.hexagon[INNER_WALL][wallNumber][Y]);
-                Point point2 = new Point(roomView.hexagon[INNER_WALL][wallNumber + 1][X], roomView.hexagon[INNER_WALL][wallNumber + 1][Y]);
-                initWallTunnel(INNER_WALL, wallNumber, point1, point2);
-
-                Point point3 = new Point(roomView.hexagon[OUTER_WALL][wallNumber][X], roomView.hexagon[OUTER_WALL][wallNumber][Y]);
-                Point point4 = new Point(roomView.hexagon[OUTER_WALL][wallNumber + 1][X], roomView.hexagon[OUTER_WALL][wallNumber + 1][Y]);
-                initWallTunnel(OUTER_WALL, wallNumber, point3, point4);
-            }
-        }
-    }
-
-    private void initWallTunnel(int innerOuter, int wallNumber, Point point1, Point point2) {
-        Wall wall = walls[wallNumber];
-
-        if (wall.hasTunne1) {
-            // assumes point2 further right than point1
-            double wallWidth = point2.x - point1.x;
-            double tunnelMidX = point1.x + wallWidth / 2;
-            double tunnelWidth = .3 * wallWidth;
-            double tunnelLeft = tunnelMidX - tunnelWidth / 2;
-            double tunnelRight = tunnelLeft + tunnelWidth;
-
-            // assumes point2 lower than point1
-            double wallHeight = point2.y - point1.y;
-            double tunnelMidY = point2.y - wallHeight / 2;
-            double tunnelHeight = .3 * wallHeight;
-            double tunnelTop = tunnelMidY - tunnelHeight / 2;
-            double tunnelBottom = tunnelTop + tunnelHeight;
-
-            if (innerOuter == INNER_WALL) {
-                wall.tunnel[POINT_0] = new Point(tunnelLeft, tunnelTop);
-                wall.tunnel[POINT_1] = new Point(tunnelRight, tunnelBottom);
-            } else {
-                wall.tunnel[POINT_2] = new Point(tunnelRight, tunnelBottom);
-                wall.tunnel[POINT_3] = new Point(tunnelLeft, tunnelTop);
-            }
-        }
-    }
 
     private void drawBat(RoomView roomView) {
         // display the bat image centered in the room
@@ -346,6 +303,49 @@ class Room {
         if(Player.isInRoom(roomNumber)){ verticalPosition = "Top";}
 
         drawImage(roomView, OPAQUE, verticalPosition, "wumpus.png");
+    }
+
+    private void initRoomTunnels(RoomView roomView) {
+        // compute the four points that define the tunnel polygon
+        for (int wallNumber = 0; wallNumber < 6; wallNumber++) {
+            if (walls[wallNumber].hasTunne1) {
+                Point point1 = new Point(roomView.hexagon[INNER_WALL][wallNumber][X], roomView.hexagon[INNER_WALL][wallNumber][Y]);
+                Point point2 = new Point(roomView.hexagon[INNER_WALL][wallNumber + 1][X], roomView.hexagon[INNER_WALL][wallNumber + 1][Y]);
+                initWallTunnel(INNER_WALL, wallNumber, point1, point2);
+
+                Point point3 = new Point(roomView.hexagon[OUTER_WALL][wallNumber][X], roomView.hexagon[OUTER_WALL][wallNumber][Y]);
+                Point point4 = new Point(roomView.hexagon[OUTER_WALL][wallNumber + 1][X], roomView.hexagon[OUTER_WALL][wallNumber + 1][Y]);
+                initWallTunnel(OUTER_WALL, wallNumber, point3, point4);
+            }
+        }
+    }
+
+    private void initWallTunnel(int innerOuter, int wallNumber, Point point1, Point point2) {
+        Wall wall = walls[wallNumber];
+
+        if (wall.hasTunne1) {
+            // assumes point2 further right than point1
+            double wallWidth = point2.x - point1.x;
+            double tunnelMidX = point1.x + wallWidth / 2;
+            double tunnelWidth = .3 * wallWidth;
+            double tunnelLeft = tunnelMidX - tunnelWidth / 2;
+            double tunnelRight = tunnelLeft + tunnelWidth;
+
+            // assumes point2 lower than point1
+            double wallHeight = point2.y - point1.y;
+            double tunnelMidY = point2.y - wallHeight / 2;
+            double tunnelHeight = .3 * wallHeight;
+            double tunnelTop = tunnelMidY - tunnelHeight / 2;
+            double tunnelBottom = tunnelTop + tunnelHeight;
+
+            if (innerOuter == INNER_WALL) {
+                wall.tunnel[POINT_0] = new Point(tunnelLeft, tunnelTop);
+                wall.tunnel[POINT_1] = new Point(tunnelRight, tunnelBottom);
+            } else {
+                wall.tunnel[POINT_2] = new Point(tunnelRight, tunnelBottom);
+                wall.tunnel[POINT_3] = new Point(tunnelLeft, tunnelTop);
+            }
+        }
     }
 
     private void tunnelWallClick(Event event, Wall wall, RoomView roomView) {
