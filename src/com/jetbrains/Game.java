@@ -44,8 +44,6 @@ public final class Game {
     static Bow bow;
     static Cave cave;
     static GIO gio;
-    static Map map;
-    //static Player player;
     static Stats stats;
 
     //////////////////
@@ -200,8 +198,6 @@ public final class Game {
             return;
         }
 
-        map = new Map();
-
         Wumpus.init(initialRoom);
 
         cave = new Cave(caveName, initialRoom);
@@ -223,7 +219,7 @@ public final class Game {
     ///////////////////////////
     // Game helper functions //
     ///////////////////////////
-    
+
     public static void signIn() {
         if(useDefaults) { return;}
         Dialog dialog = new Dialog<>();

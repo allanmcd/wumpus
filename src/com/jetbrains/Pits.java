@@ -8,51 +8,22 @@ import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 
 public final class Pits {
-    //
-    // Pit constants
-    //
+    ///////////////////
+    // Pit constants //
+    ///////////////////
+
     static final int NUMBER_OF_PITS = 2;
-    //
-    // Pit instance variables
-    //
+
+    ////////////////////////////
+    // Pit instance variables //
+    ///////////////////////////
 
     static int pitRooms[] = new int[2];
     static int roomNumber;
 
-    //
-    // Pit methods
-    //
-    static boolean isInRoom(int roomNumber){
-        Room room = rooms[roomNumber];
-        return room.hasPit;
-    }
-
-    static void fellIn(){
-            // FEATURE would be nice if the player spun and vanished
-            if(CaveMap.isOpen){
-                CaveMap.refresh();
-            }
-            String askMsgPrefix = "You have fallen into a pit.  To get out";
-            if(Trivia.ask(3,2, askMsgPrefix)){
-                gio.gotoRoom(initialRoom, "You have been returned to");
-            } else {
-                Game.youLost("You fell into a bottomless pit");
-            }
-    }
-    static boolean inAdjacentRoom(){
-        boolean inAdjacentRoom = false;
-        Room playerRoom = rooms[Player.roomNumber];
-        for(int wallNumber = 0; wallNumber < 6; wallNumber++){
-            Wall wall = playerRoom.walls[wallNumber];
-            if(wall.hasTunne1) {
-                if (isInRoom(wall.adjacentRoom)) {
-                    inAdjacentRoom = true;
-                    break;
-                }
-            }
-        }
-        return inAdjacentRoom;
-    }
+    /////////////////
+    // Pit methods //
+    /////////////////
 
     static void addPits(int numberOfPits){
         if (useDefaults) {
@@ -105,6 +76,39 @@ public final class Pits {
                 System.out.println("pit assigned to room " + pitRoomNumber);
             }
         }
+    }
+
+    static void fellIn(){
+            // FEATURE would be nice if the player spun and vanished
+            if(CaveMap.isOpen){
+                CaveMap.refresh();
+            }
+            String askMsgPrefix = "You have fallen into a pit.  To get out";
+            if(Trivia.ask(3,2, askMsgPrefix)){
+                gio.gotoRoom(initialRoom, "You have been returned to");
+            } else {
+                Game.youLost("You fell into a bottomless pit");
+            }
+    }
+
+    static boolean inAdjacentRoom(){
+        boolean inAdjacentRoom = false;
+        Room playerRoom = rooms[Player.roomNumber];
+        for(int wallNumber = 0; wallNumber < 6; wallNumber++){
+            Wall wall = playerRoom.walls[wallNumber];
+            if(wall.hasTunne1) {
+                if (isInRoom(wall.adjacentRoom)) {
+                    inAdjacentRoom = true;
+                    break;
+                }
+            }
+        }
+        return inAdjacentRoom;
+    }
+
+    static boolean isInRoom(int roomNumber){
+        Room room = rooms[roomNumber];
+        return room.hasPit;
     }
 
     static int roomWithPitInIt(){
