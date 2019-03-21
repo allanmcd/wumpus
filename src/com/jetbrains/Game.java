@@ -26,10 +26,12 @@ import static javafx.scene.input.KeyCode.ESCAPE;
 // NOTE there should only be one Game object
 //
 public final class Game {
-    //
-    // game static variables
+
+    ///////////////////////////
+    // game static variables //
+    ///////////////////////////
+
     // most are accessed before game object is created
-    //
     static Stage currentStage;
     static Stage stage;
     static boolean loaded;
@@ -46,9 +48,9 @@ public final class Game {
     //static Player player;
     static Stats stats;
 
-    //
-    // Game methods
-    //
+    //////////////////
+    // Game methods //
+    //////////////////
 
     static void fatalError(String alertMsg){
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(Alert.AlertType.ERROR,alertMsg, ButtonType.OK);
@@ -210,16 +212,18 @@ public final class Game {
         loaded &= Trivia.init();
     }
 
-    //
-    // Game constructor
-    //
+    //////////////////////
+    // Game constructor //
+    //////////////////////
+
     private Game(){
         // force it to be a static singleton
     }
 
-    //
-    // Game helper functions
-    //
+    ///////////////////////////
+    // Game helper functions //
+    ///////////////////////////
+    
     public static void signIn() {
         if(useDefaults) { return;}
         Dialog dialog = new Dialog<>();
