@@ -26,25 +26,28 @@ class Cave {
     static boolean valid;
     static ArrayList highScores = new ArrayList();
 
-    //
-    // Cave constructor
-    //
-    //
+    //////////////////////
+    // Cave constructor //
+    //////////////////////
+
     Cave(String caveName, int initialRoom) {
         name = caveName;
         this.initialRoom = initialRoom;
         rooms = newCaveRooms(30);
     }
 
-    //
-    // Cave local variables
-    //
+    //////////////////////////
+    // Cave local variables //
+    //////////////////////////
+
     static private Room caveRoom;
 
-    //
-    // Cave helper functions
+    ///////////////////////////
+    // Cave helper functions //
+    ///////////////////////////
+
     // need to be static because they are called from within static contexts
-    //
+
     static boolean loadCave(String caveName) {
         BufferedReader br;
         String fileName = "Caves/" + caveName + ".cave";
