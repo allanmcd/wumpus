@@ -246,6 +246,7 @@ public final class Trivia {
                         displayNext = true;
                         triviaIndex++;
                         nextButtonClicked = true;
+                        triviaStage.close();
                     });
 
                     scene.setOnKeyPressed(e -> {
@@ -274,8 +275,7 @@ public final class Trivia {
                         continueDisplayingTrivia = false;
                     }
                 }
-           } catch (InterruptedException ex) {
-            }
+           } catch (InterruptedException ex) { }
         } while (continueDisplayingTrivia && triviaIndex < triviaQuestions.size()) ;
     }
 
@@ -319,12 +319,14 @@ public final class Trivia {
 
                     // remember the correct answer
                     String correctAnswer = args[2].trim();
+                    correctAnswer = correctAnswer.replace("%COMMA%",",");
                     triviaQnA[CORRECT_ANSWER] = correctAnswer;
 
                     // process all the wrong answers for the current line of the file
                     int numberOfArgs = args.length <7?args.length:6;
                     for (int argsIndex = 3; argsIndex < numberOfArgs; argsIndex++) {
                         String nextWrongAnswer = args[argsIndex].trim();
+                        nextWrongAnswer = nextWrongAnswer.replace("%COMMA%",",");
                         triviaQnA[argsIndex] = nextWrongAnswer;
                     }
                     triviaQuestions.add(triviaQnA);
@@ -404,6 +406,7 @@ public final class Trivia {
     }
 
     ////////////////////////
+
     // Trivia constructor //
     ////////////////////////
 
