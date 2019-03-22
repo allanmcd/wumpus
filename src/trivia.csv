@@ -12,7 +12,10 @@
 // to produce a statement, the following will occur
 //   The text within {} will be replaced with the correct answer
 //   text within <> will be included
-//   characters between [] will be deleted//
+//   characters between [] will be deleted
+//
+// &COMMA& will be replaced with a ,
+//
 N, {Who} is buried in Grants tomb, Grant, Lincoln, Washington, nobody
 N, {What city} is the capital of Washington State, Olympia, Seattle, Portland
 N, {What} is the largest planet in our solar system, Jupiter, earth, Pluto, Saturn
@@ -26,41 +29,41 @@ N, In 1952 Albert Einstein was offered the presidency of {which country}, Isreal
 N, Rock singer William Bailey is better known <as >{}[by what stage name], Axl Rose, Joe Cocker, Rod Steward, Nick Drake
 N, {Which South American country} is the world’s largest producer of Coffee, Brazil, Columbia, Peru, Argentenia
 N, {Which metallic element} has a melting point of approximately −38 °F (−39 °C), mercury, lead, copper, zinc
-N, {Which rapper} was born Robert Matthew Van Winkle on October 31, 1967, Vanilla Ice, Eminem, Tupac, Jay-Z
+N, {Which rapper} was born Robert Matthew Van Winkle on October 31%COMMA% 1967, Vanilla Ice, Eminem, Tupac, Jay-Z
 N, {What was}< is> the name of the London theatre built by Shakespeare’s playing company in 1599, The Globe Theatre, Southwark Playhouse, Arcola Theatre, National Theatre
-N, Released on April 5, 1974, {what} was Stephen King’s first published novel, Carrie, The Shining, Salems Lot, The Dead Zone
-N, In the sitcom Family Matters and film Die Hard, actor Reginald VelJohnson’s character < was a >{had what occupation}, Policeman, Fireman, Plumber, Truck Driver
-N, <The >{What] <are a >U.S. nonprofit organization <that >sells about 200 million boxes of cookies per year, Girl Scouts, Campfire Girls, Brownies, Girl Guides
-N, The scientific unit named after Sir Isaac Newton measures {what}, Force, Power, Velocity, Angular Momentum
+N, Released on April 5%COMMA% 1974%COMMA% {what} was Stephen King’s first published novel, Carrie, The Shining, Salems Lot, The Dead Zone
+N, In the sitcom Family Matters and film Die Hard%COMMA% actor Reginald VelJohnson’s character < was a >{had what occupation}, Policeman, Fireman, Plumber, Truck Driver
+N, <The >{What} <are a >U.S. nonprofit organization <that >sells about 200 million boxes of cookies per year, Girl Scouts, Campfire Girls, Brownies, Girl Guides
+N, The scientific unit named after Sir Isaac Newton < (the Newton)> measures {what}, Force, Power, Velocity, Angular Momentum
 N, {What} is the only country that displays the Bible on its national flag, The Dominican Republic, Isreal, Puerto Rico, Argentenia
 N, The city of Baghdad lies along the banks of {which river}, The Tigris River, The Euphrates Rivewr, The River Jordan, Khabur River
 N, [What element did ]Joseph Priestley discover<d >{} in 1774, Oxygen, Hydrogen, Lithium, Titanium
-N, Of the original six space shuttles, <the >{which one} never flew a mission in space, Enterprise, Challenger, Columbia, Discovery
+N, Of the original six space shuttles%COMMA% <the >{which one} never flew a mission in space, Enterprise, Challenger, Columbia, Discovery
 N, {What} was the name of Alexander the Great’s horse, Bucephalus, Adonis, Hero, Tyndaris
 N, {What}< is the > inorganic molecule <that> is produced by lightning, Ozone, Carbon, Methane, Hydrogen
-N, According to Norse mythology, {who} is the god of thunder, Thor, Mars, Zues, Apollo
-N, Utah, Colorado, New Mexico and Arizona meet at {what}< a > U.S. landmark, Four Corners Monument, Bryce Canyon, Grand Canyon, Mesa Verde
+N, According to Norse mythology%COMMA% {who} is the god of thunder, Thor, Mars, Zues, Apollo
+N, Utah%COMMA% Colorado%COMMA% New Mexico and Arizona meet at {what}<%COMMA% a > U.S. landmark, Four Corners Monument, Bryce Canyon, Grand Canyon, Mesa Verde
 N, {Who} was the first cartoon character to get his own star on Hollywood Boulevard’s Walk of Fame, Mickey Mouse, Mighty Mouse, Donald Duck, Goofy
 N, Tom yum is a type of hot and sour soup that originated in {which country}, Thailand, China, Viet Nam, Japan
 N, {What} are the only two countries in South America that do not border Brazil, Chile and Ecuador, Argentenia and Peru, Columbia and Ecuador, Venezuala and Chile
-N, The NBA’s Memphis Grizzlies formerly played in [what ]<the >Canadian city<of >{}, Vancouver, Quebec, Victoria, Winnepeg
-N, {What fruit}<es are> [is ]thrown at the annual food fight festival held in Buñol, Spain, Tomato, Potatoe, Avacado, Banana
-N, {What late disc jockey} was the voice of Shaggy in the cartoon, “Scooby-Doo, Where Are You, Casey Kasem, Art Roberts, Johnny Holiday, Wolfman Jack
-N, Who was the first ever wrestler to be inducted into the WWE Hall of Fame, Andre the Giant, Hulk Hogan, The Rock, Jesse Ventura
+N, {What late disc jockey} was the voice of Shaggy in the cartoon%COMMA% “Scooby-Doo%COMMA% Where Are You, Casey Kasem, Art Roberts, Johnny Holiday, Wolfman Jack
+N, The NBA’s Memphis Grizzlies formerly played in [what ]<the >Canadian city< of >{}, Vancouver, Quebec, Victoria, Winnepeg
+N, {Who} was the first ever wrestler to be inducted into the WWE Hall of Fame, Andre the Giant, Hulk Hogan, The Rock, Jesse Ventura
+N, {What fruit}<es are> [is ]thrown at the annual food fight festival held in Buñol%COMMA% Spain, Tomato, Potatoe, Avacado, Banana
 N, The ancient Egyptian symbol Ouroboros depicts a serpent eating {what}, its own tail, an apple, a hawk, another serpent
-N, [What Star Trek: ]The Next Generation actor <that >hosted the children’s show Reading Rainbow< was >{}, Le Var Burton, Patrick Stewart, Denise Crosby, Gates McFadden
-N, Located in southeast Vietnam, {what} is the former name of Ho Chi Minh City, Saigon, Nha Trang, Can Tho, Dallat
-N, In the X-Men film franchise, Halle Berry played the role of {which character}, Storm, Domino, Dazzler, Pixie
-N, Moss, garter, and seed are common terms used in which {type of handicraft}, knitting, sewing, embroidery, needlework
-N, In Olympic archery, {what} is the standard distance of the target from the archer, 70 Meters, 55 Meters, 40 Meters, 30 Meters
+N, [What Star Trek: ]The Next Generation actor <that >hosted the children’s show Reading Rainbow< was >{}, LeVar Burton, Patrick Stewart, Denise Crosby, Gates McFadden
+N, Located in southeast Vietnam%COMMA% {what} is the former name of Ho Chi Minh City, Saigon, Nha Trang, Can Tho, Dallat
+N, In the X-Men film franchise%COMMA% Halle Berry played the role of {which character}, Storm, Domino, Dazzler, Pixie
+N, Moss%COMMA% garter%COMMA% and seed are common terms used in {which type of handicraft}, knitting, sewing, embroidery, needlework
+N, In Olympic archery%COMMA% {what} is the standard distance of the target from the archer, 70 Meters, 55 Meters, 40 Meters, 30 Meters
 N, {What} is the highest number found on a standard roulette wheel, 36, 38, 34, 31
-N, {Who} created the comedy science fiction series, “The Hitchhiker’s Guide to the Galaxy”, Douglas Adams, Isaac Asimov, Arthur Clarke, Ray Bradbury
+N, {Who} created the comedy science fiction series%COMMA% “The Hitchhiker’s Guide to the Galaxy”, Douglas Adams, Isaac Asimov, Arthur Clarke, Ray Bradbury
 N, {Who} was the first man to appear on the cover of Playboy Magazine, Peter Sellers, Hugh Hefner, Sean Connery, Peter Sellers
 N, {Which water sport} is the official state individual sport of Hawaii, surfing, swimming, scuba diving, canoeing
-N, Spanish silver dollars, originally called the Spanish peso, were each worth {how many} Spanish reales, 8, 9, 10, 20
+N, Spanish silver dollars%COMMA% originally called the Spanish peso%COMMA% were each worth {how many} Spanish reales, 8, 9, 10, 20
 N, {What} is the mathematical formula for Newton’s Second Law of Motion, F=ma, V=d/t, a=dv/t, g=GM/r*r
-N, Which fast food restaurant chain once tested bubble gum broccoli as a children’s menu item, McDonalds, Burger King, Jack in the Box, Dairy Queen
+N, {Which fast food restaurant chain} once tested bubble gum broccoli as a children’s menu item, McDonalds, Burger King, Jack in the Box, Dairy Queen
 N, {Who} directed the romantic comedy fantasy adventure film The Princess Bride, Rob Reiner, Steven Spielberg, Tim Burton, James Cameron
 N, {Who} was first U.S. president to be impeached, Andrew Johnson, Richard Nixon, Bill Clinton, Donald Trump
 N, Ron McKernan of the Grateful Dead was commonly known by <the> [what ]nickname {}, Pigpen, Stud muffin, Sid Vicious, Iggy Pop
-N, What is the highest mountain when measured from the center of Earth, Mt. Chimborazo, Mt. Everest, Mt. McKinnley, Mauna Kea
+N, {What} is the highest mountain when measured from the center of Earth, Mt. Chimborazo, Mt. Everest, Mt. McKinnley, Mauna Kea

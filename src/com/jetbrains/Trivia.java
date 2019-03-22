@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -17,12 +14,15 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static com.jetbrains.GIO.centerLabelInHBox;
 import static com.jetbrains.GIO.message;
+import static com.jetbrains.Game.gio;
 import static com.jetbrains.Main.useDefaults;
 import static com.jetbrains.Player.numberOfCoins;
 import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.scene.input.KeyCode.ESCAPE;
 import static javafx.scene.text.FontWeight.BOLD;
 import static javafx.scene.text.FontWeight.NORMAL;
 
@@ -50,7 +50,9 @@ public final class Trivia {
                                 "// to produce a statement, the following will occur\n"+
                                 "//   The text within {} will be replaced with the correct answer\n"+
                                 "//   text within <> will be included\n"+
-                                "//   characters between [] will be deleted"+
+                                "//   characters between [] will be deleted\n"+
+                                "//\n"+
+                                "// &COMMA& will be replaced with a ,\n"+
                                 "//\n";
 
     ///////////////////////////////
@@ -60,9 +62,19 @@ public final class Trivia {
     static boolean answerAllCorrect = false;
     static boolean answerAllWrong = false;
     static boolean bypassTrivia;
-    static int questionIndex;
     static Random triviaRnd = new Random();
     static TextArea txtTrivia;
+
+    // these have to be non-local because of scoping issues
+    // or because they are used in an event handler
+    static private boolean displayNext;
+    static private boolean nextButtonClicked;
+    static private boolean nextButtonPressed;
+    static private int questionIndex;
+    static private BorderPane questionPane;
+    static private int triviaHeaderSize;
+    static private int triviaIndex;
+    static private VBox vbStatement;
 
 
     // making the triviaPane static is probably not a good idea
@@ -146,9 +158,7 @@ public final class Trivia {
         HBox.setHgrow(spacer4, Priority.ALWAYS);
         spacer4.setMinSize(10, 1);
 
-
         answerAllWrongHbox.getChildren().addAll(spacer3, lblFail, btnFail, spacer4);
-
 
         Label blankLine = new Label("");
         blankLine.setMaxHeight(10);
@@ -196,10 +206,87 @@ public final class Trivia {
         return retVal;
     }
 
+    static void displayTriviaQuestions(){
+        int firstIndex = gio.getHowMany(true, 0, 0,
+                                        triviaQuestions.size(),
+                                        "Index of first trivia question to display (0 based)");
+        triviaIndex = firstIndex;
+
+        // create a dialog to display the question on
+        Stage triviaStage = new Stage(StageStyle.UTILITY);
+        triviaStage.initModality(Modality.APPLICATION_MODAL);
+        triviaStage.setAlwaysOnTop(true);
+        triviaStage.setMinWidth(250);
+
+        // create a Border pane to put the question and answers in
+        boolean enableEvents = false;
+        boolean addStatement = true;
+        displayNext = true;
+        boolean continueDisplayingTrivia = true;
+
+        do {
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+                if (displayNext) {
+                    displayNext = false;
+                    nextButtonClicked = false;
+                    nextButtonPressed = false;
+                    questionPane = createQuestionPane(triviaIndex, enableEvents, addStatement);
+
+                    // now display the question and answer dialog
+                    Scene scene = new Scene(questionPane);
+                    triviaStage.setScene(scene);
+                    questionPane.getTop().requestFocus();
+
+                    // add a "Next" button
+                    Button btnNext = new Button("Next");
+                    HBox hbxNext = GIO.centerButtonInHBox(btnNext);
+
+                    btnNext.setOnAction(e -> {
+                        displayNext = true;
+                        triviaIndex++;
+                        nextButtonClicked = true;
+                    });
+
+                    scene.setOnKeyPressed(e -> {
+                        KeyCode keyCode = e.getCode();
+                        if(keyCode == ENTER){
+
+                            displayNext = true;
+                            triviaIndex++;
+                            nextButtonPressed = true;
+                            triviaStage.close();
+                        } else if(keyCode == ESCAPE){
+                            triviaStage.close();
+                        }
+                    });
+
+                    VBox vbxDisplayBottom = new VBox();
+                    vbxDisplayBottom.getChildren().add( hbxNext);
+                    questionPane.setBottom(vbxDisplayBottom);
+
+                    String title = "Trivia.csv line number  " + (triviaIndex + triviaHeaderSize +1);
+                    title = title + " (Index " + triviaIndex + ")";
+
+                    triviaStage.setTitle(title);
+                    triviaStage.showAndWait();
+                    if(nextButtonClicked == false && nextButtonPressed == false){
+                        continueDisplayingTrivia = false;
+                    }
+                }
+           } catch (InterruptedException ex) {
+            }
+        } while (continueDisplayingTrivia && triviaIndex < triviaQuestions.size()) ;
+    }
+
     static boolean init(){
         if(useDefaults){
             bypassTrivia = true;
         }
+
+        // figure out the size of the Trival.csv header - comments prior to trivia questions
+        triviaHeaderSize = HEADER.split( "\n").length;
+
         // assume that the initialization will succeed
         boolean initSuceeded = true;
         String triviaFileName = "src/trivia.csv";
@@ -284,7 +371,7 @@ public final class Trivia {
        System.out.println("rndTriviaIndex = " + rndTriviaIndex);
        randomTriviaQnA = triviaQuestions.get(rndTriviaIndex);
 
-        // get rid of brackets [] and the text between them
+       // get rid of brackets [] and the text between them
        String triviaStatement = formatStatement(randomTriviaQnA);
        return triviaStatement;
     }
@@ -299,6 +386,7 @@ public final class Trivia {
 
             for (int questionIndex = 0; questionIndex < triviaQuestions.size(); questionIndex++) {
                 String formattedTriviaQnA = Arrays.toString(triviaQuestions.get(questionIndex));
+                // Arrays.toString will produce [n1, n2, n3, n4] or possilby [n1,n2,n3,null]
                 // get rid of leading bracket
                 formattedTriviaQnA = formattedTriviaQnA.substring(1);
                 // get rid of trailing bracket
@@ -361,9 +449,36 @@ public final class Trivia {
         answerStage = new Stage(StageStyle.UNDECORATED);
         answerStage.initModality(Modality.APPLICATION_MODAL);
         answerStage.setAlwaysOnTop(true);
-        answerStage.setTitle("Trivia Dialog");
         answerStage.setMinWidth(250);
 
+        // create a Border pane to put the question and answers in
+        boolean enableEvents = true;
+        boolean showStatement = false;
+        BorderPane questionPane = createQuestionPane(triviaIndex, enableEvents, showStatement );
+
+        Label lblStillNeed = new Label("You still need to answer " + stillNeed + " more questions correctly");
+        HBox hbxStillNeed = centerLabelInHBox(lblStillNeed);
+
+        Label lblRemaining = new Label("You have " + remaining + " more questions after this one");
+        HBox hbxRemaining = centerLabelInHBox(lblRemaining, new Insets(5,0,10,0));
+        hbxRemaining.setPadding(new Insets(5,0,10,0));
+
+        VBox vbStillNeed = new VBox();
+        vbStillNeed.getChildren().addAll(hbxStillNeed, hbxRemaining);
+        questionPane.setBottom(vbStillNeed);
+
+        // now display the question and answer dialog
+        Scene scene = new Scene(questionPane);
+        answerStage.setScene(scene);
+        questionPane.getTop().requestFocus();
+        answerStage.showAndWait();
+    }
+
+    private static void closeQuestionStage(){
+        answerStage.close();
+    }
+
+    private static BorderPane createQuestionPane(int triviaIndex, boolean setCheckBoxEvents, boolean showStatement){
         // get the trivia question and all the answers
         String[] triviaQnA = triviaQuestions.get(triviaIndex);
 
@@ -373,15 +488,18 @@ public final class Trivia {
         question = question.replace("}","");
         question = question.replace("[","");
         question = question.replace("]","");
+        question = question.replace("%COMMA%",",");
 
         // get rid of < and >  and delete the text between them
         // ADVANCED - could do this with regular expressions
         int lessThanOffset = question.indexOf("<");
         int greaterThanOffset = question.indexOf(">");
-        if(lessThanOffset > -1 && greaterThanOffset > -1){
+        while(lessThanOffset > -1 && greaterThanOffset > -1 && greaterThanOffset > lessThanOffset){
             // remove < and > as well as the text between them
             String phrase = question.substring(lessThanOffset,greaterThanOffset + 1);
             question = question.replace(phrase,"");
+            lessThanOffset = question.indexOf("<");
+            greaterThanOffset = question.indexOf(">");
         }
 
         Label lblQuestion = new Label(question + "?");
@@ -404,7 +522,7 @@ public final class Trivia {
 
         // create a Border pane to put the question and answers in
         BorderPane questionPane = new BorderPane();
-        questionPane.setTop(lblQuestion);
+        questionPane.setTop(centerLabelInHBox(lblQuestion, new Insets(0,20,0,20)));
 
         // create check boxes for each answer and fill it in
         VBox answerPane = new VBox(5);
@@ -422,12 +540,16 @@ public final class Trivia {
 
             CheckBox nextCheckBox = new CheckBox(nextAnswer);
             nextCheckBox.setSelected(false);
-            //nextCheckBox.setAlignment(Pos.TOP_LEFT);
-            if(nextAnswer.equals(correctAnswer)){
+            if(setCheckBoxEvents) {
+                if (nextAnswer.equals(correctAnswer)) {
 
-                nextCheckBox.setOnAction(e -> rightAnswer(triviaQnA, triviaIndex));
+                    nextCheckBox.setOnAction(e -> rightAnswer(triviaQnA, triviaIndex));
+                } else {
+                    nextCheckBox.setOnAction(e -> wrongAnswer(triviaQnA, triviaIndex));
+                }
             } else {
-                nextCheckBox.setOnAction(e -> wrongAnswer(triviaQnA, triviaIndex));
+                nextCheckBox.setOnAction(e -> nextCheckBox.setSelected(false));
+                questionPane.getTop().requestFocus();
             }
             answerPane.getChildren().add(nextCheckBox);
         }
@@ -446,34 +568,37 @@ public final class Trivia {
         answerPaneCentered.getChildren().addAll(spacer1, answerPane, spacer2);
         answerPaneCentered.setPadding(new Insets(10,0,20,0));
 
-        questionPane.setCenter(answerPaneCentered);
+        if(showStatement){
+            VBox vbxAnswerPane = new VBox();
+            vbxAnswerPane.getChildren().addAll(answerPaneCentered, createStatementPane(triviaIndex));
+            questionPane.setCenter(vbxAnswerPane);
+        } else{
+            questionPane.setCenter(answerPaneCentered);
+        }
 
-        Label lblStillNeed = new Label("You still need to answer " + stillNeed + " more questions correctly");
-        HBox hbxStillNeed = centerLabelInHBox(lblStillNeed);
-
-        Label lblRemaining = new Label("You have " + remaining + " more questions after this one");
-        HBox hbxRemaining = centerLabelInHBox(lblRemaining, new Insets(5,0,10,0));
-        hbxRemaining.setPadding(new Insets(5,0,10,0));
-
-        VBox vbStillNeed = new VBox();
-        vbStillNeed.getChildren().addAll(hbxStillNeed, hbxRemaining);
-        questionPane.setBottom(vbStillNeed);
-
-        // now display the question and answer dialog
-        Scene scene = new Scene(questionPane);
-        answerStage.setScene(scene);
-        lblQuestion.requestFocus();
-        answerStage.showAndWait();
+        return questionPane;
     }
 
-    private static void closeQuestionStage(){
-        answerStage.close();
+    private static VBox createStatementPane(int triviaIndex){
+        String triviaStatement = formatStatement(triviaQuestions.get(triviaIndex));
+        Label lblStatement = new Label(triviaStatement);
+        HBox hbxStatement = centerLabelInHBox(lblStatement, new Insets(5,0,10,0));
+        hbxStatement.setPadding(new Insets(5,0,10,0));
+
+        VBox vbStatement = new VBox();
+        vbStatement.getChildren().add( hbxStatement);
+
+        return vbStatement;
     }
 
-    private static String formatStatement(String[] triviaQnA)
-    {
+    private static String formatStatement(String[] triviaQnA){
         // get rid of brackets [] and the text between them
         String triviaStatement = triviaQnA[QUESTION];
+
+        // put and escaped commas back
+        triviaStatement = triviaStatement.replace("%COMMA%",",");
+
+
         // ADVANCED - could do this with regular expressions
         int leftBracketOffset = triviaStatement.indexOf("[");
         int rightBracketOffset = triviaStatement.indexOf("]");
@@ -495,8 +620,8 @@ public final class Trivia {
         }
 
         // get rid of < > leaving the text in between them
-        triviaStatement = triviaStatement.replace("<","");
-        triviaStatement = triviaStatement.replace(">","");
+        triviaStatement = triviaStatement.replaceAll("<","");
+        triviaStatement = triviaStatement.replaceAll(">","");
 
         return triviaStatement;
     }
@@ -515,7 +640,6 @@ public final class Trivia {
             questionAlreadyAsked = alreadyAsked.equals("R") || alreadyAsked.equals("W");
         }while(questionAlreadyAsked && questionsRemaining > 0);
 
-        dumpTriviaQuestions();
         if(questionsRemaining == 0) {
             // we've already asked all the trivia questions
             recycleTriviaQuestions();
@@ -564,28 +688,12 @@ public final class Trivia {
         HBox hbxCorrrectAnswer = centerLabelInHBox(lblCorrectAnswer);
         hbxCorrrectAnswer.setPadding(new Insets(20,20,10,20));
 
-        // create an "OK" button at the bottom of the dialog
-        Button btnOK = new Button();
-        btnOK.setText("OK");
+        Button btnOK = new Button("OK");
+        HBox hbxOK = GIO.centerButtonInHBox(btnOK);
         btnOK.setOnAction(e -> correctAnswerStage.close());
 
-        final Pane spacerLeft = new Pane();
-        HBox.setHgrow(spacerLeft, Priority.ALWAYS);
-        spacerLeft.setMinSize(10, 1);
-
-        final Pane spacerRight = new Pane();
-        HBox.setHgrow(spacerRight, Priority.ALWAYS);
-        spacerRight.setMinSize(10, 1);
-
-        HBox hbxOK = new HBox();
-        hbxOK.getChildren().addAll(spacerLeft, btnOK, spacerRight);
-        hbxOK.setPadding(new Insets(10,0,20,0));
-
-        VBox vbCorrect = new VBox();
-        vbCorrect.getChildren().addAll(hbxHeader, hbxCorrrectAnswer, hbxOK);
-
         // display the correct answer and wait for player to click OK button
-        Scene correctAnswerScene = new Scene(vbCorrect);
+        Scene correctAnswerScene = new Scene(hbxOK);
 
         Platform.runLater(() -> {
             // hide the answer dialog to avoid confussion
@@ -598,25 +706,14 @@ public final class Trivia {
 
     private static void wrongAnswer(String[] triviaQnA, int questionIndex ){
         wrongAnswers++;
-        //GIO.message(formatStatement(triviaQnA),"", "That is NOT correct");
         showCorrectAnswer(triviaQnA);
         gradeAnswer("W", triviaQnA, questionIndex);
         System.out.println("wrongAnswer - questionIndex = "+questionIndex);
-        dumpTriviaQuestions();
     }
 
     private static void gradeAnswer(String rightWrong, String[] triviaQnA, int questionIndex ){
         triviaQnA[ALREADY_ASKED] = rightWrong;
         triviaQuestions.set(questionIndex, triviaQnA);
         closeQuestionStage();
-    }
-
-    private static void dumpTriviaQuestions(){
-        if(false){
-            for(int i = 0; i < triviaQuestions.size(); i++) {
-                String trivia = Arrays.toString(triviaQuestions.get(i));
-                System.out.println(Integer.toString(i)+ trivia);
-            }
-        }
     }
 }

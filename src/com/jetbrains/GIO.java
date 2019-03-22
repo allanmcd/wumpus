@@ -89,6 +89,26 @@ class GIO {
         return hbox;
     }
 
+    static HBox centerButtonInHBox(Button button){
+        // create an "OK" button at the bottom of the dialog
+        //Button btnOK = new Button();
+        //btnOK.setText(text);
+
+        final Pane spacerLeft = new Pane();
+        HBox.setHgrow(spacerLeft, Priority.ALWAYS);
+        spacerLeft.setMinSize(10, 1);
+
+        final Pane spacerRight = new Pane();
+        HBox.setHgrow(spacerRight, Priority.ALWAYS);
+        spacerRight.setMinSize(10, 1);
+
+        HBox hbxButton = new HBox();
+        hbxButton.getChildren().addAll(spacerLeft, button, spacerRight);
+        hbxButton.setPadding(new Insets(10,0,20,0));
+
+        return hbxButton;
+    }
+
     int getDesiredRoomNumber() {
         int desiredRoom = getHowMany(false,0,1, 30, "Which room would you like to go to?");
         return desiredRoom;
@@ -589,6 +609,10 @@ class GIO {
             Trivia.bypassTrivia = true;
         });
 
+        MenuItem displayTriviaMenuItem = new MenuItem("Display Trivia Questions");
+        displayTriviaMenuItem.setOnAction(e -> {
+            Trivia.displayTriviaQuestions();
+        });
 
         MenuItem showCaveMapMenuItem = new MenuItem("Show Cave Map");
         showCaveMapMenuItem.setOnAction(e -> {
@@ -597,8 +621,9 @@ class GIO {
 
         Menu debugMenu = new Menu("Testing");
         debugMenu.getItems().addAll(useDefaultsMenuItem, winTheGameMenuItem, loseTheGameMenuItem,
-                                    answerTriviaMenuItem, moreCoinsMenuItem,  setPreferedSecretMenu,
-                                    gotoRoomMenuItem, changeScoreMenuItem, ignoreTriviaMenuItem,
+                                    moreCoinsMenuItem,  setPreferedSecretMenu,
+                                    gotoRoomMenuItem, changeScoreMenuItem,
+                                    answerTriviaMenuItem, displayTriviaMenuItem, ignoreTriviaMenuItem,
                                     showCaveMapMenuItem);
 
         MenuBar gameMenuBar = new MenuBar();
