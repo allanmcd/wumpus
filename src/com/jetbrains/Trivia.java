@@ -362,8 +362,7 @@ public final class Trivia {
         return triviaPane;
     }
 
-    static String randomStatement()
-    {
+    static String randomStatement(){
        String[] randomTriviaQnA;
        int numberOfTriviaQuestions = triviaQuestions.size();
        int rndTriviaIndex = (int)Math.floor((Math.random() * numberOfTriviaQuestions));
