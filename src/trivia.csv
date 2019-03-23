@@ -17,7 +17,7 @@
 // &COMMA& will be replaced with a ,
 //
 N, {Who} is buried in Grants tomb, Grant, Lincoln, Washington, nobody
-N, {What city} is the capital of Washington State, Olympia, Seattle, Portland
+R, {What city} is the capital of Washington State, Olympia, Seattle, Portland
 N, {What} is the largest planet in our solar system, Jupiter, earth, Pluto, Saturn
 N, {Who} invented the first AC induction motor, Nikola Tesla, Thomas Edison, Elon Musk, Benjamin Franklin
 N, {What} is the only national flag that is not square or rectangular, The flag of Nepal, The flag of Burma, The flag of Indonesia
@@ -25,7 +25,7 @@ N, <">{What three-word parting catchphrase}<"> is engraved on voice actor Mel Bl
 N, {Which German Philosopher} wrote 'Thus Spoke Zarathustra', Friedrich Nietzsche, Immanuel Kant, Gottfried Leibniz, Friedrich Paulsen
 N, [What film did ]Randolph Hearst's media empire conspire<d> to stop the release of{}, Citizen Kane, War of the Worlds, Laura, Rear Window
 N, [What part of ]the {human body} contains five metacarpal bones, hand, foot, ear, spine
-N, In 1952 Albert Einstein was offered the presidency of {which country}, Isreal, United States, France, Germany
+R, In 1952 Albert Einstein was offered the presidency of {which country}, Isreal, United States, France, Germany
 N, Rock singer William Bailey is better known <as >{}[by what stage name], Axl Rose, Joe Cocker, Rod Steward, Nick Drake
 N, {Which South American country} is the world’s largest producer of Coffee, Brazil, Columbia, Peru, Argentenia
 N, {Which metallic element} has a melting point of approximately −38 °F (−39 °C), mercury, lead, copper, zinc
@@ -54,7 +54,7 @@ N, The ancient Egyptian symbol Ouroboros depicts a serpent eating {what}, its ow
 N, [What Star Trek: ]The Next Generation actor <that >hosted the children’s show Reading Rainbow< was >{}, LeVar Burton, Patrick Stewart, Denise Crosby, Gates McFadden
 N, Located in southeast Vietnam%COMMA% {what} is the former name of Ho Chi Minh City, Saigon, Nha Trang, Can Tho, Dallat
 N, In the X-Men film franchise%COMMA% Halle Berry played the role of {which character}, Storm, Domino, Dazzler, Pixie
-N, Moss%COMMA% garter%COMMA% and seed are common terms used in {which type of handicraft}, knitting, sewing, embroidery, needlework
+W, Moss%COMMA% garter%COMMA% and seed are common terms used in {which type of handicraft}, knitting, sewing, embroidery, needlework
 N, In Olympic archery%COMMA% {what} is the standard distance of the target from the archer, 70 Meters, 55 Meters, 40 Meters, 30 Meters
 N, {What} is the highest number found on a standard roulette wheel, 36, 38, 34, 31
 N, {Who} created the comedy science fiction series%COMMA% “The Hitchhiker’s Guide to the Galaxy”, Douglas Adams, Isaac Asimov, Arthur Clarke, Ray Bradbury
@@ -81,7 +81,7 @@ N, Published in 1906%COMMA% White Fang is a novel about a wolf-dog written by {w
 N, [What does ]the online acronym SMH stand<s> for< >{}, Shaking My Head, Six More Hours, Smashed My Hand, Stupid Miinded Humans
 N, A league is equivalent to {how many} nautical miles at sea, 3, 2, 6, 7
 N, <The >{What} is the only snake in the world that builds a nest for its eggs, King Cobra, Rattle Snake, Viper, Python
-N, {Who} is generally credited as being the first computer programmer,Ada Lovelace, Charles Babbage, Grace Hopper, John Von Neumann
+N, {Who} is generally credited as being the first computer programmer, Ada Lovelace, Charles Babbage, Grace Hopper, John Von Neumann
 N, <The >{What} is the largest country located entirely in Europe, Ukraine, Germany, France, Spain
 N, {What inland U.S. state} has the longest shoreline< of any inland U.S. state>, Michigan, Illinois, Iowa, Arizona
 N, A word that is spelled the same forwards and backwards is called a {what}, Palindrome, Acronym, Anagram
@@ -91,7 +91,7 @@ N, Wrangell-St. Elias%COMMA% the largest national park in the U.S.%COMMA% is loc
 N, The adult human skeleton is made of up {how many} bones, 206, 188, 214, 192
 N, Papua New Guinea is bordered by {which country} to the west, Indonesia, Viet Nam, Thailand, Borneo
 N, “If I Had $1000000” is a song by [which]<the> Canadian musical group< >{}, Barenaked Ladies, Rush, The Trajically Hip, Loverboy
-N, [What]<the> three colors <that >appear on the flag of Ireland< are >{}, Green%COMMA% White and Orange, Red%COMMA% White and Blue, Yellow%COMMA% Red and Green
+N, [What]<the> three colors <that >appear on the flag of Ireland< are >{}, Green, White and Orange, Red, White and Blue, Yellow, Red and Green
 N, In 2003%COMMA% {which U.S. state} was officially declared the birthplace of aviation, Ohio, North Carolina, Iowa, Virginia
 N, {Which actor} played Freddie Mercury in the 2018 film Bohemian Rhapsody, Rami Malek, Kal Penn, Aziz Ansari, Shishir Kurup
 N, [In which Asian country is the]<The> city of Chiang Mai <is >located <in >{}, Thailand, Viet Nam, Cambodia, Laos

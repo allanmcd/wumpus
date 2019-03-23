@@ -598,10 +598,22 @@ class GIO {
             Game.stats.modifyScore();
         });
 
-        MenuItem gotoRoomMenuItem = new MenuItem("Go To Room");
+        MenuItem gotoRoomMenuItem = new MenuItem("Move Player To Room");
         gotoRoomMenuItem.setOnAction(e -> {
             int desiredRoomNumber = gio.getDesiredRoomNumber();
             gio.gotoRoom(desiredRoomNumber, "You have been moved to ");
+        });
+
+        MenuItem moveWumpusToRoom = new MenuItem("Move Wumpus To Room");
+        moveWumpusToRoom.setOnAction(e -> {
+            Wumpus.roomNumber = getHowMany(false,0,1,30,"move Wumpus to which room");
+            CaveMap.refresh();
+        });
+
+        MenuItem updateDistanceFrom = new MenuItem("Update the distance from the Wumpus in each room");
+        updateDistanceFrom.setOnAction(e -> {
+            Wumpus.updateDistanceFrom();
+            CaveMap.refresh();
         });
 
         MenuItem ignoreTriviaMenuItem = new MenuItem("Bypass Trivia Questions");
@@ -622,7 +634,7 @@ class GIO {
         Menu debugMenu = new Menu("Testing");
         debugMenu.getItems().addAll(useDefaultsMenuItem, winTheGameMenuItem, loseTheGameMenuItem,
                                     moreCoinsMenuItem,  setPreferedSecretMenu,
-                                    gotoRoomMenuItem, changeScoreMenuItem,
+                                    gotoRoomMenuItem, moveWumpusToRoom, updateDistanceFrom, changeScoreMenuItem,
                                     answerTriviaMenuItem, displayTriviaMenuItem, ignoreTriviaMenuItem,
                                     showCaveMapMenuItem);
 
